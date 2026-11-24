@@ -661,6 +661,9 @@ let auth,db;
 if(ready){const app=initializeApp(firebaseConfig);auth=getAuth(app);db=getFirestore(app)}
 const need=()=>{if(!ready){const e=new Error('ยังไม่ได้วางค่า firebaseConfig ในไฟล์ index.html');e.cfg=1;throw e}};
 const em=u=>u.toLowerCase()+DOM;
+const OWNER_NAME='ssmownershop';          // บัญชีเจ้าของ (ต้องตรงกับ ownerToken() ใน firestore.rules)
+const isOwn=d=>!!d&&(d.owner===true||String(d.name||'').toLowerCase()===OWNER_NAME);
+const mkAcc=(id,d)=>{const a=Object.assign({id:id},d);a.owner=isOwn(d);return a};
 const D=(...p)=>doc(db,...p);
 const errLog=e=>console.error('Firestore:',e.code,e.message);
 let unsubs=[],signing=false,rawCodes=[],rawUses=[];
@@ -673,7 +676,7 @@ function attach(uid,own){
   unsubs.push(onSnapshot(collection(db,'products'),s=>{prods=s.docs.map(x=>x.data()).sort((a,b)=>(a.ord||0)-(b.ord||0));refresh()},errLog));
   unsubs.push(onSnapshot(own?collection(db,'orders'):query(collection(db,'orders'),where('u','==',uid)),s=>{orders=s.docs.map(x=>x.data());refresh()},errLog));
   if(!own)return;
-  unsubs.push(onSnapshot(collection(db,'users'),s=>{accounts={};s.docs.forEach(x=>{accounts[x.id]=Object.assign({id:x.id},x.data())});refresh()},errLog));
+  unsubs.push(onSnapshot(collection(db,'users'),s=>{accounts={};s.docs.forEach(x=>{accounts[x.id]=mkAcc(x.id,x.data())});refresh()},errLog));
   unsubs.push(onSnapshot(collection(db,'codes'),s=>{rawCodes=s.docs.map(x=>x.data());mergeCodes();refresh()},errLog));
   unsubs.push(onSnapshot(collectionGroup(db,'uses'),s=>{rawUses=s.docs.map(x=>x.data());mergeCodes();refresh()},errLog));
 }
@@ -681,8 +684,8 @@ function start(uid){
   stop();let attached=false;
   unsubs.push(onSnapshot(D('users',uid),s=>{
     if(!s.exists())return;
-    accounts[uid]=Object.assign({id:uid},s.data());
-    if(!attached){attached=true;attach(uid,s.data().owner===true);enterApp(uid);
+    accounts[uid]=mkAcc(uid,s.data());
+    if(!attached){attached=true;attach(uid,isOwn(s.data()));enterApp(uid);
       if(s.data().email)setDoc(D('emailIndex',s.data().email),{u:uid,name:s.data().name},{merge:true}).catch(()=>{})}else{refresh()}
   },errLog));
 }
@@ -723,7 +726,7 @@ const FB={
   async resetAll(){need();const ops=[];
     for(const n of ['products','orders','codes'])(await getDocs(collection(db,n))).forEach(x=>ops.push(b=>b.delete(x.ref)));
     (await getDocs(collectionGroup(db,'uses'))).forEach(x=>{const u=x.data();ops.push(b=>b.delete(x.ref));ops.push(b=>b.delete(D('codes',u.cd,'users',u.u)))});
-    (await getDocs(collection(db,'users'))).forEach(x=>{if(!x.data().owner)ops.push(b=>b.update(x.ref,{coins:0,ledger:[]}))});
+    (await getDocs(collection(db,'users'))).forEach(x=>{if(!isOwn(x.data()))ops.push(b=>b.update(x.ref,{coins:0,ledger:[]}))});
     for(let i=0;i<ops.length;i+=100){const b=writeBatch(db);ops.slice(i,i+100).forEach(f=>f(b));await b.commit()}},
   confirmOrder(id){return updateDoc(D('orders',String(id)),{st:'confirmed'})},
 
@@ -775,7 +778,7 @@ const FB={
       const uS=await tx.get(uR),pS=await tx.get(pR);
       let cR,cS;if(o.cd){cR=D('codes',o.cd);cS=await tx.get(cR)}
       tx.update(oR,{st:'rejected'});
-      if(uS.exists()&&!uS.data().owner){const u=uS.data(),nb=(u.coins||0)+o.tot;
+      if(uS.exists()&&!isOwn(uS.data())){const u=uS.data(),nb=(u.coins||0)+o.tot;
         tx.update(uR,{coins:nb,ledger:[...(u.ledger||[]),{t:Date.now(),d:o.tot,n:'คืนคอยน์ ออเดอร์ #'+String(o.id).slice(-6),b:nb,rf:true}]})}
       if(pS.exists())tx.update(pR,{stock:(pS.data().stock||0)+o.q});
       if(cS&&cS.exists()){tx.update(cR,{used:Math.max(0,(cS.data().used||0)-1)});
@@ -785,7 +788,7 @@ const FB={
   async adjustCoins(d){need();const v=Math.floor(+d.amt);if(!v)throw new Error('จำนวนคอยน์ไม่ถูกต้อง');
     await runTransaction(db,async tx=>{
       const uR=D('users',d.uid),uS=await tx.get(uR);
-      if(!uS.exists()||uS.data().owner)throw new Error('ไม่พบผู้ใช้');
+      if(!uS.exists()||isOwn(uS.data()))throw new Error('ไม่พบผู้ใช้');
       const u=uS.data(),nb=(u.coins||0)+v;
       if(nb<0)throw new Error('หักเกินยอดคงเหลือไม่ได้');
       tx.update(uR,{coins:nb,ledger:[...(u.ledger||[]),{t:Date.now(),d:v,n:(v>0?'เจ้าของให้คอยน์':'เจ้าของหักคอยน์')+(d.note?' · '+d.note:''),b:nb,rf:false}]})});
