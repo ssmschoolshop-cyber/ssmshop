@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>สร้างบัญชี</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--page:#14307f;--bg:#fff8d6;--card:#fff;--ink:#0f2257;--mute:#5a6690;--line:#f0d96a;--pri:#1a3a8f;--pri-ink:#ffd83b;--chip:#fff0a8;--err:#d93a4a;--ok:#1f9d66;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--page:#0a1330;--bg:#0a1330;--card:#12214d;--ink:#fff6d1;--mute:#a9b4da;--line:#2c458c;--pri:#ffd83b;--pri-ink:#0a1330;--chip:#1b2f66;--err:#ff6b7a;--ok:#4cd39a;color-scheme:dark}}
+:root[data-theme="dark"]{--page:#0a1330;--bg:#0a1330;--card:#12214d;--ink:#fff6d1;--mute:#a9b4da;--line:#2c458c;--pri:#ffd83b;--pri-ink:#0a1330;--chip:#1b2f66;--err:#ff6b7a;--ok:#4cd39a;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);font-family:'Noto Sans Thai',system-ui,sans-serif;display:flex;justify-content:center;padding:20px 16px}
+.wrap{width:100%;max-width:420px}
+.logo{font-size:40px;text-align:center;margin-top:8px}
+h1{font-size:24px;text-align:center;margin:14px 0 2px;color:#ffd83b}
+.sub{text-align:center;color:#dfe6ff;font-size:14px;margin:0 0 18px}
+.tabs{display:flex;background:var(--chip);border-radius:14px;padding:4px;margin-bottom:14px}
+.tabs button{flex:1;border:0;background:none;color:var(--mute);font:inherit;font-weight:500;padding:10px;border-radius:11px;cursor:pointer}
+.tabs button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px}
+label,.lbl{display:block;font-size:14px;font-weight:500;margin:14px 0 6px}
+label:first-child,.lbl:first-child{margin-top:0}
+input{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;outline:none}
+input:focus{border-color:var(--pri)}
+.pw{position:relative}.pw button{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:none;font:inherit;font-size:14px;font-weight:500;color:var(--pri);padding:8px 10px;cursor:pointer}
+.pw input{padding-right:66px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1.5px solid var(--line);background:var(--chip);color:var(--ink);font:inherit;font-size:14px;border-radius:999px;padding:8px 14px;cursor:pointer;min-width:46px}
+.chip.on{background:var(--pri);color:var(--pri-ink);border-color:var(--pri);font-weight:700}
+.room{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+.room .chip{padding:9px 0;min-width:0;text-align:center;border-radius:12px}
+.pick{margin-top:10px;font-size:14px;color:var(--mute)}
+.pick b{color:var(--pri);font-size:16px}
+.go{width:100%;margin-top:18px;border:0;background:var(--pri);color:var(--pri-ink);font:inherit;font-weight:700;font-size:16px;padding:14px;border-radius:14px;cursor:pointer}
+.msg{margin-top:12px;font-size:14px;text-align:center;min-height:20px}
+.msg.err{color:var(--err)}.msg.ok{color:var(--ok)}
+.hint{font-size:12px;color:var(--mute);margin-top:4px}
+.hide{display:none}
+.live{font-size:12px;margin-top:5px;line-height:1.4}
+.live.err{color:var(--err)}.live.ok{color:var(--ok)}
+.note{background:var(--chip);border-left:4px solid #e0b400;border-radius:10px;padding:10px 12px;font-size:13px;margin-top:16px;line-height:1.5}
+.chk{display:flex;align-items:center;gap:8px;font-weight:400;margin:14px 0 0;cursor:pointer}
+.chk input{width:20px;height:20px;padding:0;accent-color:var(--pri);flex:none}
+.cf{background:var(--chip);border-radius:12px;padding:10px 14px;font-size:15px;line-height:1.8;margin-top:8px}
+.app{position:fixed;top:0;left:0;right:0;height:100vh;height:100dvh;background:var(--page);padding:calc(12px + env(safe-area-inset-top,0px)) 12px calc(12px + env(safe-area-inset-bottom,0px));z-index:20;display:flex}
+.app.hide{display:none}
+.frame{flex:1;border:5px solid #ffd83b;border-radius:24px;display:flex;flex-direction:column;padding:16px;overflow:auto;max-width:480px;margin:0 auto;width:100%}
+.atop{display:flex;align-items:center;justify-content:flex-end;gap:12px}
+.who{text-align:right}
+#aName{font-weight:700;font-size:17px;color:#fff}#aName.gold{color:transparent}
+.atop .role{color:#c9d4ff;margin-top:2px}
+.av{border:0;padding:0;font-family:inherit;cursor:pointer;width:48px;height:48px;border-radius:50%;background:#ffd83b;color:#0f2257;font-weight:700;font-size:20px;display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none}
+.av img{width:100%;height:100%;object-fit:cover}
+.av.gr{box-shadow:0 0 0 3px #ffd700,0 0 14px #ffd700}
+.av.big{width:96px;height:96px;font-size:40px;margin:0 auto}
+.amid{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:24px 0}
+.shop{font-size:42px;font-weight:700;color:#ffd83b;text-align:center;line-height:1.1}
+.ssm{color:#dfe6ff;font-size:13px;margin-top:6px}
+.menu{display:grid;gap:12px}
+.menu button{font:inherit;font-weight:500;font-size:16px;padding:16px 18px;border-radius:20px;border:1.5px solid #f5d96b;background:var(--card);color:var(--ink);cursor:pointer;text-align:left}
+.menu button.dng{color:var(--err)}
+.sheet{text-align:left;max-height:90vh;overflow:auto}
+.sheet h2{text-align:center}
+.row{display:flex;gap:10px;margin-top:16px}
+.row button{flex:1;padding:12px;border-radius:12px;font:inherit;font-weight:700;cursor:pointer;border:0}
+.ghost{background:var(--chip);color:var(--ink)}
+.go2{background:var(--pri);color:var(--pri-ink)}.go2.danger{background:var(--err);color:#fff}
+select{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:12px;padding:12px 10px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.lnk{display:block;width:100%;margin-top:10px;padding:10px;border:0;border-radius:12px;font:inherit;cursor:pointer}
+.warn{font-size:14px;color:var(--mute);margin:0 0 4px}
+.modal{position:fixed;inset:0;background:rgba(5,12,40,.72);display:flex;align-items:center;justify-content:center;padding:20px;z-index:50}
+.modal.hide{display:none}
+.box{background:var(--card);color:var(--ink);border-radius:24px;padding:28px 22px 22px;width:100%;max-width:340px;text-align:center;animation:pop .25s ease-out}
+@keyframes pop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+.tick{width:68px;height:68px;border-radius:50%;background:var(--pri);color:var(--pri-ink);font-size:36px;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+.box h2{margin:0 0 8px;font-size:22px}
+.mbody{min-height:24px;font-size:15px}
+.opt{font-weight:400;color:var(--mute);font-size:12px}
+.welcome{text-align:center;margin-top:12px;font-size:15px}
+.badge{display:inline-block;background:#0f2257;border-radius:999px;padding:4px 14px;font-weight:700}
+.gold{background:linear-gradient(90deg,#b8860b,#ffd700,#fff4b0,#ffd700,#b8860b);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:shine 3s linear infinite}
+@keyframes shine{to{background-position:-200% 0}}
+.role{display:block;font-size:12px;color:var(--mute);margin-top:6px}
+.cbtn{margin-right:auto;border:0;background:#ffd83b;color:#0f2257;font:inherit;font-weight:700;font-size:16px;border-radius:999px;padding:10px 14px;cursor:pointer}
+.amid{justify-content:flex-start;align-items:stretch;padding:14px 0;gap:4px}
+.amid .lbl{color:#ffd83b}.amid .warn{color:#dfe6ff}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.pc{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px;display:flex;flex-direction:column;gap:4px;font-size:14px;color:var(--ink)}
+.pc img,.cov{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;display:block}
+.ph{aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;font-size:32px;background:var(--chip);border-radius:10px}
+.pc button{margin-top:auto;padding:8px;border:0;border-radius:10px;font:inherit;font-weight:700;cursor:pointer;background:var(--pri);color:var(--pri-ink)}
+.pc button:disabled{opacity:.4}
+
+/* ===== Visual upgrade ===== */
+:root{--grad:linear-gradient(135deg,#1a3a8f,#3a63d6);--glow:rgba(58,99,214,.45);--glass:rgba(255,255,255,.93);--ease:cubic-bezier(.22,1,.36,1)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--grad:linear-gradient(135deg,#ffd83b,#ffae00);--glow:rgba(255,200,40,.4);--glass:rgba(18,33,77,.82)}}
+:root[data-theme="dark"]{--grad:linear-gradient(135deg,#ffd83b,#ffae00);--glow:rgba(255,200,40,.4);--glass:rgba(18,33,77,.82)}
+html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
+body{position:relative;min-height:100vh;background:#0a1a52;-webkit-font-smoothing:antialiased}
+.bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;
+ background:radial-gradient(1200px 700px at 15% -10%,#2f56c9 0%,transparent 60%),radial-gradient(900px 700px at 100% 10%,#6a3fd0 0%,transparent 55%),radial-gradient(1000px 800px at 50% 120%,#0f6fb8 0%,transparent 60%),linear-gradient(160deg,#0a1a52,#14307f 50%,#0b1d5e);
+ background-size:140% 140%;animation:drift 22s ease-in-out infinite alternate}
+@keyframes drift{from{background-position:0% 0%}to{background-position:100% 100%}}
+.bg::before{content:"";position:absolute;inset:0;
+ background-image:radial-gradient(2px 2px at 20px 30px,#fff,transparent),radial-gradient(1.5px 1.5px at 90px 120px,#ffe98a,transparent),radial-gradient(1px 1px at 160px 60px,#fff,transparent),radial-gradient(2px 2px at 230px 180px,#cfe0ff,transparent),radial-gradient(1.5px 1.5px at 60px 210px,#fff,transparent);
+ background-size:260px 260px;opacity:.55;animation:twinkle 5s ease-in-out infinite alternate}
+@keyframes twinkle{from{opacity:.25}to{opacity:.7}}
+.bg::after{content:"";position:absolute;inset:0;
+ background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);
+ background-size:44px 44px;-webkit-mask-image:radial-gradient(ellipse at center,#000 10%,transparent 75%);mask-image:radial-gradient(ellipse at center,#000 10%,transparent 75%)}
+.bg i{position:absolute;border-radius:50%;filter:blur(60px);opacity:.55;will-change:transform;animation:floaty 16s ease-in-out infinite alternate}
+.bg i:nth-child(1){width:340px;height:340px;background:#ffd83b;top:-90px;left:-80px;opacity:.28}
+.bg i:nth-child(2){width:420px;height:420px;background:#4f7bff;bottom:-140px;right:-120px;animation-duration:20s}
+.bg i:nth-child(3){width:260px;height:260px;background:#9b5cff;top:38%;left:58%;opacity:.35;animation-duration:24s}
+.bg i:nth-child(4){width:220px;height:220px;background:#00c2ff;top:55%;left:-70px;opacity:.3;animation-duration:18s}
+.bg i:nth-child(5){width:180px;height:180px;background:#ff9fd0;top:8%;left:62%;opacity:.22;animation-duration:26s}
+@keyframes floaty{0%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-50px) scale(1.15)}100%{transform:translate(-30px,40px) scale(.92)}}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .bg{background:radial-gradient(1200px 700px at 15% -10%,#1b2f78 0%,transparent 60%),radial-gradient(900px 700px at 100% 10%,#3a2478 0%,transparent 55%),linear-gradient(160deg,#050b22,#0a1330 55%,#060d28)}}
+.wrap{position:relative;z-index:1;animation:rise .6s var(--ease) both}
+@keyframes rise{from{opacity:0;transform:translateY(18px) scale(.98)}to{opacity:1;transform:none}}
+h1{font-size:30px;font-weight:700;letter-spacing:.2px;background:linear-gradient(90deg,#fff1a8,#ffd83b,#ffb800,#ffd83b,#fff1a8);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:shine 4s linear infinite;filter:drop-shadow(0 4px 14px rgba(255,200,40,.35))}
+.sub{opacity:.9}
+.tabs{background:rgba(255,255,255,.14);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.2)}
+.tabs button{color:#e6ecff;transition:all .3s var(--ease)}
+.tabs button.on{background:var(--grad);color:#fff;box-shadow:0 6px 18px var(--glow)}
+:root[data-theme="dark"] .tabs button.on{color:#0a1330}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tabs button.on{color:#0a1330}}
+.card{background:var(--glass);backdrop-filter:blur(22px) saturate(1.4);-webkit-backdrop-filter:blur(22px) saturate(1.4);border:1px solid rgba(255,255,255,.55);border-radius:26px;padding:22px;box-shadow:0 24px 60px rgba(3,10,45,.45),0 2px 0 rgba(255,255,255,.6) inset}
+input,select{transition:border-color .2s,box-shadow .25s,transform .2s}
+input:focus,select:focus{border-color:var(--pri);box-shadow:0 0 0 4px var(--glow);transform:translateY(-1px)}
+.chip{transition:all .22s var(--ease)}
+.chip:hover{transform:translateY(-2px);border-color:var(--pri)}
+.chip:active{transform:scale(.93)}
+.chip.on{background:var(--grad);box-shadow:0 6px 16px var(--glow);transform:translateY(-1px)}
+.go,.go2,.pc button,.cbtn{transition:transform .2s var(--ease),box-shadow .25s,filter .2s}
+.go{background:var(--grad);box-shadow:0 10px 24px var(--glow);letter-spacing:.2px;position:relative;overflow:hidden}
+.go::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.45),transparent);transform:skewX(-20deg);animation:sweep 3.5s ease-in-out infinite}
+@keyframes sweep{0%,60%{left:-60%}100%{left:130%}}
+.go:hover,.go2:hover,.pc button:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.07)}
+.go:active,.go2:active,.pc button:active:not(:disabled),.cbtn:active{transform:scale(.96)}
+.go2{background:var(--grad);box-shadow:0 6px 16px var(--glow)}
+.go2.danger{background:linear-gradient(135deg,#d93a4a,#ff5a6a);box-shadow:0 6px 16px rgba(217,58,74,.4)}
+.ghost{transition:filter .2s,transform .2s}.ghost:hover{filter:brightness(.95);transform:translateY(-1px)}
+.note{background:linear-gradient(135deg,var(--chip),transparent);border-radius:14px}
+.cf{border:1px solid var(--line);border-radius:14px}
+.app{background:transparent;z-index:20}
+.frame{background:linear-gradient(160deg,rgba(255,255,255,.12),rgba(255,255,255,.04));backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:3px solid transparent;background-clip:padding-box;position:relative;box-shadow:0 0 0 3px #ffd83b,0 0 40px rgba(255,216,59,.35),0 30px 70px rgba(0,0,0,.4);animation:rise .6s var(--ease) both}
+.av{box-shadow:0 0 0 3px rgba(255,255,255,.35),0 6px 16px rgba(0,0,0,.35);transition:transform .25s var(--ease)}
+.av:hover{transform:scale(1.08) rotate(-4deg)}
+.av.gr{box-shadow:0 0 0 3px #ffd700,0 0 22px #ffd700}
+.cbtn{background:var(--grad-gold,linear-gradient(135deg,#ffe36b,#ffb800));box-shadow:0 6px 18px rgba(255,184,0,.45)}
+.cbtn:hover{transform:translateY(-2px) scale(1.04)}
+.menu button{background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:transform .25s var(--ease),box-shadow .25s,border-color .2s}
+.menu button:hover{transform:translateX(5px);border-color:#ffd83b;box-shadow:0 8px 22px rgba(0,0,0,.28)}
+.menu button:active{transform:scale(.98)}
+.grid{gap:14px}
+.pc{background:var(--glass);border-radius:20px;padding:12px;box-shadow:0 10px 26px rgba(0,0,0,.28);transition:transform .3s var(--ease),box-shadow .3s;animation:rise .5s var(--ease) both;overflow:hidden}
+.pc:hover{transform:translateY(-6px);box-shadow:0 18px 38px rgba(0,0,0,.4)}
+.pc img,.ph{border-radius:14px;transition:transform .5s var(--ease)}
+.pc:hover img{transform:scale(1.06)}
+.pc b{font-size:15px}
+.pc>div:nth-of-type(2){font-weight:700;color:var(--pri)}
+.modal{background:rgba(4,10,38,.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.box{border-radius:28px;box-shadow:0 30px 80px rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.18);animation:pop .35s var(--ease)}
+.tick{background:var(--grad);box-shadow:0 10px 28px var(--glow);animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 10px 28px var(--glow),0 0 0 0 var(--glow)}50%{box-shadow:0 10px 28px var(--glow),0 0 0 14px transparent}}
+.live{transition:color .2s}
+.badge{box-shadow:0 0 18px rgba(255,215,0,.45)}
+::-webkit-scrollbar{width:8px}::-webkit-scrollbar-thumb{background:rgba(255,216,59,.55);border-radius:8px}::-webkit-scrollbar-track{background:transparent}
+/* ===== Clean & smooth pass ===== */
+:root{--ease:cubic-bezier(.25,.8,.25,1)}
+body{line-height:1.5;padding:24px 16px}
+.bg{animation-duration:40s}
+.bg::before{opacity:.22;animation:none}
+.bg::after{display:none}
+.bg i{filter:blur(80px);opacity:.28;animation-duration:36s}
+.bg i:nth-child(1){opacity:.16}
+.bg i:nth-child(5){display:none}
+h1{font-size:28px;animation:none;background:none;-webkit-text-fill-color:#ffd83b;color:#ffd83b;filter:none;text-shadow:0 2px 14px rgba(255,216,59,.25)}
+.sub{margin-bottom:20px}
+.tabs{padding:5px;border-radius:16px;background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.14)}
+.tabs button{padding:11px;transition:background .25s var(--ease),color .25s var(--ease),box-shadow .25s var(--ease)}
+.card{border-radius:22px;padding:22px;border:1px solid rgba(255,255,255,.4);box-shadow:0 16px 40px rgba(3,10,45,.3)}
+label,.lbl{margin:18px 0 8px}
+input,select{padding:13px 14px;border-width:1px;transition:border-color .25s var(--ease),box-shadow .25s var(--ease)}
+input:focus,select:focus{transform:none;box-shadow:0 0 0 3px var(--glow)}
+.chip,.go,.go2,.pc button,.cbtn,.ghost,.menu button,.pc,.av{transition:transform .25s var(--ease),box-shadow .25s var(--ease),background .25s var(--ease),border-color .25s var(--ease),filter .25s var(--ease)}
+.chip:hover,.ghost:hover,.go:hover,.go2:hover,.pc button:hover:not(:disabled),.cbtn:hover{transform:translateY(-1px)}
+.chip.on{transform:none;box-shadow:0 4px 12px var(--glow)}
+.go{box-shadow:0 6px 18px var(--glow);padding:15px}
+.go::after{display:none}
+.go2{box-shadow:none}
+.go2.danger{box-shadow:none}
+.note{border-radius:12px}
+.cf{border:0;border-radius:12px;padding:12px 14px}
+.frame{border-width:2px;padding:18px;box-shadow:0 0 0 2px rgba(255,216,59,.9),0 20px 50px rgba(0,0,0,.35)}
+.av:hover{transform:scale(1.05)}
+.cbtn{box-shadow:0 4px 12px rgba(255,184,0,.3)}
+.menu{gap:10px}
+.menu button{padding:15px 18px;border-width:1px;border-radius:16px}
+.menu button:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(0,0,0,.2)}
+.grid{gap:12px}
+.pc{border-radius:18px;border:0;box-shadow:0 6px 18px rgba(0,0,0,.2);animation-duration:.4s}
+.pc:hover{transform:translateY(-3px);box-shadow:0 12px 26px rgba(0,0,0,.28)}
+.pc:hover img{transform:scale(1.03)}
+.modal{animation:fade .25s var(--ease)}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.box{border-radius:24px;box-shadow:0 20px 60px rgba(0,0,0,.45);animation-duration:.3s}
+.tick{animation:none;box-shadow:0 6px 18px var(--glow)}
+.pc{position:relative}
+.pc .pdel{position:absolute;top:8px;right:8px;z-index:2;width:30px;height:30px;padding:0;margin:0;border-radius:50%;background:rgba(217,58,74,.92);color:#fff;font-size:14px;line-height:1;box-shadow:0 3px 10px rgba(0,0,0,.35)}
+.shopname{text-align:center;font-weight:700;font-size:26px;line-height:1.2;color:#ffd83b;margin:14px 0 4px;text-shadow:0 2px 14px rgba(255,216,59,.3)}
+.shopname span{display:block;margin-top:4px;font-size:12px;letter-spacing:2px;color:#dfe6ff;text-shadow:none}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+<div class="wrap" id="auth">
+  <div class="shopname" style="margin-top:34px">Bell &amp; Buy</div>
+  <h1 id="title">สร้างบัญชี</h1>
+  <p class="sub" id="sub">กรอกข้อมูลเพียง 3 อย่างก็พร้อมใช้งาน</p>
+
+  <div class="tabs">
+    <button id="tSign" class="on" type="button">สมัครสมาชิก</button>
+    <button id="tLogin" type="button">เข้าสู่ระบบ</button>
+  </div>
+
+  <div class="card">
+    <!-- Sign up -->
+    <div id="signup">
+      <label for="su">1. ชื่อผู้ใช้</label>
+      <input id="su" autocomplete="username" placeholder="เช่น somchai01">
+      <div class="live" id="suL"></div>
+
+      <div class="lbl">2. ห้องเรียน</div>
+      <div class="hint" style="margin:-2px 0 8px">เลือกระดับชั้น</div>
+      <div class="chips" id="grades"></div>
+      <div class="hint" style="margin:12px 0 8px">เลือกห้อง (1–14)</div>
+      <div class="room" id="rooms"></div>
+      <div class="pick">ห้องที่เลือก: <b id="picked">ยังไม่ได้เลือก</b></div>
+
+      <label for="sp">3. รหัสผ่าน</label>
+      <div class="pw"><input id="sp" type="password" autocomplete="new-password" placeholder="อย่างน้อย 6 ตัวอักษร"><button type="button" data-eye="sp" aria-label="แสดงรหัสผ่าน">ดู</button></div>
+      <div class="live" id="spL"></div>
+
+      <label for="se">4. อีเมล <span class="opt">(ไม่บังคับ)</span></label>
+      <input id="se" type="email" autocomplete="email" placeholder="you@example.com">
+      <div class="live" id="seL"></div>
+
+      <div class="note">⚠️ ข้อมูลที่<b>เปลี่ยนไม่ได้</b>หลังสร้างบัญชี: <b>ชื่อผู้ใช้, ห้องเรียน และอีเมล</b><br>เปลี่ยนได้เฉพาะรหัสผ่านและรูปโปรไฟล์</div>
+
+      <button class="go" id="goSign" type="button">สร้างบัญชี</button>
+    </div>
+
+    <!-- Login -->
+    <div id="login" class="hide">
+      <label for="lu">ชื่อผู้ใช้</label>
+      <input id="lu" autocomplete="username" placeholder="ชื่อผู้ใช้ที่สมัครไว้">
+      <label for="lp">รหัสผ่าน</label>
+      <div class="pw"><input id="lp" type="password" autocomplete="current-password"><button type="button" data-eye="lp" aria-label="แสดงรหัสผ่าน">ดู</button></div>
+      <label class="chk"><input type="checkbox" id="rm"> จดจำฉัน</label>
+      <div class="hint">เข้าสู่ระบบด้วยชื่อผู้ใช้และรหัสผ่านที่สมัครไว้</div>
+      <button class="go" id="goLogin" type="button">เข้าสู่ระบบ</button>
+    </div>
+
+    <div class="msg" id="msg"></div>
+    <div class="welcome" id="welcome"></div>
+  </div>
+</div>
+
+<div class="app hide" id="app"><div class="frame">
+  <div class="atop"><button type="button" class="cbtn" id="cBtn" aria-label="คอยน์">🪙 <span id="cBal">0</span></button><div class="who"><div id="aName"></div><div class="role" id="aRole"></div></div><button type="button" class="av" id="avTop" aria-label="แก้ไขโปรไฟล์"></button></div>
+  <div class="shopname">Bell &amp; Buy</div>
+  <div class="amid" id="amid"></div>
+</div></div>
+
+<div class="modal hide" id="menuM"><div class="box sheet">
+  <div class="menu">
+    <button type="button" data-act="avatar">เปลี่ยนรูปโปรไฟล์</button>
+    <button type="button" data-act="pass">เปลี่ยนรหัสผ่าน</button>
+    <button type="button" data-act="out">ออกจากระบบ</button>
+    <button type="button" class="dng" data-act="del">ลบบัญชี</button>
+  </div>
+  <button type="button" class="lnk ghost" id="menuX">ปิด</button>
+</div></div>
+
+<div class="modal hide" id="sheet"><div class="box sheet">
+  <h2 id="shT"></h2><div id="shB"></div><div class="msg" id="shM"></div>
+  <div class="row"><button type="button" class="ghost" id="shC">ยกเลิก</button><button type="button" class="go2" id="shOk">บันทึก</button></div>
+</div></div>
+
+<div class="modal hide" id="modal" role="dialog" aria-modal="true">
+  <div class="box">
+    <div class="tick">✓</div>
+    <h2 id="mTitle"></h2>
+    <div class="mbody" id="mBody"></div>
+    <button class="go" id="mBtn" type="button">ตกลง</button>
+  </div>
+</div>
+
+<script>
+var accounts={};
+var $=function(i){return document.getElementById(i)};
+var grade=null,room=null;
+
+
+function renderPick(){
+  $('picked').textContent=(grade&&room)?('ม.'+grade+'/'+room):(grade?('ม.'+grade+'/ ?'):'ยังไม่ได้เลือก');
+  document.querySelectorAll('#grades .chip').forEach(function(c){c.classList.toggle('on',+c.dataset.v===grade)});
+  document.querySelectorAll('#rooms .chip').forEach(function(c){c.classList.toggle('on',+c.dataset.v===room)});
+}
+for(var g=1;g<=6;g++){var b=document.createElement('button');b.type='button';b.className='chip';b.dataset.v=g;b.textContent='ม.'+g;b.onclick=(function(v){return function(){grade=v;renderPick()}})(g);$('grades').appendChild(b)}
+for(var r=1;r<=14;r++){var c=document.createElement('button');c.type='button';c.className='chip';c.dataset.v=r;c.textContent=r;c.onclick=(function(v){return function(){room=v;renderPick()}})(r);$('rooms').appendChild(c)}
+
+function popup(title,fill,btn,after){
+  var tk=document.querySelector('#modal .tick');tk.textContent='✓';tk.style.background='';tk.style.color='';
+  $('mTitle').textContent=title;var b=$('mBody');b.innerHTML='';fill(b);
+  $('mBtn').textContent=btn;$('modal').classList.remove('hide');
+  $('mBtn').onclick=function(){$('modal').classList.add('hide');if(after)after()};
+}
+function msg(t,k){$('welcome').innerHTML='';$('msg').textContent=t;$('msg').className='msg '+(k||'')}
+function mode(m){
+  var s=m==='sign';
+  $('signup').classList.toggle('hide',!s);$('login').classList.toggle('hide',s);
+  $('tSign').classList.toggle('on',s);$('tLogin').classList.toggle('on',!s);
+  $('title').textContent=s?'สร้างบัญชี':'ยินดีต้อนรับกลับ';
+  $('sub').textContent=s?'กรอกข้อมูลเพียง 3 อย่างก็พร้อมใช้งาน':'ใช้ชื่อผู้ใช้ (หรืออีเมล) และรหัสผ่านของคุณ';
+  msg('');
+}
+$('tSign').onclick=function(){mode('sign')};
+$('tLogin').onclick=function(){mode('login')};
+document.querySelectorAll('[data-eye]').forEach(function(b){b.onclick=function(){var i=$(b.dataset.eye),show=i.type==='password';i.type=show?'text':'password';b.textContent=show?'ไม่ดู':'ดู'}});
+
+$('goSign').onclick=function(){
+  var u=$('su').value.trim(),p=$('sp').value;
+  if(!u){return msg('กรุณากรอกชื่อผู้ใช้','err')}
+  if(!/^[A-Za-z0-9_.]{3,20}$/.test(u)){return msg('ชื่อผู้ใช้ใช้ได้เฉพาะ a–z, 0–9, _ และ . (3–20 ตัว)','err')}
+  if(!grade||!room){return msg('กรุณาเลือกห้องเรียนให้ครบ (ระดับชั้นและห้อง)','err')}
+  if(p.length<6){return msg('รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร','err')}
+  var em=$('se').value.trim().toLowerCase();
+  if(em&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){return msg('รูปแบบอีเมลไม่ถูกต้อง','err')}
+  var cls='ม.'+grade+'/'+room;
+  sheet('ตรวจสอบก่อนสร้างบัญชี','<p class="warn">ข้อมูลต่อไปนี้ <b>เปลี่ยนไม่ได้</b> หลังสร้างบัญชี กรุณาตรวจสอบให้ถูกต้อง</p><div class="cf" id="cf"></div>','ยืนยันสร้างบัญชี',function(){
+    closeSheet();msg('กำลังสร้างบัญชี...');busy=true;
+    FB.signup(u,cls,em,p).then(function(){busy=false;msg('');$('se').value='';$('lu').value=u;$('su').value='';$('sp').value='';grade=null;room=null;renderPick();chkU();chkE();chkP();popup('สร้างบัญชีสำเร็จ',function(b){b.textContent='ห้อง '+cls},'ไปเข้าสู่ระบบ',function(){mode('login');$('lp').focus()})}).catch(function(e){busy=false;msg(e.message||'สร้างบัญชีไม่สำเร็จ','err')});
+  });
+  [['ชื่อผู้ใช้',u],['ห้องเรียน',cls],['อีเมล',em||'ไม่ได้ใส่']].forEach(function(r){
+    var d=document.createElement('div');d.appendChild(document.createTextNode(r[0]+': '));
+    var b=document.createElement('b');b.textContent=r[1];d.appendChild(b);$('cf').appendChild(d)});
+  $('shC').textContent='กลับไปแก้ไข';
+};
+$('goLogin').onclick=function(){
+  var u=$('lu').value.trim().toLowerCase(),p=$('lp').value;
+  if(!u||!p){return msg('กรุณากรอกชื่อผู้ใช้และรหัสผ่าน','err')}
+  msg('กำลังเข้าสู่ระบบ...');
+  FB.login(u,p,$('rm').checked).then(function(){msg('');$('lp').value=''}).catch(function(e){msg(e&&e.cfg?e.message:'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง','err')});
+};
+var prods=[],orders=[],codes=[],LINE='bren2024';
+function saveC(){save()}
+function saveP(){save()}
+function saveO(){}
+function pe(e){shErr('บันทึกไม่สำเร็จ ('+(e.code||e.message)+')')}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function fd(t){return new Date(t).toLocaleString('th-TH',{dateStyle:'short',timeStyle:'short'})}
+function bal(a){return a.owner?'∞':(a.coins||0)}
+function addCoin(a,d,n,rf){if(a.owner)return;a.coins=(a.coins||0)+d;(a.ledger=a.ledger||[]).push({t:Date.now(),d:d,n:n,b:a.coins,rf:!!rf});save()}
+function info(t,h){sheet(t,h,'ปิด',closeSheet);$('shC').style.display='none'}
+function paintCoin(){$('cBal').textContent=bal(A())}
+function sums(a){var i=0,o=0;(a.ledger||[]).forEach(e=>{if(e.rf){o-=e.d}else if(e.d>0){i+=e.d}else{o-=e.d}});return{i:i,o:o}}
+function sumTwo(a){var s=sums(a);return '<div class="two"><div class="cf">ยอดเข้า<br><b style="color:var(--ok)">+'+s.i+'</b></div><div class="cf">ยอดออก<br><b style="color:var(--err)">-'+s.o+'</b></div></div>'}
+function sumHTML(a){var s=sums(a);return '<div class="two"><div class="cf">ยอดเข้า<br><b style="color:var(--ok)">+'+s.i+'</b></div><div class="cf">ยอดออก<br><b style="color:var(--err)">-'+s.o+'</b></div></div><div class="cf">คงเหลือ: <b>'+bal(a)+' 🪙</b></div>'}
+function ledHTML(a){var L=(a.ledger||[]).slice().reverse();if(!L.length)return '<p class="warn">ยังไม่มีรายการ</p>';
+  return L.map(e=>'<div class="cf"><b style="color:var(--'+(e.d>0?'ok':'err')+')">'+(e.d>0?'+':'')+e.d+' 🪙</b> · คงเหลือ '+e.b+'<div class="hint">'+fd(e.t)+' · '+esc(e.n)+'</div></div>').join('')}
+function cp(t,btn){var ok=()=>{btn.textContent='คัดลอกแล้ว ✓';setTimeout(()=>{btn.textContent='คัดลอก ID'},1800)};
+  var fb=()=>{var x=document.createElement('textarea');x.value=t;document.body.appendChild(x);x.select();try{document.execCommand('copy');ok()}catch(e){}x.remove()};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,fb)}else{fb()}}
+function showCoin(){var a=A();
+  info('คอยน์ของฉัน','<div class="cf">คงเหลือ: <b>'+bal(a)+' 🪙</b>'+(a.owner?' <span class="hint">เจ้าของมีคอยน์ไม่จำกัด</span>':'')+'</div>'+(a.owner?'':sumTwo(a)+'<div class="note"><b>วิธีเติมคอยน์</b> (1 คอยน์ = 1 บาท)<br>1. แอดไลน์ ID: <b>'+esc(LINE)+'</b><br>2. บอกว่าอยากเติมกี่คอยน์<br>3. ส่งสลิป<br>4. รอแอดมินตอบ</div><div class="two" style="margin-top:10px"><button type="button" class="lnk ghost" style="margin:0" id="lcp">คัดลอก ID</button><button type="button" class="lnk go2" style="margin:0" id="lop">เปิดไลน์</button></div><div class="lbl">ประวัติคอยน์</div>'+ledHTML(a)));
+  if(a.owner)return;
+  $('lcp').onclick=function(){cp(LINE,this)};
+  $('lop').onclick=()=>window.open('https://line.me/R/ti/p/'+encodeURIComponent(LINE),'_blank')}
+$('cBtn').onclick=showCoin;
+
+function renderHome(){var a=A(),h='<div class="menu"><button type="button" id="bHis">🧾 ประวัติการซื้อ (3 เดือน)</button>'+(a.owner?'<button type="button" id="bOrd">📋 ออเดอร์รอยืนยัน'+(orders.some(o=>o.st==='pending')?' ('+orders.filter(o=>o.st==='pending').length+')':'')+'</button><button type="button" id="bMan">⚙️ จัดการสินค้า</button><button type="button" id="bUsr">👥 คอยน์ของผู้ใช้</button><button type="button" id="bMem">🪪 ข้อมูลสมาชิก</button><button type="button" id="bCod">🏷️ โค้ดส่วนลด</button><button type="button" id="bShop">'+(shopOpen?'🟢 ร้านเปิดอยู่ · กดเพื่อปิดร้าน':'🔴 ร้านปิดอยู่ · กดเพื่อเปิดร้าน')+'</button><button type="button" class="dng" id="bRst">🗑️ รีเซ็ตข้อมูลทั้งหมด</button>':'')+'</div>'+(shopOpen?'':'<div class="note">🔒 ร้านปิดอยู่ชั่วคราว ยังสั่งซื้อไม่ได้</div>')+'<div class="lbl">สินค้า</div><div class="grid">';
+  if(!prods.length){h+='<p class="warn">ยังไม่มีสินค้า</p>'}
+  prods.forEach(p=>{h+='<div class="pc">'+(a.owner?'<button type="button" class="pdel" data-del="'+p.id+'" aria-label="ลบสินค้า">✕</button>':'')+(p.img?'<img src="'+p.img+'" alt="">':'<div class="ph">🛍️</div>')+'<b>'+esc(p.name)+'</b><div>'+p.price+' 🪙</div><div class="hint" style="color:var(--mute)">'+(p.stock>0?'เหลือ '+p.stock:'หมด')+'</div><button type="button" data-buy="'+p.id+'"'+(p.stock>0&&(shopOpen||a.owner)?'':' disabled')+'>ซื้อ</button></div>'});
+  $('amid').innerHTML=h+'</div>';
+  $('amid').querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>buy(+b.dataset.buy));
+  $('amid').querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>delProd(+b.dataset.del));
+  $('bHis').onclick=showHis;if(a.owner){$('bOrd').onclick=showOrd;$('bMan').onclick=showMan;$('bUsr').onclick=showUsr;$('bMem').onclick=function(){showMem(0)};$('bCod').onclick=showCodes;$('bShop').onclick=toggleShop;$('bRst').onclick=resetAll}}
+
+function delProd(id,after){var p=prods.find(x=>x.id===id);if(!p||!A().owner)return;
+  sheet('ลบสินค้า','<p class="warn">ลบ <b id="dpn"></b> ออกจากร้านถาวรใช่ไหม?</p>','ยืนยันลบ',()=>{
+    FB.delProduct(id).then(()=>{closeSheet();if(after)after()}).catch(pe)},true);
+  $('dpn').textContent=p.name;$('shC').onclick=after||closeSheet}
+
+var PTS=['โรงอาหาร','หน้าสหกรณ์','บ่อเต่า','หน้าลานรูปปั้นเจ้าพระยา'],TMS=['10:50','10:55','11:00','11:05','11:10','11:15'];
+function buy(id){var a=A(),p=prods.find(x=>x.id===id);if(!p||p.stock<1)return;if(!shopOpen&&!a.owner)return;
+  var ap=null,sub=()=>(+$('bq').value)*p.price,disc=()=>ap?codeDisc(ap,sub()):0,tot=()=>sub()-disc();
+  sheet('ซื้อ '+p.name,'<div class="lbl">จำนวน</div>'+sel('bq',Math.min(p.stock,20),'')+'<div class="lbl">จุดนัดพบ</div>'+PTS.map((x,i)=>'<label class="chk"><input type="radio" name="pt" value="'+i+'"> '+esc(x)+'</label>').join('')+'<div class="lbl">วันที่รับสินค้า <span class="opt">(ไม่รวมเสาร์-อาทิตย์)</span></div><select id="bd"><option value="">เลือกวัน</option>'+dayOpts().map(x=>'<option value="'+x.v+'">'+x.l+'</option>').join('')+'</select><div class="lbl">เวลานัดรับ</div><select id="bt2"><option value="">เลือกเวลา</option>'+TMS.map(x=>'<option value="'+x+'">'+x+' น.</option>').join('')+'</select><div class="hint">อาจมาสายประมาณ 1–5 นาที</div><div class="lbl">โค้ดส่วนลด <span class="opt">(ถ้ามี)</span></div><div style="display:flex;gap:8px"><input id="bc" placeholder="กรอกโค้ดส่วนลด" autocomplete="off" autocapitalize="characters" style="text-transform:uppercase"><button type="button" class="ghost" id="bca" style="border:0;border-radius:12px;padding:0 16px;font:inherit;font-weight:700;cursor:pointer;flex:none">ใช้โค้ด</button></div><div class="live" id="bcl"></div><div class="lbl">การชำระเงิน</div><div class="cf">จ่ายด้วยคอยน์เท่านั้น (คงเหลือ '+bal(a)+' 🪙)<br><span id="bt"></span></div>','ยืนยันการซื้อ',()=>{
+    var q=+$('bq').value,pe=document.querySelector('input[name=pt]:checked'),tm=$('bt2').value,dy=$('bd').value;
+    if(q>p.stock)return shErr('สินค้าไม่พอ');
+    if(!dy)return shErr('กรุณาเลือกวันที่รับสินค้า');
+    var wd=new Date(dy+'T00:00:00').getDay();if(wd===0||wd===6)return shErr('รับสินค้าไม่ได้ในวันเสาร์-อาทิตย์');
+    if(!pe)return shErr('กรุณาเลือกจุดนัดพบ');
+    if(!tm)return shErr('กรุณาเลือกเวลานัดรับ');
+    var cv=$('bc').value.trim();
+    if(cv&&(!ap||ap.code!==cv.toUpperCase()))return shErr('กรุณากดปุ่ม "ใช้โค้ด" เพื่อตรวจโค้ดก่อน');
+    $('shOk').disabled=true;
+    CF.placeOrder({pid:p.id,q:q,pt:+pe.value,tm:tm,dy:dy,code:ap?ap.code:''}).then(function(r){
+      var o=r.data;closeSheet();$('shOk').disabled=false;
+      popup('ส่งออเดอร์แล้ว',function(b){b.textContent=p.name+' ×'+q+' = '+o.tot+' 🪙';[o.disc?'ใช้โค้ด '+o.cd+' ลด '+o.disc+' 🪙':'','วัน: '+dlabel(dy),'เวลา: '+tm+' น.','จุดนัดพบ: '+PTS[+pe.value],a.owner?'':'รอเจ้าของร้านยืนยันออเดอร์'].filter(Boolean).forEach(function(s){var d=document.createElement('div');d.textContent=s;b.appendChild(d)})},'ตกลง')
+    }).catch(function(e){$('shOk').disabled=false;shErr(e.message||'สั่งซื้อไม่สำเร็จ')});
+  });
+  var okMsg=()=>live('bcl','✓ ใช้โค้ด '+ap.code+' ได้ ลด '+codeDisc(ap,sub())+' คอยน์','ok');
+  var up=()=>{var d=disc();$('bt').innerHTML=(d?'ราคา '+sub()+' − ส่วนลด '+d+' = ':'')+'รวม <b>'+tot()+' 🪙</b>'};up();
+  $('bq').onchange=function(){if(ap)okMsg();up()};
+  $('bc').oninput=function(){ap=null;live('bcl','');up()};
+  $('bca').onclick=function(){var v=$('bc').value.trim();if(!v){return live('bcl','กรุณากรอกโค้ดส่วนลด','err')}
+    CF.checkCode({code:v}).then(function(r){ap=r.data;up();okMsg()}).catch(function(e){ap=null;up();live('bcl',e.message||'โค้ดใช้ไม่ได้','err')})}}
+
+function codeActive(c){return c.uses.filter(u=>!u.void)}
+function codeStat(c){var td=iso(new Date());
+  if(!c.on)return{k:'off',t:'⛔ ปิดใช้งาน'};
+  if(c.exp<td)return{k:'exp',t:'⌛ หมดเขตแล้ว'};
+  if(codeActive(c).length>=c.max)return{k:'full',t:'🈵 ใช้ครบแล้ว'};
+  return{k:'ok',t:'✅ ใช้งานได้'}}
+function codeLbl(c){return c.type==='pct'?'ลด '+c.val+'%':'ลด '+c.val+' 🪙'}
+function codeDisc(c,s){var d=c.type==='pct'?Math.floor(s*c.val/100):c.val;return Math.max(0,Math.min(d,s))}
+function codeCheck(str,s){var k=String(str).trim().toUpperCase(),c=codes.find(x=>x.code===k);
+  if(!c)return{ok:false,msg:'ไม่พบโค้ดนี้'};
+  var st=codeStat(c);
+  if(st.k==='off')return{ok:false,msg:'โค้ดนี้ถูกปิดใช้งานแล้ว'};
+  if(st.k==='exp')return{ok:false,msg:'โค้ดนี้หมดเขตแล้ว'};
+  if(st.k==='full')return{ok:false,msg:'โค้ดนี้ถูกใช้ครบจำนวนแล้ว'};
+  if(codeActive(c).some(u=>u.u===cur))return{ok:false,msg:'คุณใช้โค้ดนี้ไปแล้ว'};
+  return{ok:true,c:c}}
+function showCodes(){
+  info('โค้ดส่วนลด','<button type="button" class="lnk go2" id="cAdd">➕ สร้างโค้ดใหม่</button>'+(codes.length?codes.slice().reverse().map(c=>{var st=codeStat(c);return '<div class="cf"><b>'+esc(c.code)+'</b> · '+codeLbl(c)+'<br>ใช้แล้ว '+codeActive(c).length+'/'+c.max+' คน · หมดเขต '+esc(dlabel(c.exp))+'<br>'+st.t+'<div class="row" style="margin-top:8px"><button type="button" class="ghost" data-ch="'+c.id+'">ประวัติการใช้</button><button type="button" class="ghost" data-ct="'+c.id+'">'+(c.on?'ปิดโค้ด':'เปิดโค้ด')+'</button></div></div>'}).join(''):'<p class="warn">ยังไม่มีโค้ดส่วนลด</p>'));
+  $('cAdd').onclick=codeForm;
+  $('shB').querySelectorAll('[data-ch]').forEach(b=>b.onclick=()=>codeHist(+b.dataset.ch));
+  $('shB').querySelectorAll('[data-ct]').forEach(b=>b.onclick=()=>{var c=codes.find(x=>x.id===+b.dataset.ct);if(c){FB.toggleCode(c.code,!c.on).then(showCodes).catch(pe)}})}
+function codeForm(){
+  sheet('สร้างโค้ดส่วนลด',fld('ชื่อโค้ด (A-Z, 0-9, _ , -)','kc')+'<div class="lbl">ประเภทส่วนลด</div><select id="kt"><option value="pct">ลดเป็นเปอร์เซ็นต์ (%)</option><option value="coin">ลดเป็นคอยน์ (🪙)</option></select>'+fld('จำนวนส่วนลด','kv','number')+fld('ใช้ได้กี่คน','km','number')+fld('หมดเขตวันที่ (ใช้ได้ถึงสิ้นวันนั้น)','ke','date'),'สร้างโค้ด',()=>{
+    var code=$('kc').value.trim().toUpperCase(),type=$('kt').value,val=Math.floor(+$('kv').value),max=Math.floor(+$('km').value),exp=$('ke').value;
+    if(!/^[A-Z0-9_-]{3,20}$/.test(code))return shErr('ชื่อโค้ดใช้ A-Z, 0-9, _ และ - (3–20 ตัว)');
+    if(codes.some(c=>c.code===code))return shErr('มีโค้ดนี้อยู่แล้ว ห้ามสร้างซ้ำ');
+    if(!(val>=1)||(type==='pct'&&val>100))return shErr(type==='pct'?'เปอร์เซ็นต์ต้องอยู่ระหว่าง 1–100':'จำนวนคอยน์ต้องมากกว่า 0');
+    if(!(max>=1))return shErr('จำนวนคนต้องอย่างน้อย 1');
+    if(!exp)return shErr('กรุณาเลือกวันหมดเขต');
+    if(exp<iso(new Date()))return shErr('วันหมดเขตต้องไม่ใช่วันที่ผ่านมาแล้ว');
+    FB.saveCode({code:code,type:type,val:val,max:max,exp:exp}).then(showCodes).catch(pe)});
+  $('shC').onclick=showCodes;
+  $('kv').placeholder='เช่น 10';$('km').placeholder='เช่น 20';$('ke').min=iso(new Date())}
+function codeHist(id){var c=codes.find(x=>x.id===id);if(!c)return;
+  sheet('ประวัติโค้ด '+c.code,'<div class="cf">'+codeLbl(c)+' · ใช้แล้ว '+codeActive(c).length+'/'+c.max+' คน<br>หมดเขต '+esc(dlabel(c.exp))+'</div><div class="lbl">ผู้ที่ใช้โค้ด</div>'+(c.uses.length?c.uses.slice().reverse().map(u=>'<div class="cf"><b>'+esc(u.un)+'</b> '+esc(u.cls||'')+'<br>'+esc(u.n)+' ×'+u.q+' · ลด '+u.disc+' 🪙'+(u.void?'<br>❌ ออเดอร์ถูกยกเลิก (คืนสิทธิ์โค้ดแล้ว)':'')+'<div class="hint">'+fd(u.t)+' · #'+String(u.oid).slice(-6)+'</div></div>').join(''):'<p class="warn">ยังไม่มีใครใช้โค้ดนี้</p>'),'กลับ',showCodes);
+  $('shC').style.display='none'}
+function iso(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function dlabel(v){var p=String(v).split('-');return new Date(+p[0],+p[1]-1,+p[2]).toLocaleDateString('th-TH',{weekday:'long',day:'numeric',month:'long'})}
+function dayOpts(){var out=[],n=new Date(),c=new Date(n.getFullYear(),n.getMonth(),n.getDate());
+  c.setDate(c.getDate()+1);
+  while(out.length<2){var w=c.getDay();if(w!==0&&w!==6)out.push({v:iso(c),l:dlabel(iso(c))});c.setDate(c.getDate()+1)}
+  return out}
+function stLbl(o){return o.st==='pending'?'⏳ รอเจ้าของยืนยัน':o.st==='rejected'?'❌ ถูกยกเลิก (คืนคอยน์แล้ว)':'✅ ยืนยันแล้ว'}
+function showOrd(){var L=orders.filter(o=>o.st==='pending');
+  info('ออเดอร์รอยืนยัน',L.length?L.map(o=>{var u=accounts[o.u]||{name:o.u,cls:''};return '<div class="cf"><b>'+esc(o.n)+'</b> ×'+o.q+' = <b>'+o.tot+' 🪙</b>'+(o.disc?' <span class="hint">(โค้ด '+esc(o.cd)+' ลด '+o.disc+')</span>':'')+'<br>ผู้ซื้อ:'+esc(u.name)+' '+esc(u.cls||'')+'<br>'+esc(dlabel(o.dy))+' · '+esc(o.tm)+' น.<br>จุดนัดพบ: '+esc(o.pt)+'<div class="row" style="margin-top:8px"><button type="button" class="go2 danger" data-r="'+o.id+'">ไม่รับ</button><button type="button" class="go2" data-a="'+o.id+'">รับออเดอร์</button></div><div class="hint">'+fd(o.t)+' · #'+String(o.id).slice(-6)+'</div></div>'}).join(''):'<p class="warn">ไม่มีออเดอร์รอยืนยัน</p>');
+  $('shB').querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{var o=orders.find(x=>x.id===+b.dataset.a);if(o&&o.st==='pending'){FB.confirmOrder(o.id).then(showOrd).catch(pe)}});
+  $('shB').querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>rejectOrd(+b.dataset.r))}
+function rejectOrd(id){var o=orders.find(x=>x.id===id);if(!o||o.st!=='pending')return;
+  sheet('ไม่รับออเดอร์','<p class="warn">ยกเลิกออเดอร์ <b id="rn"></b> และคืนคอยน์ให้ผู้ซื้อ?</p>','ยืนยันไม่รับ',()=>{
+    CF.rejectOrder({oid:o.id}).then(function(){showOrd()}).catch(function(e){shErr(e.message||'ผิดพลาด')})},true);
+  $('rn').textContent=o.n+' ×'+o.q;$('shC').onclick=showOrd}
+function notify(){if(!cur||!A()||A().owner||!$('modal').classList.contains('hide'))return;
+  var o=orders.find(x=>x.u===cur&&!seen(x.id)&&(x.st==='confirmed'||x.st==='rejected'));if(!o)return;
+  mark(o.id);var ok=o.st==='confirmed';
+  popup(ok?'ออร์เดอร์ได้รับการยืนยัน':'ออร์เดอร์ถูกยกเลิก',b=>{
+    b.textContent=ok?'ออร์เดอร์ของคุณได้รับการคอนเฟิรม์เรียบร้อยแล้ว':'ขออภัยในความไม่สะดวก ออร์เดอร์ของคุณถูกยกเลิก';
+    [o.n+' ×'+o.q,o.dy?dlabel(o.dy)+' · '+o.tm+' น. · '+o.pt:'',ok?'':'คืนคอยน์ให้แล้ว'].filter(Boolean).forEach(s=>{var d=document.createElement('div');d.className='hint';d.textContent=s;b.appendChild(d)})},'ตกลง',notify);
+  if(!ok){var t=document.querySelector('#modal .tick');t.textContent='✕';t.style.background='var(--err)';t.style.color='#fff'}}
+function showHis(){var lim=Date.now()-90*864e5,L=orders.filter(o=>o.u===cur&&o.t>=lim).reverse();
+  info('ประวัติการซื้อ (ย้อนหลัง 3 เดือน)',L.length?L.map(o=>'<div class="cf"><b>'+esc(o.n)+'</b> ×'+o.q+'<br>'+o.pr+' × '+o.q+' = <b>'+o.tot+' 🪙</b>'+(o.disc?'<br>ใช้โค้ด '+esc(o.cd)+' ลด '+o.disc+' 🪙':'')+(o.pt?'<br>'+(o.dy?esc(dlabel(o.dy))+' · ':'')+esc(o.tm)+' น. · '+esc(o.pt):'')+'<br>'+stLbl(o)+'<div class="hint">'+fd(o.t)+' · #'+String(o.id).slice(-6)+'</div></div>').join(''):'<p class="warn">ยังไม่มีประวัติการซื้อ</p>')}
+
+function showMan(){info('จัดการสินค้า','<button type="button" class="lnk go2" id="pAdd">➕ เพิ่มสินค้า</button>'+prods.map((p,i)=>'<div class="cf"><b>'+esc(p.name)+'</b> · '+p.price+' 🪙 · เหลือ '+p.stock+'<div class="row" style="margin-top:8px"><button type="button" class="ghost" data-m="up" data-i="'+i+'">▲</button><button type="button" class="ghost" data-m="dn" data-i="'+i+'">▼</button><button type="button" class="ghost" data-m="ed" data-i="'+i+'">แก้ไข</button><button type="button" class="ghost" data-m="rm" data-i="'+i+'">ลบ</button></div></div>').join(''));
+  $('pAdd').onclick=()=>prodForm(-1);
+  $('shB').querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{var i=+b.dataset.i,m=b.dataset.m;
+    if(m==='ed')return prodForm(i);
+    
+    
+    if(m==='rm')return delProd(prods[i].id,showMan);
+    var j=m==='up'?i-1:i+1;if(j<0||j>=prods.length)return;FB.swapProducts(prods[i],prods[j]).then(showMan).catch(pe)})}
+
+function prodForm(i){var p=i>=0?prods[i]:{name:'',price:'',stock:'',img:''},img=p.img;
+  sheet(i>=0?'แก้ไขสินค้า':'เพิ่มสินค้า',fld('ชื่อสินค้า','pn')+fld('ราคา (คอยน์)','pp','number')+fld('จำนวนในสต็อก','ps','number')+'<div class="lbl">หน้าปกสินค้า</div><div id="pv"></div><input id="pi" type="file" accept="image/*">','บันทึก',()=>{
+    var n=$('pn').value.trim(),pr=Math.floor(+$('pp').value),st=Math.floor(+$('ps').value);
+    if(!n)return shErr('กรุณาใส่ชื่อสินค้า');
+    if($('pp').value===''||!(pr>=0))return shErr('ราคาไม่ถูกต้อง');
+    if($('ps').value===''||!(st>=0))return shErr('จำนวนไม่ถูกต้อง');
+    var id=i>=0?p.id:Date.now();
+    FB.saveProduct({id:id,name:n,price:pr,stock:st,img:img||'',ord:i>=0?(p.ord||id):id}).then(showMan).catch(pe)});
+  $('shC').onclick=showMan;
+  $('pn').value=p.name;$('pp').value=p.price;$('ps').value=p.stock;
+  var pv=()=>{$('pv').innerHTML=img?'<img class="cov" src="'+img+'" alt="">':''};pv();
+  $('pi').onchange=function(){var f=this.files[0];if(!f)return;var rd=new FileReader();
+    rd.onload=()=>{var im=new Image();
+      im.onload=()=>{var c=document.createElement('canvas');c.width=320;c.height=240;var k=Math.max(320/im.width,240/im.height);
+        c.getContext('2d').drawImage(im,(320-im.width*k)/2,(240-im.height*k)/2,im.width*k,im.height*k);img=c.toDataURL('image/jpeg',0.7);pv()};
+      im.onerror=()=>shErr('ไฟล์รูปไม่ถูกต้อง');im.src=rd.result};
+    rd.readAsDataURL(f)}}
+
+/* ===== ข้อมูลสมาชิก (เฉพาะเจ้าของ) ===== */
+function memCls(a){var m=/ม\.(\d+)\/(\d+)/.exec(a.cls||'');return m?[+m[1],+m[2]]:[99,99]}
+function showMem(g){var me=A();if(!me||!me.owner)return;g=g||0;
+  var all=Object.keys(accounts),cnt={};
+  all.forEach(function(k){var c=memCls(accounts[k])[0];cnt[c]=(cnt[c]||0)+1});
+  var ks=all.filter(function(k){return !g||memCls(accounts[k])[0]===g});
+  ks.sort(function(x,y){var a=memCls(accounts[x]),b=memCls(accounts[y]);return a[0]-b[0]||a[1]-b[1]||accounts[x].name.localeCompare(accounts[y].name)});
+  var h='<div class="chips" id="mgc"><button type="button" class="chip'+(g?'':' on')+'" data-g="0">ทั้งหมด ('+all.length+')</button>';
+  for(var i=1;i<=6;i++){if(cnt[i])h+='<button type="button" class="chip'+(g===i?' on':'')+'" data-g="'+i+'">ม.'+i+' ('+cnt[i]+')</button>'}
+  h+='</div><input id="mq" style="margin-top:12px" placeholder="ค้นหาชื่อ / ห้อง เช่น 3/5">';
+  h+='<div class="hint">แสดง '+ks.length+' คน · แตะชื่อเพื่อดูข้อมูล</div><div id="mls">';
+  if(!ks.length)h+='<p class="warn">ยังไม่มีสมาชิก</p>';
+  ks.forEach(function(k){var a=accounts[k];
+    h+='<button type="button" class="lnk ghost" data-k="'+esc(k)+'" data-s="'+esc((a.name+' '+(a.cls||'')+' '+(a.cls||'').replace('ม.','')).toLowerCase())+'">'+(a.owner?'👑 ':'')+esc(a.name)+' · <b>'+esc(a.cls||'-')+'</b></button>'});
+  info('ข้อมูลสมาชิก',h+'</div>');
+  $('shB').querySelectorAll('#mgc [data-g]').forEach(function(b){b.onclick=function(){showMem(+b.dataset.g)}});
+  $('shB').querySelectorAll('#mls [data-k]').forEach(function(b){b.onclick=function(){memDet(b.dataset.k,g)}});
+  $('mq').oninput=function(){var q=this.value.trim().toLowerCase();
+    $('shB').querySelectorAll('#mls [data-k]').forEach(function(b){b.style.display=(!q||b.dataset.s.indexOf(q)>=0)?'':'none'})}}
+function memDet(k,g){var me=A();if(!me||!me.owner)return;var a=accounts[k];if(!a)return showMem(g);
+  var c=memCls(a),oc=orders.filter(function(o){return o.u===k}).length;
+  function row(l,v){return '<div class="cf">'+l+': <b>'+v+'</b></div>'}
+  sheet('ข้อมูลสมาชิก',
+    row('ชื่อผู้ใช้',esc(a.name))+
+    row('ระดับชั้น',c[0]<99?'มัธยมศึกษาปีที่ '+c[0]:'-')+
+    row('ห้อง',c[1]<99?c[1]:'-')+
+    row('ห้องเรียน',esc(a.cls||'-'))+
+    row('อีเมล',a.email?esc(a.email):'ไม่ได้ใส่')+
+    row('สถานะ',a.owner?'เจ้าของ 👑':'สมาชิก')+
+    row('คอยน์คงเหลือ',bal(a)+' 🪙')+
+    row('จำนวนออเดอร์',oc+' รายการ')+
+    (a.owner?'':'<button type="button" class="lnk go2" id="mCoin">🪙 จัดการคอยน์</button>'),
+    'กลับ',function(){showMem(g)});
+  $('shC').style.display='none';
+  if($('mCoin'))$('mCoin').onclick=function(){userDet(k)}}
+function showUsr(){var ks=Object.keys(accounts);
+  info('คอยน์ของผู้ใช้',ks.map(k=>'<button type="button" class="lnk ghost" data-k="'+esc(k)+'">'+esc(accounts[k].name)+' · '+esc(accounts[k].cls)+' · <b>'+bal(accounts[k])+' 🪙</b></button>').join(''));
+  $('shB').querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>userDet(b.dataset.k))}
+function userDet(k,flash){var a=accounts[k];
+  if(a.owner){sheet(a.name+' · '+a.cls,'<div class="cf">คงเหลือ: <b>∞ 🪙</b><div class="hint">เจ้าของมีคอยน์ไม่จำกัด ไม่ต้องให้หรือหักคอยน์</div></div>','กลับ',showUsr);$('shC').style.display='none';return}
+  sheet(a.name+' · '+a.cls,sumHTML(a)+'<div class="lbl">จัดการคอยน์</div><input id="gv" type="number" min="1" inputmode="numeric" placeholder="จำนวนคอยน์"><input id="gn" style="margin-top:8px" placeholder="หมายเหตุ (ไม่บังคับ)"><div class="two" style="margin-top:10px"><button type="button" class="lnk go2" style="margin:0" id="gGive">➕ ให้คอยน์</button><button type="button" class="lnk go2 danger" style="margin:0" id="gTake">➖ หักคอยน์</button></div><div class="lbl">ประวัติคอยน์</div>'+ledHTML(a),'กลับ',showUsr);
+  $('shC').style.display='none';
+  var amt=()=>Math.floor(+$('gv').value);
+  var adj=(v,t)=>CF.adjustCoins({uid:k,amt:v,note:$('gn').value.trim()}).then(()=>{userDet(k,t)}).catch(e=>shErr(e.message||'ผิดพลาด'));
+  $('gGive').onclick=()=>{var v=amt();if(!(v>0))return shErr('ใส่จำนวนคอยน์ให้ถูกต้อง');adj(v,'ให้ '+v+' คอยน์เรียบร้อย')};
+  $('gTake').onclick=()=>{var v=amt();if(!(v>0))return shErr('ใส่จำนวนคอยน์ให้ถูกต้อง');if(v>(a.coins||0))return shErr('หักเกินยอดคงเหลือไม่ได้ (คงเหลือ '+(a.coins||0)+' คอยน์)');adj(-v,'หัก '+v+' คอยน์เรียบร้อย')};
+  if(flash){$('shM').textContent='✓ '+flash;$('shM').className='msg ok'}}
+
+var cur=null,pend;
+var EM=/^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+function A(){return accounts[cur]}
+function taken(em,ex){return em&&Object.keys(accounts).some(function(k){return k!==ex&&accounts[k].email===em})}
+function paintAv(el,a,big){el.innerHTML='';el.className='av'+(big?' big':'')+(a.owner?' gr':'');
+  if(a.avatar){var im=document.createElement('img');im.src=a.avatar;im.alt='';el.appendChild(im)}else{el.textContent=a.name.charAt(0).toUpperCase()}}
+function paintApp(){var a=A();paintAv($('avTop'),a);var n=$('aName');n.textContent=(a.owner?'👑 ':'')+a.name;n.className=a.owner?'gold':'';
+  $('aRole').textContent=(a.owner?'เจ้าของ · ':'')+a.cls;paintCoin();renderHome()}
+function enterApp(k){cur=k;$('auth').classList.add('hide');$('app').classList.remove('hide');paintApp();notify()}
+function leave(){cur=null;clearSess();$('app').classList.add('hide');$('auth').classList.remove('hide');mode('login')}
+function closeSheet(){$('sheet').classList.add('hide')}
+function shErr(t){$('shM').textContent=t;$('shM').className='msg err'}
+function sheet(t,h,ok,fn,danger){$('shC').style.display='';$('shC').textContent='ยกเลิก';$('shT').textContent=t;$('shB').innerHTML=h;$('shM').textContent='';$('shM').className='msg';
+  $('shOk').textContent=ok;$('shOk').className='go2'+(danger?' danger':'');$('sheet').classList.remove('hide');
+  $('shC').onclick=closeSheet;$('shOk').onclick=fn}
+function fld(l,id,t){return '<label for="'+id+'">'+l+'</label><input id="'+id+'" type="'+(t||'text')+'">'}
+function sel(id,n,pre){var h='<select id="'+id+'">';for(var i=1;i<=n;i++){h+='<option value="'+i+'">'+pre+i+'</option>'}return h+'</select>'}
+
+var acts={
+ avatar:function(){var a=A();pend=undefined;
+  sheet('เปลี่ยนรูปโปรไฟล์','<div id="pvAv"></div><div style="height:12px"></div><input id="pf" type="file" accept="image/*"><button type="button" class="lnk ghost" id="pRm">ลบรูปปัจจุบัน</button>','บันทึก',function(){
+    if(pend!==undefined){FB.setAvatar(pend).catch(pe)}closeSheet()});
+  paintAv($('pvAv'),a,true);
+  $('pf').onchange=function(){var f=this.files[0];if(!f){return}var rd=new FileReader();
+    rd.onload=function(){var im=new Image();
+      im.onload=function(){var c=document.createElement('canvas');c.width=c.height=160;var z=Math.min(im.width,im.height);
+        c.getContext('2d').drawImage(im,(im.width-z)/2,(im.height-z)/2,z,z,0,0,160,160);
+        pend=c.toDataURL('image/jpeg',0.8);paintAv($('pvAv'),{name:a.name,owner:a.owner,avatar:pend},true)};
+      im.onerror=function(){shErr('ไฟล์รูปไม่ถูกต้อง')};im.src=rd.result};
+    rd.readAsDataURL(f)};
+  $('pRm').onclick=function(){pend='';paintAv($('pvAv'),{name:a.name,owner:a.owner},true)}},
+ pass:function(){var a=A();
+  sheet('เปลี่ยนรหัสผ่าน',fld('รหัสผ่านปัจจุบัน','c0','password')+fld('รหัสผ่านใหม่ (อย่างน้อย 6 ตัว)','c1','password')+fld('ยืนยันรหัสผ่านใหม่','c2','password'),'เปลี่ยนรหัสผ่าน',function(){
+    if($('c1').value.length<6){return shErr('รหัสผ่านใหม่ต้องมีอย่างน้อย 6 ตัวอักษร')}
+    if($('c1').value!==$('c2').value){return shErr('รหัสผ่านใหม่ไม่ตรงกัน')}
+    FB.changePass($('c0').value,$('c1').value).then(function(){closeSheet();popup('เปลี่ยนรหัสผ่านสำเร็จ',function(b){b.textContent='ใช้รหัสผ่านใหม่ในการเข้าสู่ระบบครั้งถัดไป'},'ตกลง')}).catch(function(){shErr('รหัสผ่านปัจจุบันไม่ถูกต้อง')})})},
+ out:function(){FB.logout()},
+ del:function(){var a=A();
+  if(a.owner)return info('ลบบัญชี','<p class="warn">บัญชีเจ้าของลบเองไม่ได้</p>');
+  if(orders.some(function(o){return o.u===cur&&o.st==='pending'}))return info('ลบบัญชี','<p class="warn">ยังมีออเดอร์รอยืนยันอยู่ ลบบัญชีไม่ได้ กรุณารอให้เจ้าของร้านจัดการก่อน</p>');
+  sheet('ลบบัญชี','<p class="warn">ลบบัญชี <b id="dn"></b> ถาวร คอยน์คงเหลือ <b>'+bal(a)+' 🪙</b> จะหายทั้งหมดและกู้คืนไม่ได้</p>'+fld('ใส่รหัสผ่านเพื่อยืนยัน','dpw','password'),'ลบบัญชีถาวร',function(){
+    if(!$('dpw').value)return shErr('กรุณาใส่รหัสผ่าน');
+    $('shOk').disabled=true;
+    FB.deleteAccount($('dpw').value).then(function(){$('shOk').disabled=false;closeSheet()}).catch(function(e){$('shOk').disabled=false;shErr((e&&(e.code==='auth/invalid-credential'||e.code==='auth/wrong-password'))?'รหัสผ่านไม่ถูกต้อง':'ลบบัญชีไม่สำเร็จ ('+((e&&e.code)||(e&&e.message))+')')})},true);
+  $('dn').textContent=a.name}
+};
+document.querySelectorAll('[data-act]').forEach(function(b){b.onclick=function(){$('menuM').classList.add('hide');acts[b.dataset.act]()}});
+$('menuX').onclick=function(){$('menuM').classList.add('hide')};
+$('avTop').onclick=function(){$('menuM').classList.remove('hide')};
+function live(id,t,k){var e=$(id);e.textContent=t;e.className='live '+(k||'')}
+function chkU(){var u=$('su').value.trim();
+  if(!u){return live('suL','')}
+  if(!/^[A-Za-z0-9_.]{3,20}$/.test(u)){return live('suL','ใช้ได้เฉพาะ a–z, 0–9, _ และ . (3–20 ตัว)','err')}
+  live('suL','✓ ใช้ชื่อนี้ได้ (เปลี่ยนไม่ได้หลังสร้างบัญชี)','ok')}
+function chkE(){var em=$('se').value.trim().toLowerCase();
+  if(!em){return live('seL','')}
+  if(!EM.test(em)){return live('seL','รูปแบบอีเมลยังไม่ถูกต้อง','err')}
+  live('seL','✓ ใช้อีเมลนี้ได้ (เปลี่ยนไม่ได้หลังสร้างบัญชี)','ok')}
+function chkP(){var p=$('sp').value;
+  if(!p){return live('spL','')}
+  if(p.length<6){return live('spL','อีก '+(6-p.length)+' ตัวอักษรขึ้นไป','err')}
+  live('spL','✓ รหัสผ่านใช้ได้','ok')}
+$('su').oninput=chkU;$('se').oninput=chkE;$('sp').oninput=chkP;
+/* ===== ข้อมูลทั้งหมดอยู่บน Firebase (ดู <script type="module"> ด้านล่าง) ===== */
+var busy=false;
+function seen(id){try{return JSON.parse(localStorage.getItem('ntf')||'[]').indexOf(id)>=0}catch(e){return false}}
+function mark(id){try{var l=JSON.parse(localStorage.getItem('ntf')||'[]');if(l.indexOf(id)<0){l.push(id);localStorage.setItem('ntf',JSON.stringify(l.slice(-300)))}}catch(e){}}
+function save(){console.warn('save() เลิกใช้แล้ว ใช้ FB.* แทน')}
+function clearSess(){}
+var shopOpen=true;
+function toggleShop(){var to=!shopOpen;
+  sheet(to?'เปิดร้าน':'ปิดร้าน','<p class="warn">'+(to?'เปิดร้านให้สมาชิกสั่งซื้อได้ตามปกติ?':'ปิดร้าน สมาชิกจะสั่งซื้อไม่ได้จนกว่าจะเปิดใหม่?')+'</p>',to?'เปิดร้าน':'ปิดร้าน',function(){
+    FB.setShop(to).then(closeSheet).catch(pe)},!to)}
+function resetAll(){
+  sheet('รีเซ็ตข้อมูลทั้งหมด','<p class="warn">จะลบ <b>สินค้า ออเดอร์ โค้ดส่วนลด</b> ทั้งหมด และตั้ง <b>คอยน์ของสมาชิกทุกคนเป็น 0</b> พร้อมล้างประวัติคอยน์ (บัญชีสมาชิกยังอยู่) กู้คืนไม่ได้</p><label for="rsT">พิมพ์คำว่า <b>รีเซ็ต</b> เพื่อยืนยัน</label><input id="rsT" autocomplete="off">','ลบข้อมูลทั้งหมด',function(){
+    if($('rsT').value.trim()!=='รีเซ็ต')return shErr('พิมพ์คำว่า รีเซ็ต ให้ถูกต้องก่อน');
+    $('shOk').disabled=true;$('shM').className='msg';$('shM').textContent='กำลังลบข้อมูล...';
+    FB.resetAll().then(function(){$('shOk').disabled=false;closeSheet();popup('รีเซ็ตเรียบร้อย',function(b){b.textContent='ลบสินค้า ออเดอร์ โค้ดส่วนลด และตั้งคอยน์สมาชิกเป็น 0 แล้ว'},'ตกลง')}).catch(function(e){$('shOk').disabled=false;shErr('รีเซ็ตไม่สำเร็จ ('+(e.code||e.message)+')')})},true)}
+renderPick();
+</script>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getAuth,onAuthStateChanged,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,setPersistence,browserLocalPersistence,browserSessionPersistence,EmailAuthProvider,reauthenticateWithCredential,updatePassword,deleteUser} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {getFirestore,doc,collection,collectionGroup,query,where,onSnapshot,getDoc,getDocs,setDoc,updateDoc,deleteDoc,writeBatch,runTransaction,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* ▼▼▼ วางค่า firebaseConfig ของคุณตรงนี้ (Firebase Console > Project settings > Your apps) ▼▼▼ */
+const firebaseConfig={
+  apiKey:"AIzaSyBuS9VYfEWQmM4IpzWuwGUKJt3ZU5kwrlA",
+  authDomain:"ssm-shop-6d19b.firebaseapp.com",
+  projectId:"ssm-shop-6d19b",
+  storageBucket:"ssm-shop-6d19b.firebasestorage.app",
+  messagingSenderId:"452671057379",
+  appId:"1:452671057379:web:53c5060b5e577e432f44d6"
+};
+/* ▲▲▲ ─────────────────────────────────────────────────────────────────────────────────── ▲▲▲ */
+
+const DOM='@ssm-shop.app';               // อีเมลจำลองจากชื่อผู้ใช้ (ไม่มีการส่งอีเมลจริง)
+const ready=firebaseConfig.apiKey.indexOf('PASTE')!==0;
+let auth,db;
+if(ready){const app=initializeApp(firebaseConfig);auth=getAuth(app);db=getFirestore(app)}
+const need=()=>{if(!ready){const e=new Error('ยังไม่ได้วางค่า firebaseConfig ในไฟล์ index.html');e.cfg=1;throw e}};
+const em=u=>u.toLowerCase()+DOM;
+const D=(...p)=>doc(db,...p);
+const errLog=e=>console.error('Firestore:',e.code,e.message);
+let unsubs=[],signing=false,rawCodes=[],rawUses=[];
+
+function stop(){unsubs.forEach(f=>f());unsubs=[]}
+function refresh(){if(cur&&accounts[cur]){paintApp();notify()}}
+function mergeCodes(){codes=rawCodes.map(c=>Object.assign({},c,{uses:rawUses.filter(u=>u.cd===c.code).sort((a,b)=>a.t-b.t)}))}
+function attach(uid,own){
+  unsubs.push(onSnapshot(D('config','shop'),s=>{shopOpen=s.exists()?s.data().open!==false:true;refresh()},errLog));
+  unsubs.push(onSnapshot(collection(db,'products'),s=>{prods=s.docs.map(x=>x.data()).sort((a,b)=>(a.ord||0)-(b.ord||0));refresh()},errLog));
+  unsubs.push(onSnapshot(own?collection(db,'orders'):query(collection(db,'orders'),where('u','==',uid)),s=>{orders=s.docs.map(x=>x.data());refresh()},errLog));
+  if(!own)return;
+  unsubs.push(onSnapshot(collection(db,'users'),s=>{accounts={};s.docs.forEach(x=>{accounts[x.id]=Object.assign({id:x.id},x.data())});refresh()},errLog));
+  unsubs.push(onSnapshot(collection(db,'codes'),s=>{rawCodes=s.docs.map(x=>x.data());mergeCodes();refresh()},errLog));
+  unsubs.push(onSnapshot(collectionGroup(db,'uses'),s=>{rawUses=s.docs.map(x=>x.data());mergeCodes();refresh()},errLog));
+}
+function start(uid){
+  stop();let attached=false;
+  unsubs.push(onSnapshot(D('users',uid),s=>{
+    if(!s.exists())return;
+    accounts[uid]=Object.assign({id:uid},s.data());
+    if(!attached){attached=true;attach(uid,s.data().owner===true);enterApp(uid);
+      if(s.data().email)setDoc(D('emailIndex',s.data().email),{u:uid,name:s.data().name},{merge:true}).catch(()=>{})}else{refresh()}
+  },errLog));
+}
+if(ready)onAuthStateChanged(auth,u=>{
+  if(signing)return;
+  if(u){start(u.uid)}
+  else{stop();const was=cur;cur=null;accounts={};prods=[];orders=[];codes=[];rawCodes=[];rawUses=[];if(was)leave()}
+});
+
+const FB={
+  async signup(u,cls,e,p){need();signing=true;let cr;
+    try{cr=await createUserWithEmailAndPassword(auth,em(u),p)}
+    catch(x){signing=false;throw new Error(x.code==='auth/email-already-in-use'?'ชื่อผู้ใช้นี้ถูกใช้แล้ว':'สร้างบัญชีไม่สำเร็จ ('+x.code+')')}
+    try{const b=writeBatch(db);
+      b.set(D('users',cr.user.uid),{name:u,cls:cls,email:e||'',avatar:'',coins:0,ledger:[],owner:false,createdAt:serverTimestamp()});
+      if(e)b.set(D('emailIndex',e),{u:cr.user.uid,name:u});
+      await b.commit()}
+    catch(x){await cr.user.delete().catch(()=>{});signing=false;throw new Error(e?'อีเมลนี้ถูกใช้แล้ว หรือบันทึกไม่สำเร็จ':'สร้างบัญชีไม่สำเร็จ ('+(x.code||x.message)+')')}
+    await signOut(auth);signing=false},
+  async login(u,p,rem){need();let name=u;
+    if(u.indexOf('@')>=0){const s=await getDoc(D('emailIndex',u.toLowerCase())).catch(()=>null);
+      if(!s||!s.exists()||!s.data().name){const e=new Error('ไม่พบอีเมลนี้ กรุณาเข้าสู่ระบบด้วยชื่อผู้ใช้');e.cfg=1;throw e}
+      name=s.data().name}
+    await setPersistence(auth,rem?browserLocalPersistence:browserSessionPersistence);await signInWithEmailAndPassword(auth,em(name),p)},
+  async deleteAccount(pw){need();const us=auth.currentUser,a=accounts[cur];
+    await reauthenticateWithCredential(us,EmailAuthProvider.credential(us.email,pw));
+    const b=writeBatch(db);b.delete(D('users',cur));if(a.email)b.delete(D('emailIndex',a.email));await b.commit();
+    await deleteUser(us)},
+  logout(){return signOut(auth)},
+  async changePass(o,n){need();const us=auth.currentUser;await reauthenticateWithCredential(us,EmailAuthProvider.credential(us.email,o));await updatePassword(us,n)},
+  setAvatar(v){return updateDoc(D('users',cur),{avatar:v})},
+  saveProduct(p){return setDoc(D('products',String(p.id)),p)},
+  delProduct(id){return deleteDoc(D('products',String(id)))},
+  swapProducts(a,b){const w=writeBatch(db);w.update(D('products',String(a.id)),{ord:b.ord});w.update(D('products',String(b.id)),{ord:a.ord});return w.commit()},
+  saveCode(c){return setDoc(D('codes',c.code),{id:Date.now(),code:c.code,type:c.type,val:c.val,max:c.max,exp:c.exp,expMs:new Date(c.exp+'T23:59:59.999+07:00').getTime(),on:true,used:0,created:Date.now()})},
+  toggleCode(code,on){return updateDoc(D('codes',code),{on:on})},
+  setShop(open){return setDoc(D('config','shop'),{open:open})},
+  async resetAll(){need();const ops=[];
+    for(const n of ['products','orders','codes'])(await getDocs(collection(db,n))).forEach(x=>ops.push(b=>b.delete(x.ref)));
+    (await getDocs(collectionGroup(db,'uses'))).forEach(x=>{const u=x.data();ops.push(b=>b.delete(x.ref));ops.push(b=>b.delete(D('codes',u.cd,'users',u.u)))});
+    (await getDocs(collection(db,'users'))).forEach(x=>{if(!x.data().owner)ops.push(b=>b.update(x.ref,{coins:0,ledger:[]}))});
+    for(let i=0;i<ops.length;i+=100){const b=writeBatch(db);ops.slice(i,i+100).forEach(f=>f(b));await b.commit()}},
+  confirmOrder(id){return updateDoc(D('orders',String(id)),{st:'confirmed'})},
+
+  async checkCode(d){need();const k=String(d.code).trim().toUpperCase();
+    if(!/^[A-Z0-9_-]{3,20}$/.test(k))throw new Error('ไม่พบโค้ดนี้');
+    const s=await getDoc(D('codes',k));if(!s.exists())throw new Error('ไม่พบโค้ดนี้');
+    const c=Object.assign({},s.data());c.uses=Array.from({length:c.used||0},()=>({}));
+    const st=codeStat(c).k;
+    if(st==='off')throw new Error('โค้ดนี้ถูกปิดใช้งานแล้ว');
+    if(st==='exp')throw new Error('โค้ดนี้หมดเขตแล้ว');
+    if(st==='full')throw new Error('โค้ดนี้ถูกใช้ครบจำนวนแล้ว');
+    if((await getDoc(D('codes',k,'users',cur))).exists())throw new Error('คุณใช้โค้ดนี้ไปแล้ว');
+    return{data:c}},
+
+  async placeOrder(d){need();const a=accounts[cur],q=Math.floor(+d.q);
+    if(!a||!(q>=1))throw new Error('ข้อมูลไม่ถูกต้อง');
+    const oid=Date.now(),code=d.code?String(d.code).toUpperCase():'',res={};
+    await runTransaction(db,async tx=>{
+      const pR=D('products',String(d.pid)),uR=D('users',cur);
+      const pS=await tx.get(pR),uS=await tx.get(uR),sS=await tx.get(D('config','shop'));
+      if(!a.owner&&sS.exists()&&sS.data().open===false)throw new Error('ร้านปิดอยู่ ยังสั่งซื้อไม่ได้');
+      if(!pS.exists())throw new Error('ไม่พบสินค้า');
+      const p=pS.data(),u=uS.data();
+      if(q>p.stock)throw new Error('สินค้าไม่พอ');
+      const sub=q*p.price;let disc=0,c=null,cR,mR;
+      if(code){cR=D('codes',code);mR=D('codes',code,'users',cur);
+        const cS=await tx.get(cR),mS=await tx.get(mR);
+        if(!cS.exists())throw new Error('ไม่พบโค้ดนี้');
+        c=cS.data();const k=Object.assign({},c,{uses:Array.from({length:c.used||0},()=>({}))});
+        if(codeStat(k).k!=='ok')throw new Error('โค้ดนี้ใช้ไม่ได้แล้ว');
+        if(mS.exists())throw new Error('คุณใช้โค้ดนี้ไปแล้ว');
+        disc=codeDisc(c,sub)}
+      const tot=sub-disc;
+      if(!a.owner&&u.coins<tot)throw new Error('คอยน์ไม่พอ (ต้องใช้ '+tot+' คอยน์ มี '+u.coins+' คอยน์)');
+      const now=Date.now();
+      tx.set(D('orders',String(oid)),{id:oid,u:cur,pid:p.id,n:p.name,q:q,pr:p.price,tot:tot,disc:disc,cd:code,pt:PTS[+d.pt],tm:d.tm,dy:d.dy,st:a.owner?'confirmed':'pending',t:now});
+      tx.update(pR,{stock:p.stock-q,lastOrder:String(oid)});
+      if(!a.owner){const nb=u.coins-tot;tx.update(uR,{coins:nb,ledger:[...(u.ledger||[]),{t:now,d:-tot,n:'ซื้อ '+p.name+' ×'+q,b:nb,rf:false}]})}
+      if(c){tx.update(cR,{used:(c.used||0)+1});tx.set(mR,{t:now});
+        tx.set(D('codes',code,'uses',String(oid)),{u:cur,un:a.name,cls:a.cls,n:p.name,q:q,disc:disc,t:now,oid:oid,cd:code,void:false})}
+      res.tot=tot;res.disc=disc;res.cd=code});
+    return{data:res}},
+
+  async rejectOrder(d){need();
+    await runTransaction(db,async tx=>{
+      const oR=D('orders',String(d.oid)),oS=await tx.get(oR);
+      if(!oS.exists()||oS.data().st!=='pending')throw new Error('ออเดอร์นี้จัดการไปแล้ว');
+      const o=oS.data(),uR=D('users',o.u),pR=D('products',String(o.pid));
+      const uS=await tx.get(uR),pS=await tx.get(pR);
+      let cR,cS;if(o.cd){cR=D('codes',o.cd);cS=await tx.get(cR)}
+      tx.update(oR,{st:'rejected'});
+      if(uS.exists()&&!uS.data().owner){const u=uS.data(),nb=(u.coins||0)+o.tot;
+        tx.update(uR,{coins:nb,ledger:[...(u.ledger||[]),{t:Date.now(),d:o.tot,n:'คืนคอยน์ ออเดอร์ #'+String(o.id).slice(-6),b:nb,rf:true}]})}
+      if(pS.exists())tx.update(pR,{stock:(pS.data().stock||0)+o.q});
+      if(cS&&cS.exists()){tx.update(cR,{used:Math.max(0,(cS.data().used||0)-1)});
+        tx.delete(D('codes',o.cd,'users',o.u));tx.update(D('codes',o.cd,'uses',String(o.id)),{void:true})}})
+    return{data:{}}},
+
+  async adjustCoins(d){need();const v=Math.floor(+d.amt);if(!v)throw new Error('จำนวนคอยน์ไม่ถูกต้อง');
+    await runTransaction(db,async tx=>{
+      const uR=D('users',d.uid),uS=await tx.get(uR);
+      if(!uS.exists()||uS.data().owner)throw new Error('ไม่พบผู้ใช้');
+      const u=uS.data(),nb=(u.coins||0)+v;
+      if(nb<0)throw new Error('หักเกินยอดคงเหลือไม่ได้');
+      tx.update(uR,{coins:nb,ledger:[...(u.ledger||[]),{t:Date.now(),d:v,n:(v>0?'เจ้าของให้คอยน์':'เจ้าของหักคอยน์')+(d.note?' · '+d.note:''),b:nb,rf:false}]})});
+    return{data:{}}}
+};
+window.FB=FB;window.CF=FB;
+</script>
+</body>
+</html>
