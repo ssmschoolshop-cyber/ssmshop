@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
 <meta charset="utf-8">
@@ -422,13 +422,18 @@ $('goLogin').onclick=function(){
   msg('กำลังเข้าสู่ระบบ...');
   FB.login(u,p,$('rm').checked).then(function(){msg('');$('lp').value=''}).catch(function(e){msg(e&&e.cfg?e.message:'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง','err')});
 };
-var prods=[],orders=[],codes=[],LINE='bren2024';
+var prods=[],orders=[],codes=[],logs=[],LINE='bren2024';
 function saveC(){save()}
 function saveP(){save()}
 function saveO(){}
 function pe(e){shErr('บันทึกไม่สำเร็จ ('+(e.code||e.message)+')')}
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 function fd(t){return new Date(t).toLocaleString('th-TH',{dateStyle:'short',timeStyle:'short'})}
+/* ===== แบนแบบกำหนดเวลา: banUntil = เวลา (ms) ที่หมดแบน, 0 หรือไม่มี = แบนถาวร ===== */
+function banOn(a){return !!a&&a.banned===true&&(!a.banUntil||a.banUntil>Date.now())}
+function banTxt(a){return !a.banUntil?'ถาวร':'ถึง '+fd(a.banUntil)}
+function banLeft(ms){var m=Math.max(1,Math.ceil((ms-Date.now())/60000));
+  if(m<60)return m+' นาที';var h=Math.ceil(m/60);if(h<48)return h+' ชั่วโมง';return Math.ceil(h/24)+' วัน'}
 function bal(a){return a.owner?'∞':(a.coins||0)}
 function addCoin(a,d,n,rf){if(a.owner)return;a.coins=(a.coins||0)+d;(a.ledger=a.ledger||[]).push({t:Date.now(),d:d,n:n,b:a.coins,rf:!!rf});save()}
 function info(t,h){sheet(t,h,'ปิด',closeSheet);$('shC').style.display='none'}
@@ -448,13 +453,13 @@ function showCoin(){var a=A();
   $('lop').onclick=()=>window.open('https://line.me/R/ti/p/'+encodeURIComponent(LINE),'_blank')}
 $('cBtn').onclick=showCoin;
 
-function renderHome(){var a=A(),h='<div class="menu"><button type="button" id="bHis">🧾 ประวัติการซื้อ (3 เดือน)</button>'+(a.owner?'<button type="button" id="bOrd">📋 ออเดอร์รอยืนยัน'+(orders.some(o=>o.st==='pending')?' ('+orders.filter(o=>o.st==='pending').length+')':'')+'</button><button type="button" id="bMan">⚙️ จัดการสินค้า</button><button type="button" id="bUsr">👥 คอยน์ของผู้ใช้</button><button type="button" id="bMem">🪪 ข้อมูลสมาชิก</button><button type="button" id="bCod">🏷️ โค้ดส่วนลด</button><button type="button" id="bShop">'+(shopOpen?'🟢 ร้านเปิดอยู่ · กดเพื่อปิดร้าน':'🔴 ร้านปิดอยู่ · กดเพื่อเปิดร้าน')+'</button><button type="button" class="dng" id="bRst">🗑️ รีเซ็ตข้อมูลทั้งหมด</button>':'')+'</div>'+(shopOpen?'':'<div class="note">🔒 ร้านปิดอยู่ชั่วคราว ยังสั่งซื้อไม่ได้</div>')+'<div class="lbl">สินค้า</div><div class="grid">';
+function renderHome(){var a=A(),h='<div class="menu"><button type="button" id="bHis">🧾 ประวัติการซื้อ (3 เดือน)</button>'+(a.owner?'<button type="button" id="bOrd">📋 ออเดอร์รอยืนยัน'+(orders.some(o=>o.st==='pending')?' ('+orders.filter(o=>o.st==='pending').length+')':'')+'</button><button type="button" id="bMan">⚙️ จัดการสินค้า</button><button type="button" id="bUsr">👥 คอยน์ของผู้ใช้</button><button type="button" id="bMem">🪪 ข้อมูลสมาชิก</button><button type="button" id="bCod">🏷️ โค้ดส่วนลด</button><button type="button" id="bLog">🛡️ ประวัติเข้าสู่ระบบ / สมัคร</button><button type="button" id="bShop">'+(shopOpen?'🟢 ร้านเปิดอยู่ · กดเพื่อปิดร้าน':'🔴 ร้านปิดอยู่ · กดเพื่อเปิดร้าน')+'</button><button type="button" class="dng" id="bRst">🗑️ รีเซ็ตข้อมูลทั้งหมด</button>':'')+'</div>'+(shopOpen?'':'<div class="note">🔒 ร้านปิดอยู่ชั่วคราว ยังสั่งซื้อไม่ได้</div>')+'<div class="lbl">สินค้า</div><div class="grid">';
   if(!prods.length){h+='<p class="warn">ยังไม่มีสินค้า</p>'}
   prods.forEach(p=>{h+='<div class="pc">'+(a.owner?'<button type="button" class="pdel" data-del="'+p.id+'" aria-label="ลบสินค้า">✕</button>':'')+(p.img?'<img src="'+p.img+'" alt="">':'<div class="ph">🛍️</div>')+'<b>'+esc(p.name)+'</b><div>'+p.price+' 🪙</div><div class="hint" style="color:var(--mute)">'+(p.stock>0?'เหลือ '+p.stock:'หมด')+'</div><button type="button" data-buy="'+p.id+'"'+(p.stock>0&&(shopOpen||a.owner)?'':' disabled')+'>ซื้อ</button></div>'});
   $('amid').innerHTML=h+'</div>';
   $('amid').querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>buy(+b.dataset.buy));
   $('amid').querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>delProd(+b.dataset.del));
-  $('bHis').onclick=showHis;if(a.owner){$('bOrd').onclick=showOrd;$('bMan').onclick=showMan;$('bUsr').onclick=showUsr;$('bMem').onclick=function(){showMem(0)};$('bCod').onclick=showCodes;$('bShop').onclick=toggleShop;$('bRst').onclick=resetAll}}
+  $('bHis').onclick=showHis;if(a.owner){$('bOrd').onclick=showOrd;$('bMan').onclick=showMan;$('bUsr').onclick=showUsr;$('bMem').onclick=function(){showMem(0)};$('bCod').onclick=showCodes;$('bLog').onclick=function(){showLogs('all')};$('bShop').onclick=toggleShop;$('bRst').onclick=resetAll}}
 
 function delProd(id,after){var p=prods.find(x=>x.id===id);if(!p||!A().owner)return;
   sheet('ลบสินค้า','<p class="warn">ลบ <b id="dpn"></b> ออกจากร้านถาวรใช่ไหม?</p>','ยืนยันลบ',()=>{
@@ -587,7 +592,7 @@ function showMem(g){var me=A();if(!me||!me.owner)return;g=g||0;
   h+='<div class="hint">แสดง '+ks.length+' คน · แตะชื่อเพื่อดูข้อมูล</div><div id="mls">';
   if(!ks.length)h+='<p class="warn">ยังไม่มีสมาชิก</p>';
   ks.forEach(function(k){var a=accounts[k];
-    h+='<button type="button" class="lnk ghost" data-k="'+esc(k)+'" data-s="'+esc((a.name+' '+(a.cls||'')+' '+(a.cls||'').replace('ม.','')).toLowerCase())+'">'+(a.owner?'👑 ':'')+esc(a.name)+' · <b>'+esc(a.cls||'-')+'</b></button>'});
+    h+='<button type="button" class="lnk ghost" data-k="'+esc(k)+'" data-s="'+esc((a.name+' '+(a.cls||'')+' '+(a.cls||'').replace('ม.','')).toLowerCase())+'">'+(a.owner?'👑 ':'')+(banOn(a)?'🚫 ':'')+esc(a.name)+' · <b>'+esc(a.cls||'-')+'</b></button>'});
   info('ข้อมูลสมาชิก',h+'</div>');
   $('shB').querySelectorAll('#mgc [data-g]').forEach(function(b){b.onclick=function(){showMem(+b.dataset.g)}});
   $('shB').querySelectorAll('#mls [data-k]').forEach(function(b){b.onclick=function(){memDet(b.dataset.k,g)}});
@@ -602,13 +607,13 @@ function memDet(k,g){var me=A();if(!me||!me.owner)return;var a=accounts[k];if(!a
     row('ห้อง',c[1]<99?c[1]:'-')+
     row('ห้องเรียน',esc(a.cls||'-'))+
     row('อีเมล',a.email?esc(a.email):'ไม่ได้ใส่')+
-    row('สถานะ',a.owner?'เจ้าของ 👑':'สมาชิก')+
+    row('สถานะ',a.owner?'เจ้าของ 👑':(banOn(a)?'🚫 ถูกแบน ('+banTxt(a)+')'+(a.banReason?' · '+esc(a.banReason):''):'สมาชิก'))+
     row('คอยน์คงเหลือ',bal(a)+' 🪙')+
     row('จำนวนออเดอร์',oc+' รายการ')+
-    (a.owner?'':'<button type="button" class="lnk go2" id="mCoin">🪙 จัดการคอยน์</button>'),
+    (a.owner?'':'<button type="button" class="lnk go2" id="mCoin">🪙 จัดการคอยน์</button><button type="button" class="lnk go2'+(banOn(a)?'':' danger')+'" id="mBan">'+(banOn(a)?'✅ ปลดแบน':'🚫 แบนผู้ใช้')+'</button>'),
     'กลับ',function(){showMem(g)});
   $('shC').style.display='none';
-  if($('mCoin'))$('mCoin').onclick=function(){userDet(k)}}
+  if($('mCoin'))$('mCoin').onclick=function(){userDet(k)};if($('mBan'))$('mBan').onclick=function(){banForm(k,g)}}
 function showUsr(){var ks=Object.keys(accounts);
   info('คอยน์ของผู้ใช้',ks.map(k=>'<button type="button" class="lnk ghost" data-k="'+esc(k)+'">'+esc(accounts[k].name)+' · '+esc(accounts[k].cls)+' · <b>'+bal(accounts[k])+' 🪙</b></button>').join(''));
   $('shB').querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>userDet(b.dataset.k))}
@@ -701,12 +706,51 @@ function resetAll(){
     if($('rsT').value.trim()!==RESET_CODE)return shErr('โค้ดลับไม่ถูกต้อง');
     $('shOk').disabled=true;$('shM').className='msg';$('shM').textContent='กำลังลบข้อมูล...';
     FB.resetAll().then(function(){$('shOk').disabled=false;closeSheet();popup('รีเซ็ตเรียบร้อย',function(b){b.textContent='ลบสินค้า ออเดอร์ โค้ดส่วนลด และตั้งคอยน์สมาชิกเป็น 0 แล้ว'},'ตกลง')}).catch(function(e){$('shOk').disabled=false;shErr('รีเซ็ตไม่สำเร็จ ('+(e.code||e.message)+')')})},true)}
+/* ===== แบน / ปลดแบน ===== */
+function banForm(k,g){var a=accounts[k];if(!a||a.owner)return;
+  var fail=function(e){shErr('ไม่สำเร็จ ('+(e.code||e.message)+')')};
+  if(banOn(a)){
+    sheet('ปลดแบน','<p class="warn">ปลดแบน <b id="bn"></b> ให้ใช้งานได้ตามปกติ?</p><p class="warn">ตอนนี้แบน: <b>'+esc(banTxt(a))+'</b>'+(a.banUntil?' (เหลือ '+banLeft(a.banUntil)+')':'')+(a.banReason?'<br>เหตุผล: '+esc(a.banReason):'')+'</p>','ยืนยันปลดแบน',function(){
+      FB.setBan(k,false).then(function(){memDet(k,g)}).catch(fail)});
+  }else{
+    var H=3600000,D=86400000,P=[['1 ชั่วโมง',H],['6 ชั่วโมง',6*H],['12 ชั่วโมง',12*H],['1 วัน',D],['3 วัน',3*D],['7 วัน',7*D],['14 วัน',14*D],['30 วัน',30*D],['90 วัน',90*D],['ถาวร (จนกว่าเจ้าของปลดแบน)',0],['กำหนดเอง...','c']];
+    var opt=P.map(function(x,n){return '<option value="'+x[1]+'"'+(n===3?' selected':'')+'>'+x[0]+'</option>'}).join('');
+    var bnMs=function(){var v=$('bnd').value;if(v!=='c')return +v;
+      var n=Math.floor(+$('bnn').value),u=+$('bnu').value;
+      if(!(n>=1)||n*u>3650*D)return null;return n*u};
+    var bnPv=function(){var ms=bnMs();$('bnc').style.display=$('bnd').value==='c'?'':'none';
+      $('bnp').textContent=ms===null?'':(ms===0?'แบนถาวร จนกว่าเจ้าของจะปลดแบน':'จะหมดแบนเมื่อ '+fd(Date.now()+ms))};
+    sheet('แบนผู้ใช้','<p class="warn">แบน <b id="bn"></b> จะเข้าใช้งานไม่ได้และถูกออกจากระบบทันที</p>'+
+      '<label for="bnd">ระยะเวลาแบน</label><select id="bnd">'+opt+'</select>'+
+      '<div id="bnc" style="display:none"><label for="bnn">กำหนดเอง</label><div style="display:flex;gap:8px"><input id="bnn" type="number" inputmode="numeric" min="1" max="3650" placeholder="จำนวน"><select id="bnu" style="width:120px"><option value="60000">นาที</option><option value="3600000">ชั่วโมง</option><option value="86400000" selected>วัน</option></select></div></div>'+
+      '<p class="warn" id="bnp" style="margin-top:8px"></p>'+fld('เหตุผล (ไม่บังคับ)','bnr'),'ยืนยันแบน',function(){
+      var ms=bnMs();if(ms===null)return shErr('กรุณาใส่จำนวนที่ถูกต้อง (1 – 3650)');
+      FB.setBan(k,true,$('bnr').value.trim(),ms?Date.now()+ms:0).then(function(){memDet(k,g)}).catch(fail)},true);
+    $('bnd').onchange=$('bnn').oninput=$('bnu').onchange=bnPv;bnPv();
+  }
+  $('bn').textContent=a.name;$('shC').onclick=function(){memDet(k,g)}}
+
+/* ===== ประวัติเข้าสู่ระบบ / สมัคร (เจ้าของ) ===== */
+function showLogs(f){var me=A();if(!me||!me.owner)return;f=f||'all';
+  var n={all:logs.length,login:0,signup:0};logs.forEach(function(e){if(n[e.type]!==undefined)n[e.type]++});
+  var L=logs.filter(function(e){return f==='all'||e.type===f});
+  var h='<div class="chips" id="lgc">'+[['all','ทั้งหมด'],['login','เข้าสู่ระบบ'],['signup','สร้างบัญชี']].map(function(x){
+    return '<button type="button" class="chip'+(f===x[0]?' on':'')+'" data-f="'+x[0]+'">'+x[1]+' ('+n[x[0]]+')</button>'}).join('')+'</div>';
+  h+='<input id="lq" style="margin-top:12px" placeholder="ค้นหาชื่อ / ห้อง / IP">';
+  h+='<div class="hint">แสดง '+L.length+' รายการ (ล่าสุดสูงสุด 500)</div><div id="lls">';
+  h+=L.length?L.map(function(e){
+    var d=new Date(e.t).toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'medium'});
+    return '<div class="cf" data-s="'+esc(((e.name||'')+' '+(e.cls||'')+' '+(e.ip||'')).toLowerCase())+'"><b>'+(e.type==='signup'?'🆕 สร้างบัญชี':'🔑 เข้าสู่ระบบ')+'</b><br>'+esc(e.name||'-')+' · '+esc(e.cls||'-')+'<br>IP: <b>'+esc(e.ip||'-')+'</b><div class="hint">'+d+'</div></div>'}).join(''):'<p class="warn">ยังไม่มีประวัติ</p>';
+  info('ประวัติเข้าสู่ระบบ / สมัคร',h+'</div>');
+  $('shB').querySelectorAll('#lgc [data-f]').forEach(function(b){b.onclick=function(){showLogs(b.dataset.f)}});
+  $('lq').oninput=function(){var q=this.value.trim().toLowerCase();
+    $('shB').querySelectorAll('#lls [data-s]').forEach(function(b){b.style.display=(!q||b.dataset.s.indexOf(q)>=0)?'':'none'})}}
 renderPick();
 </script>
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {getAuth,onAuthStateChanged,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,setPersistence,browserLocalPersistence,browserSessionPersistence,EmailAuthProvider,reauthenticateWithCredential,updatePassword,deleteUser} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {getFirestore,doc,collection,collectionGroup,query,where,onSnapshot,getDoc,getDocs,setDoc,updateDoc,deleteDoc,writeBatch,runTransaction,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {getFirestore,doc,collection,collectionGroup,query,where,onSnapshot,getDoc,getDocs,setDoc,updateDoc,deleteDoc,writeBatch,runTransaction,serverTimestamp,orderBy,limit} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 /* ▼▼▼ วางค่า firebaseConfig ของคุณตรงนี้ (Firebase Console > Project settings > Your apps) ▼▼▼ */
 const firebaseConfig={
@@ -733,6 +777,14 @@ const errLog=e=>console.error('Firestore:',e.code,e.message);
 let unsubs=[],signing=false,rawCodes=[],rawUses=[];
 
 function stop(){unsubs.forEach(f=>f());unsubs=[]}
+function banOut(d){
+  const why=d.banReason||'',til=d.banUntil?' (ถึง '+fd(d.banUntil)+' · เหลือ '+banLeft(d.banUntil)+')':' (ถาวร)';
+  stop();
+  signOut(auth).finally(()=>setTimeout(()=>{
+    $('auth').classList.remove('hide');$('app').classList.add('hide');mode('login');
+    msg('🚫 บัญชีนี้ถูกแบน'+til+(why?' เหตุผล: '+why:''),'err');
+  },80));
+}
 function refresh(){if(cur&&accounts[cur]){paintApp();notify()}}
 function mergeCodes(){codes=rawCodes.map(c=>Object.assign({},c,{uses:rawUses.filter(u=>u.cd===c.code).sort((a,b)=>a.t-b.t)}))}
 function attach(uid,own){
@@ -743,11 +795,15 @@ function attach(uid,own){
   unsubs.push(onSnapshot(collection(db,'users'),s=>{accounts={};s.docs.forEach(x=>{accounts[x.id]=mkAcc(x.id,x.data())});refresh()},errLog));
   unsubs.push(onSnapshot(collection(db,'codes'),s=>{rawCodes=s.docs.map(x=>x.data());mergeCodes();refresh()},errLog));
   unsubs.push(onSnapshot(collectionGroup(db,'uses'),s=>{rawUses=s.docs.map(x=>x.data());mergeCodes();refresh()},errLog));
+  unsubs.push(onSnapshot(query(collection(db,'logs'),orderBy('t','desc'),limit(500)),s=>{logs=s.docs.map(x=>x.data());refresh()},errLog));
 }
 function start(uid){
   stop();let attached=false;
   unsubs.push(onSnapshot(D('users',uid),s=>{
     if(!s.exists())return;
+    if(banOn(s.data())&&!isOwn(s.data())){banOut(s.data());return}
+    if(s.data().banned===true&&!isOwn(s.data())&&!s.metadata.hasPendingWrites){   // แบนหมดเวลาแล้ว → ล้างสถานะแบนเอง (ถ้าไม่สำเร็จก็ไม่เป็นไร เพราะฝั่งแอปถือว่าหมดแบนอยู่แล้ว)
+      updateDoc(D('users',uid),{banned:false,banReason:'',banUntil:0,bannedAt:0}).catch(()=>{})}
     accounts[uid]=mkAcc(uid,s.data());
     if(!attached){attached=true;attach(uid,isOwn(s.data()));enterApp(uid);
       if(s.data().email)setDoc(D('emailIndex',s.data().email),{u:uid,name:s.data().name},{merge:true}).catch(()=>{})}else{refresh()}
@@ -756,9 +812,20 @@ function start(uid){
 if(ready)onAuthStateChanged(auth,u=>{
   if(signing)return;
   if(u){start(u.uid)}
-  else{stop();const was=cur;cur=null;accounts={};prods=[];orders=[];codes=[];rawCodes=[];rawUses=[];if(was)leave()}
+  else{stop();const was=cur;cur=null;accounts={};prods=[];orders=[];codes=[];logs=[];rawCodes=[];rawUses=[];if(was)leave()}
 });
 
+let ipCache=null;
+async function getIP(){
+  if(ipCache)return ipCache;
+  try{const c=new AbortController(),t=setTimeout(()=>c.abort(),4000);
+    const r=await fetch('https://api.ipify.org?format=json',{signal:c.signal});clearTimeout(t);
+    ipCache=(await r.json()).ip}catch(e){}
+  return ipCache||'ไม่ทราบ'}
+async function addLog(type,uid,name,cls){
+  try{const ip=await getIP(),t=Date.now();
+    await setDoc(D('logs',t+'_'+uid),{type:type,uid:uid,name:name,cls:cls||'',ip:ip,ua:(navigator.userAgent||'').slice(0,160),t:t})}
+  catch(e){errLog(e)}}
 const FB={
   async signup(u,cls,e,p){need();signing=true;let cr;
     try{await setPersistence(auth,browserSessionPersistence);cr=await createUserWithEmailAndPassword(auth,em(u),p)}
@@ -768,12 +835,13 @@ const FB={
       if(e)b.set(D('emailIndex',e),{u:cr.user.uid,name:u});
       await b.commit()}
     catch(x){await cr.user.delete().catch(()=>{});signing=false;throw new Error(e?'อีเมลนี้ถูกใช้แล้ว หรือบันทึกไม่สำเร็จ':'สร้างบัญชีไม่สำเร็จ ('+(x.code||x.message)+')')}
-    signing=false;start(cr.user.uid)},   // เข้าสู่ระบบให้อัตโนมัติหลังสมัคร
+    signing=false;start(cr.user.uid);addLog('signup',cr.user.uid,u,cls)},   // เข้าสู่ระบบให้อัตโนมัติหลังสมัคร
   async login(u,p,rem){need();let name=u;
     if(u.indexOf('@')>=0){const s=await getDoc(D('emailIndex',u.toLowerCase())).catch(()=>null);
       if(!s||!s.exists()||!s.data().name){const e=new Error('ไม่พบอีเมลนี้ กรุณาเข้าสู่ระบบด้วยชื่อผู้ใช้');e.cfg=1;throw e}
       name=s.data().name}
-    await setPersistence(auth,rem?browserLocalPersistence:browserSessionPersistence);await signInWithEmailAndPassword(auth,em(name),p)},
+    await setPersistence(auth,rem?browserLocalPersistence:browserSessionPersistence);const cr=await signInWithEmailAndPassword(auth,em(name),p);
+    getDoc(D('users',cr.user.uid)).then(s=>{const d=s.exists()?s.data():{};addLog('login',cr.user.uid,d.name||name,d.cls||'')}).catch(()=>{})},
   async deleteAccount(pw){need();const us=auth.currentUser,a=accounts[cur];
     await reauthenticateWithCredential(us,EmailAuthProvider.credential(us.email,pw));
     const b=writeBatch(db);b.delete(D('users',cur));if(a.email)b.delete(D('emailIndex',a.email));await b.commit();
@@ -781,6 +849,7 @@ const FB={
   logout(){return signOut(auth)},
   async changePass(o,n){need();const us=auth.currentUser;await reauthenticateWithCredential(us,EmailAuthProvider.credential(us.email,o));await updatePassword(us,n)},
   setAvatar(v){return updateDoc(D('users',cur),{avatar:v})},
+  setBan(uid,on,why,until){return updateDoc(D('users',uid),on?{banned:true,banReason:why||'',bannedAt:Date.now(),banUntil:until||0}:{banned:false,banReason:'',bannedAt:0,banUntil:0})},
   saveProduct(p){return setDoc(D('products',String(p.id)),p)},
   delProduct(id){return deleteDoc(D('products',String(id)))},
   swapProducts(a,b){const w=writeBatch(db);w.update(D('products',String(a.id)),{ord:b.ord});w.update(D('products',String(b.id)),{ord:a.ord});return w.commit()},
