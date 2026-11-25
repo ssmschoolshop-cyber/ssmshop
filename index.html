@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
 <meta charset="utf-8">
@@ -287,6 +287,28 @@ button:focus-visible,.chip:focus-visible,.av:focus-visible{outline:none;box-shad
 .frame{background:rgba(255,255,255,.82)}
 .tabs{background:rgba(255,255,255,.85)}
 .modal{background:rgba(10,30,70,.62)}
+/* ===== Membership ===== */
+.mcard{background:linear-gradient(135deg,#fff6cf,#ffe07a);color:#4a3600;border:1.5px solid #f5d96b;border-radius:18px;padding:12px 14px;font-size:14px;line-height:1.6;margin-top:12px}
+.mcard button{width:100%;margin-top:8px;border:0;border-radius:12px;padding:12px;font:inherit;font-weight:700;font-size:15px;background:var(--grad);color:#fff;cursor:pointer;box-shadow:0 6px 16px var(--glow)}
+.mcard button:disabled{opacity:.5}
+.mcard .done{font-size:13px;color:#7a5d00;margin-top:4px}
+.pk b{font-size:15px}
+/* ===== Leaderboard ===== */
+.lb{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:9px 12px;border-bottom:1px solid var(--line);font-size:14px}
+.lb small{color:var(--mute)}
+.rk{display:inline-block;min-width:26px;font-weight:700;color:var(--mute)}
+.rk.top{color:#e11d2e;font-size:17px}
+.lbh{font-size:12px;color:var(--mute);font-weight:700;background:var(--chip);border-radius:10px;border-bottom:0}
+.lb.me{background:#fff6cf;border-radius:10px}
+/* ===== Flash sale ===== */
+.pc{position:relative}
+.fbadge{position:absolute;top:8px;left:8px;z-index:2;background:linear-gradient(135deg,#ff3d54,#ff8a00);color:#fff;font-size:12px;font-weight:700;border-radius:999px;padding:3px 9px;box-shadow:0 4px 12px rgba(255,61,84,.45)}
+.fold{color:var(--mute);font-weight:400;font-size:13px;margin-right:6px}
+.fnew{color:var(--err);font-size:16px}
+.fcd{display:block;font-size:12px;font-weight:500;color:var(--err);margin-top:2px}
+.fcd.soon{color:var(--mute)}
+.fbar{background:linear-gradient(135deg,#ff3d54,#ff8a00);color:#fff;border-radius:16px;padding:10px 14px;font-size:14px;font-weight:700;margin-top:12px;text-align:center;box-shadow:0 6px 16px rgba(255,61,84,.35)}
+.fst{font-size:13px;font-weight:700}.fst.live{color:var(--err)}.fst.soon{color:#b07a00}.fst.end{color:var(--mute)}
 </style>
 </head>
 <body>
@@ -323,7 +345,7 @@ button:focus-visible,.chip:focus-visible,.av:focus-visible{outline:none;box-shad
       <input id="se" type="email" autocomplete="email" placeholder="you@example.com">
       <div class="live" id="seL"></div>
 
-      <div class="note">⚠️ ข้อมูลที่<b>เปลี่ยนไม่ได้</b>หลังสร้างบัญชี: <b>ชื่อผู้ใช้, ห้องเรียน และอีเมล</b><br>เปลี่ยนได้เฉพาะรหัสผ่านและรูปโปรไฟล์</div>
+      <div class="note">⚠️ ข้อมูลที่<b>เปลี่ยนไม่ได้</b>หลังสร้างบัญชี: <b>ชื่อผู้ใช้, ห้องเรียน และอีเมล</b><br>เปลี่ยนได้เฉพาะรหัสผ่านและรูปโปรไฟล์<br>🔑 <b>จำรหัสผ่านให้ดี</b> ถ้าลืมรหัสผ่านจะรีเซ็ตรหัสผ่านไม่ได้</div>
 
       <button class="go" id="goSign" type="button">สร้างบัญชี</button>
     </div>
@@ -335,7 +357,7 @@ button:focus-visible,.chip:focus-visible,.av:focus-visible{outline:none;box-shad
       <label for="lp">รหัสผ่าน</label>
       <div class="pw"><input id="lp" type="password" autocomplete="current-password"><button type="button" data-eye="lp" aria-label="แสดงรหัสผ่าน">ดู</button></div>
       <label class="chk"><input type="checkbox" id="rm"> จดจำฉัน</label>
-      <div class="hint">เข้าสู่ระบบด้วยชื่อผู้ใช้และรหัสผ่านที่สมัครไว้</div>
+      <div class="hint">เข้าสู่ระบบด้วยชื่อผู้ใช้และรหัสผ่านที่สมัครไว้ (ตัวพิมพ์เล็ก/ใหญ่ต้องตรงกับตอนสมัคร)</div>
       <button class="go" id="goLogin" type="button">เข้าสู่ระบบ</button>
     </div>
 
@@ -430,7 +452,7 @@ $('goSign').onclick=function(){
   if(em&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){return msg('รูปแบบอีเมลไม่ถูกต้อง','err')}
   var cls='ม.'+grade+'/'+room;
   var proceed=function(){
-  sheet('ตรวจสอบก่อนสร้างบัญชี','<p class="warn">ข้อมูลต่อไปนี้ <b>เปลี่ยนไม่ได้</b> หลังสร้างบัญชี กรุณาตรวจสอบให้ถูกต้อง</p><div class="cf" id="cf"></div>','ยืนยันสร้างบัญชี',function(){
+  sheet('ตรวจสอบก่อนสร้างบัญชี','<p class="warn">ข้อมูลต่อไปนี้ <b>เปลี่ยนไม่ได้</b> หลังสร้างบัญชี กรุณาตรวจสอบให้ถูกต้อง</p><p class="warn">🔑 <b>ตรวจสอบข้อมูลให้แน่ใจก่อนสร้างบัญชี</b> และจำรหัสผ่านให้ดี ถ้าลืมรหัสผ่านจะรีเซ็ตรหัสผ่านไม่ได้</p><div class="cf" id="cf"></div>','ยืนยันสร้างบัญชี',function(){
     closeSheet();msg('กำลังสร้างบัญชี...');busy=true;
     FB.signup(u,cls,em,p).then(function(){busy=false;msg('');$('se').value='';$('su').value='';$('sp').value='';grade=null;room=null;renderPick();chkU();chkE();chkP();popup('สร้างบัญชีสำเร็จ',function(b){b.textContent='ยินดีต้อนรับ '+u+' · ห้อง '+cls+' (เข้าสู่ระบบให้แล้ว)'},'เริ่มใช้งาน')}).catch(function(e){busy=false;msg(e.message||'สร้างบัญชีไม่สำเร็จ','err')});
   });
@@ -448,7 +470,7 @@ $('goSign').onclick=function(){
   });
 };
 $('goLogin').onclick=function(){
-  var u=$('lu').value.trim().toLowerCase(),p=$('lp').value;
+  var u=$('lu').value.trim(),p=$('lp').value;
   if(!u||!p){return msg('กรุณากรอกชื่อผู้ใช้และรหัสผ่าน','err')}
   msg('กำลังเข้าสู่ระบบ...');
   FB.login(u,p,$('rm').checked).then(function(){msg('');$('lp').value=''}).catch(function(e){msg(e&&e.cfg?e.message:'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง','err')});
@@ -479,13 +501,13 @@ function showCoin(){var a=A();
   $('lop').onclick=()=>window.open('https://line.me/R/ti/p/'+encodeURIComponent(LINE),'_blank')}
 $('cBtn').onclick=showCoin;
 
-function renderHome(){var a=A(),h='<div class="menu"><button type="button" id="bHis">🧾 ประวัติการซื้อ (3 เดือน)</button>'+(a.owner?'<button type="button" id="bOrd">📋 ออเดอร์รอยืนยัน'+(orders.some(o=>o.st==='pending')?' ('+orders.filter(o=>o.st==='pending').length+')':'')+'</button><button type="button" id="bMan">⚙️ จัดการสินค้า</button><button type="button" id="bUsr">👥 คอยน์ของผู้ใช้</button><button type="button" id="bMem">🪪 ข้อมูลสมาชิก</button><button type="button" id="bCod">🏷️ โค้ดส่วนลด</button><button type="button" id="bLog">🛡️ ประวัติเข้าสู่ระบบ / สมัคร</button><button type="button" id="bShop">'+(shopOpen?'🟢 ร้านเปิดอยู่ · กดเพื่อปิดร้าน':'🔴 ร้านปิดอยู่ · กดเพื่อเปิดร้าน')+'</button><button type="button" class="dng" id="bRst">🗑️ รีเซ็ตข้อมูลทั้งหมด</button>':'')+'</div>'+(shopOpen?'':'<div class="note">🔒 ร้านปิดอยู่ชั่วคราว ยังสั่งซื้อไม่ได้</div>')+'<div class="lbl">สินค้า</div><div class="grid">';
+function renderHome(){var a=A(),nl=prods.filter(function(p){return unit(p)<p.price}).length,h=memHome(a)+'<div class="menu">'+(a.owner?'':'<button type="button" id="bSub">'+subBtnTxt(a)+'</button>')+'<button type="button" id="bBoard">🏆 อันดับยอดคอยน์เข้า</button><button type="button" id="bHis">🧾 ประวัติการซื้อ (3 เดือน)</button>'+(a.owner?'<button type="button" id="bOrd">📋 ออเดอร์รอยืนยัน'+(orders.some(o=>o.st==='pending')?' ('+orders.filter(o=>o.st==='pending').length+')':'')+'</button><button type="button" id="bMan">⚙️ จัดการสินค้า</button><button type="button" id="bUsr">👥 คอยน์ของผู้ใช้</button><button type="button" id="bMem">🪪 ข้อมูลสมาชิก</button><button type="button" id="bFl">⚡ Flash sale</button><button type="button" id="bCod">🏷️ โค้ดส่วนลด</button><button type="button" id="bLog">🛡️ ประวัติเข้าสู่ระบบ / สมัคร</button><button type="button" id="bShop">'+(shopOpen?'🟢 ร้านเปิดอยู่ · กดเพื่อปิดร้าน':'🔴 ร้านปิดอยู่ · กดเพื่อเปิดร้าน')+'</button><button type="button" class="dng" id="bRst">🗑️ รีเซ็ตข้อมูลทั้งหมด</button>':'')+'</div>'+(shopOpen?'':'<div class="note">🔒 ร้านปิดอยู่ชั่วคราว ยังสั่งซื้อไม่ได้</div>')+(nl?'<div class="fbar">⚡ Flash sale กำลังลดราคา '+nl+' รายการ</div>':'')+'<div class="lbl">สินค้า</div><div class="grid">';
   if(!prods.length){h+='<p class="warn">ยังไม่มีสินค้า</p>'}
-  prods.forEach(p=>{h+='<div class="pc">'+(a.owner?'<button type="button" class="pdel" data-del="'+p.id+'" aria-label="ลบสินค้า">✕</button>':'')+(p.img?'<img src="'+p.img+'" alt="">':'<div class="ph">🛍️</div>')+'<b>'+esc(p.name)+'</b><div>'+p.price+' 🪙</div><div class="hint" style="color:var(--mute)">'+(p.stock>0?'เหลือ '+p.stock:'หมด')+'</div><button type="button" data-buy="'+p.id+'"'+(p.stock>0&&(shopOpen||a.owner)?'':' disabled')+'>ซื้อ</button></div>'});
+  prods.forEach(p=>{var f=flashes[p.id],fs=fst(f),u=unit(p),fl=u<p.price;h+='<div class="pc">'+(fl?'<span class="fbadge">⚡ '+(f.type==='pct'?'-'+f.val+'%':'-'+(p.price-u)+' 🪙')+'</span>':'')+(a.owner?'<button type="button" class="pdel" data-del="'+p.id+'" aria-label="ลบสินค้า">✕</button>':'')+(p.img?'<img src="'+p.img+'" alt="">':'<div class="ph">🛍️</div>')+'<b>'+esc(p.name)+'</b><div>'+priceHTML(p,f,fs,u,fl)+'</div><div class="hint" style="color:var(--mute)">'+(p.stock>0?'เหลือ '+p.stock:'หมด')+'</div><button type="button" data-buy="'+p.id+'"'+(p.stock>0&&(shopOpen||a.owner)?'':' disabled')+'>ซื้อ</button></div>'});
   $('amid').innerHTML=h+'</div>';
   $('amid').querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>buy(+b.dataset.buy));
   $('amid').querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>delProd(+b.dataset.del));
-  $('bHis').onclick=showHis;if(a.owner){$('bOrd').onclick=showOrd;$('bMan').onclick=showMan;$('bUsr').onclick=showUsr;$('bMem').onclick=function(){showMem(0)};$('bCod').onclick=showCodes;$('bLog').onclick=function(){showLogs('all')};$('bShop').onclick=toggleShop;$('bRst').onclick=resetAll}}
+  $('bHis').onclick=showHis;$('bBoard').onclick=showBoard;if($('bSub'))$('bSub').onclick=showSub;if($('bClaim'))$('bClaim').onclick=claimDay;if(a.owner){$('bOrd').onclick=showOrd;$('bMan').onclick=showMan;$('bUsr').onclick=showUsr;$('bMem').onclick=function(){showMem(0)};$('bCod').onclick=showCodes;$('bFl').onclick=showFlash;$('bLog').onclick=function(){showLogs('all')};$('bShop').onclick=toggleShop;$('bRst').onclick=resetAll}}
 
 function delProd(id,after){var p=prods.find(x=>x.id===id);if(!p||!A().owner)return;
   sheet('ลบสินค้า','<p class="warn">ลบ <b id="dpn"></b> ออกจากร้านถาวรใช่ไหม?</p>','ยืนยันลบ',()=>{
@@ -494,7 +516,7 @@ function delProd(id,after){var p=prods.find(x=>x.id===id);if(!p||!A().owner)retu
 
 var PTS=['หน้าอาคาร 2','บ่อเต่าข้างอาคาร 2','หน้าเสาธง'],TMS=['10:50','10:55','11:00','11:05','11:10','11:15'];
 function buy(id){var a=A(),p=prods.find(x=>x.id===id);if(!p||p.stock<1)return;if(!shopOpen&&!a.owner)return;
-  var ap=null,sub=()=>(+$('bq').value)*p.price,disc=()=>ap?codeDisc(ap,sub()):0,tot=()=>sub()-disc();
+  var u1=unit(p),fl=u1<p.price,ap=null,sub=()=>(+$('bq').value)*u1,disc=()=>ap?codeDisc(ap,sub()):0,tot=()=>sub()-disc();
   sheet('ซื้อ '+p.name,'<div class="lbl">จำนวน</div>'+sel('bq',Math.min(p.stock,20),'')+'<div class="lbl">จุดนัดพบ</div>'+PTS.map((x,i)=>'<label class="chk"><input type="radio" name="pt" value="'+i+'"> '+esc(x)+'</label>').join('')+'<div class="lbl">วันที่รับสินค้า <span class="opt">(ไม่รวมเสาร์-อาทิตย์)</span></div><select id="bd"><option value="">เลือกวัน</option>'+dayOpts().map(x=>'<option value="'+x.v+'">'+x.l+'</option>').join('')+'</select><div class="lbl">เวลานัดรับ</div><select id="bt2"><option value="">เลือกเวลา</option>'+TMS.map(x=>'<option value="'+x+'">'+x+' น.</option>').join('')+'</select><div class="hint">อาจมาสายประมาณ 1–5 นาที</div><div class="lbl">โค้ดส่วนลด <span class="opt">(ถ้ามี)</span></div><div style="display:flex;gap:8px"><input id="bc" placeholder="กรอกโค้ดส่วนลด" autocomplete="off" autocapitalize="characters" style="text-transform:uppercase"><button type="button" class="ghost" id="bca" style="border:0;border-radius:12px;padding:0 16px;font:inherit;font-weight:700;cursor:pointer;flex:none">ใช้โค้ด</button></div><div class="live" id="bcl"></div><div class="lbl">การชำระเงิน</div><div class="cf">จ่ายด้วยคอยน์เท่านั้น (คงเหลือ '+bal(a)+' 🪙)<br><span id="bt"></span></div>','ยืนยันการซื้อ',()=>{
     var q=+$('bq').value,pe=document.querySelector('input[name=pt]:checked'),tm=$('bt2').value,dy=$('bd').value;
     if(q>p.stock)return shErr('สินค้าไม่พอ');
@@ -505,13 +527,13 @@ function buy(id){var a=A(),p=prods.find(x=>x.id===id);if(!p||p.stock<1)return;if
     var cv=$('bc').value.trim();
     if(cv&&(!ap||ap.code!==cv.toUpperCase()))return shErr('กรุณากดปุ่ม "ใช้โค้ด" เพื่อตรวจโค้ดก่อน');
     $('shOk').disabled=true;
-    CF.placeOrder({pid:p.id,q:q,pt:+pe.value,tm:tm,dy:dy,code:ap?ap.code:''}).then(function(r){
+    CF.placeOrder({pid:p.id,ep:u1,q:q,pt:+pe.value,tm:tm,dy:dy,code:ap?ap.code:''}).then(function(r){
       var o=r.data;closeSheet();$('shOk').disabled=false;
       popup('ส่งออเดอร์แล้ว',function(b){b.textContent=p.name+' ×'+q+' = '+o.tot+' 🪙';[o.disc?'ใช้โค้ด '+o.cd+' ลด '+o.disc+' 🪙':'','วัน: '+dlabel(dy),'เวลา: '+tm+' น.','จุดนัดพบ: '+PTS[+pe.value],a.owner?'':'รอเจ้าของร้านยืนยันออเดอร์'].filter(Boolean).forEach(function(s){var d=document.createElement('div');d.textContent=s;b.appendChild(d)})},'ตกลง')
     }).catch(function(e){$('shOk').disabled=false;shErr(e.message||'สั่งซื้อไม่สำเร็จ')});
   });
   var okMsg=()=>live('bcl','✓ ใช้โค้ด '+ap.code+' ได้ ลด '+codeDisc(ap,sub())+' คอยน์','ok');
-  var up=()=>{var d=disc();$('bt').innerHTML=(d?'ราคา '+sub()+' − ส่วนลด '+d+' = ':'')+'รวม <b>'+tot()+' 🪙</b>'};up();
+  var up=()=>{var d=disc();$('bt').innerHTML=(fl?'⚡ Flash sale ราคาชิ้นละ '+u1+' 🪙 (ปกติ '+p.price+')<br>':'')+(d?'ราคา '+sub()+' − ส่วนลด '+d+' = ':'')+'รวม <b>'+tot()+' 🪙</b>'};up();
   $('bq').onchange=function(){if(ap)okMsg();up()};
   $('bc').oninput=function(){ap=null;live('bcl','');up()};
   $('bca').onclick=function(){var v=$('bc').value.trim();if(!v){return live('bcl','กรุณากรอกโค้ดส่วนลด','err')}
@@ -582,7 +604,7 @@ function notify(){if(!cur||!A()||A().owner||!$('modal').classList.contains('hide
     [o.n+' ×'+o.q,o.dy?dlabel(o.dy)+' · '+o.tm+' น. · '+o.pt:'',ok?'':'คืนคอยน์ให้แล้ว'].filter(Boolean).forEach(s=>{var d=document.createElement('div');d.className='hint';d.textContent=s;b.appendChild(d)})},'ตกลง',notify);
   if(!ok){var t=document.querySelector('#modal .tick');t.textContent='✕';t.style.background='var(--err)';t.style.color='#fff'}}
 function showHis(){var lim=Date.now()-90*864e5,L=orders.filter(o=>o.u===cur&&o.t>=lim).reverse();
-  info('ประวัติการซื้อ (ย้อนหลัง 3 เดือน)',L.length?L.map(o=>'<div class="cf"><b>'+esc(o.n)+'</b> ×'+o.q+'<br>'+o.pr+' × '+o.q+' = <b>'+o.tot+' 🪙</b>'+(o.disc?'<br>ใช้โค้ด '+esc(o.cd)+' ลด '+o.disc+' 🪙':'')+(o.pt?'<br>'+(o.dy?esc(dlabel(o.dy))+' · ':'')+esc(o.tm)+' น. · '+esc(o.pt):'')+'<br>'+stLbl(o)+'<div class="hint">'+fd(o.t)+' · #'+String(o.id).slice(-6)+'</div></div>').join(''):'<p class="warn">ยังไม่มีประวัติการซื้อ</p>')}
+  info('ประวัติการซื้อ (ย้อนหลัง 3 เดือน)',L.length?L.map(o=>'<div class="cf"><b>'+esc(o.n)+'</b> ×'+o.q+'<br>'+o.pr+' × '+o.q+' = <b>'+o.tot+' 🪙</b>'+(o.fl?' ⚡ Flash sale (ปกติ '+o.po+')':'')+(o.disc?'<br>ใช้โค้ด '+esc(o.cd)+' ลด '+o.disc+' 🪙':'')+(o.pt?'<br>'+(o.dy?esc(dlabel(o.dy))+' · ':'')+esc(o.tm)+' น. · '+esc(o.pt):'')+'<br>'+stLbl(o)+'<div class="hint">'+fd(o.t)+' · #'+String(o.id).slice(-6)+'</div></div>').join(''):'<p class="warn">ยังไม่มีประวัติการซื้อ</p>')}
 
 function showMan(){info('จัดการสินค้า','<button type="button" class="lnk go2" id="pAdd">➕ เพิ่มสินค้า</button>'+prods.map((p,i)=>'<div class="cf"><b>'+esc(p.name)+'</b> · '+p.price+' 🪙 · เหลือ '+p.stock+'<div class="row" style="margin-top:8px"><button type="button" class="ghost" data-m="up" data-i="'+i+'">▲</button><button type="button" class="ghost" data-m="dn" data-i="'+i+'">▼</button><button type="button" class="ghost" data-m="ed" data-i="'+i+'">แก้ไข</button><button type="button" class="ghost" data-m="rm" data-i="'+i+'">ลบ</button></div></div>').join(''));
   $('pAdd').onclick=()=>prodForm(-1);
@@ -678,7 +700,7 @@ function paintApp(){var a=A();paintAv($('avTop'),a);var n=$('aName');n.textConte
   $('aRole').textContent=(a.owner?'เจ้าของ · ':'')+a.cls;paintCoin();renderHome()}
 function enterApp(k){cur=k;$('auth').classList.add('hide');$('app').classList.remove('hide');paintApp();notify()}
 function leave(){cur=null;clearSess();$('app').classList.add('hide');$('auth').classList.remove('hide');mode('login')}
-function closeSheet(){$('sheet').classList.add('hide')}
+function closeSheet(){$('sheet').classList.add('hide');flashView=false}
 function shErr(t){$('shM').textContent=t;$('shM').className='msg err'}
 function sheet(t,h,ok,fn,danger){$('shC').style.display='';$('shC').textContent='ยกเลิก';$('shT').textContent=t;$('shB').innerHTML=h;$('shM').textContent='';$('shM').className='msg';
   $('shOk').textContent=ok;$('shOk').className='go2'+(danger?' danger':'');$('sheet').classList.remove('hide');
@@ -738,6 +760,154 @@ function mark(id){try{var l=JSON.parse(localStorage.getItem('ntf')||'[]');if(l.i
 function save(){console.warn('save() เลิกใช้แล้ว ใช้ FB.* แทน')}
 function clearSess(){}
 var shopOpen=true;
+
+/* ===== อันดับยอดคอยน์เข้า / ลืมรหัสผ่าน ===== */
+var board=[];
+function showBoard(){
+  var L=board.filter(function(x){return !x.banned&&x.inc>0}).sort(function(x,y){return y.inc-x.inc||String(x.name).localeCompare(String(y.name))}),rk=[];
+  L.forEach(function(x,i){rk[i]=(i>0&&x.inc===L[i-1].inc)?rk[i-1]:i+1});
+  var row=function(x,i){return '<div class="lb'+(x.uid===cur?' me':'')+'"><span><b class="rk'+(rk[i]<=3?' top':'')+'">'+rk[i]+'</b> '+esc(x.name||'-')+' <small>'+esc(x.cls||'')+'</small></span><b>+'+x.inc+' 🪙</b></div>'};
+  var h='<div class="hint" style="margin:0 0 8px">ยอดคอยน์ที่ได้รับเข้ามาสะสม (ไม่นับการคืนคอยน์ และไม่รวมผู้ที่ถูกแบน) · ยอดเท่ากันได้อันดับเท่ากัน</div><div class="lb lbh"><span>อันดับ · ผู้ใช้</span><span>ยอดเข้า</span></div>';
+  h+=L.length?L.slice(0,20).map(row).join(''):'<p class="warn">ยังไม่มีข้อมูลอันดับ</p>';
+  var mi=L.findIndex(function(x){return x.uid===cur});
+  if(mi>=20)h+='<div class="hint" style="text-align:center;margin:6px 0">• • •</div>'+row(L[mi],mi);
+  info('🏆 อันดับยอดคอยน์เข้า',h)}
+
+
+/* ===== สมาชิกรายเดือน ===== */
+var PKG=[
+ {id:'m1',name:'แพ็คเกจ 1 เดือน',days:30,price:60,full:60,up:20,daily:2},
+ {id:'m3',name:'แพ็คเกจ 3 เดือน',days:90,price:160,full:180,up:60,daily:2}];
+function pkgOf(id){return PKG.find(function(x){return x.id===id})||PKG[0]}
+function pkgTot(P){return P.up+P.days*P.daily}
+function addDays(s,n){var q=s.split('-');return iso(new Date(+q[0],+q[1]-1,+q[2]+n))}
+function subState(a){var s=a&&a.sub&&a.sub.end?a.sub:null,td=iso(new Date());
+  if(!s)return{k:'none'};
+  if(td>s.end)return{k:'exp',s:s};
+  return{k:'on',s:s,can:td>s.start&&(s.last||'')<td,today:(s.last||'')===td,first:td<=s.start}}
+function subBtnTxt(a){return subState(a).k==='on'?'👑 สมาชิกของฉัน':'👑 สมัครสมาชิก'}
+function memHome(a){if(a.owner)return '';var st=subState(a);if(st.k!=='on')return '';
+  var s=st.s,P=pkgOf(s.pk);
+  return '<div class="mcard">👑 <b>สมาชิก · '+P.name+'</b><br>เก็บแล้ว '+(s.n||0)+'/'+P.days+' วัน · หมดอายุ '+esc(dlabel(s.end))+
+    (st.can?'<button type="button" id="bClaim">🎁 กดเก็บ +'+P.daily+' 🪙 ประจำวันนี้</button>':'<div class="done">'+(st.today?'✓ วันนี้เก็บคอยน์แล้ว มาเก็บใหม่พรุ่งนี้':'เริ่มเก็บคอยน์รายวันได้ตั้งแต่พรุ่งนี้')+'</div>')+'</div>'}
+function claimDay(){var b=$('bClaim');if(b)b.disabled=true;
+  CF.claimDaily().then(function(r){popup('เก็บคอยน์สำเร็จ',function(x){x.textContent='ได้รับ +'+r.data.d+' 🪙 (วันที่ '+r.data.n+' ของแพ็คเกจ)'},'ตกลง')})
+   .catch(function(e){if(b)b.disabled=false;info('เก็บคอยน์ไม่ได้','<p class="warn">'+esc(e.message||'ผิดพลาด')+'</p>')})}
+function showSub(){var a=A();if(!a||a.owner)return;var st=subState(a),h='';
+  if(st.k==='on'){var s=st.s,P=pkgOf(s.pk);
+    h+='<div class="cf">👑 <b>'+P.name+'</b><br>สมัครเมื่อ '+esc(dlabel(s.start))+'<br>หมดอายุ '+esc(dlabel(s.end))+'<br>เก็บแล้ว <b>'+(s.n||0)+'/'+P.days+'</b> วัน (รวม '+(s.n||0)*P.daily+' 🪙)</div>'+
+      (st.can?'<button type="button" class="lnk go2" id="sClaim">🎁 กดเก็บ +'+P.daily+' 🪙 ประจำวันนี้</button>':'<div class="cf">'+(st.today?'✓ วันนี้เก็บคอยน์แล้ว มาเก็บใหม่พรุ่งนี้':'เริ่มเก็บคอยน์รายวันได้ตั้งแต่พรุ่งนี้')+'</div>')+
+      '<div class="note">เข้ามากดเก็บคอยน์ทุกวัน วันไหนไม่ได้กดเก็บ จะไม่สะสมย้อนหลัง · สมัครแพ็คเกจใหม่ได้เมื่อแพ็คเกจนี้หมดอายุ</div>';
+  }else{
+    if(st.k==='exp')h+='<div class="note">แพ็คเกจก่อนหน้าหมดอายุแล้ว สมัครใหม่ได้เลย</div>';
+    h+=PKG.map(function(P){return '<div class="cf pk"><b>'+P.name+'</b><br>ราคา '+(P.full>P.price?'<s class="fold">'+P.full+'</s> ':'')+'<b>'+P.price+' 🪙</b>'+(P.full>P.price?' (ลด '+(P.full-P.price)+')':'')+
+      '<br>🎁 รับทันที <b>+'+P.up+' 🪙</b><br>📅 เก็บวันละ <b>'+P.daily+' 🪙</b> × '+P.days+' วัน (เริ่มพรุ่งนี้)<br>รวมได้รับ <b>'+pkgTot(P)+' 🪙</b>'+
+      '<button type="button" class="lnk go2" data-pk="'+P.id+'">สมัคร '+P.price+' 🪙</button></div>'}).join('')+
+      '<div class="hint">ชำระด้วยคอยน์ในบัญชี (คงเหลือ '+bal(a)+' 🪙)</div>'}
+  info('👑 สมัครสมาชิก',h);
+  if($('sClaim'))$('sClaim').onclick=function(){closeSheet();claimDay()};
+  $('shB').querySelectorAll('[data-pk]').forEach(function(b){b.onclick=function(){subConfirm(b.dataset.pk)}})}
+function subConfirm(id){var a=A(),P=pkgOf(id);
+  sheet('ยืนยันสมัคร '+P.name,'<p class="warn">ใช้ <b>'+P.price+' 🪙</b> (คงเหลือ '+bal(a)+' 🪙)</p><div class="cf">🎁 รับทันที +'+P.up+' 🪙<br>📅 เก็บวันละ '+P.daily+' 🪙 ต่อเนื่อง '+P.days+' วัน (เริ่มพรุ่งนี้)<br>รวมได้รับ '+pkgTot(P)+' 🪙</div><div class="hint">ต้องเข้ามากดเก็บทุกวัน วันไหนไม่กดเก็บจะไม่สะสมย้อนหลัง</div>','ยืนยันสมัคร',function(){
+    if((a.coins||0)<P.price)return shErr('คอยน์ไม่พอ (ต้องใช้ '+P.price+' คอยน์ มี '+(a.coins||0)+' คอยน์)');
+    $('shOk').disabled=true;
+    CF.subscribe(P.id).then(function(){$('shOk').disabled=false;closeSheet();popup('สมัครสมาชิกสำเร็จ',function(b){b.textContent=P.name+' · ได้รับทันที +'+P.up+' 🪙 และเก็บวันละ '+P.daily+' 🪙 ตั้งแต่พรุ่งนี้'},'ตกลง')}).catch(function(e){$('shOk').disabled=false;shErr(e.message||'สมัครไม่สำเร็จ')})});
+  $('shC').onclick=showSub}
+
+
+/* ===== Flash sale ===== */
+var flashes={},flashView=false,flashSig='';
+function pad2(n){return String(n).padStart(2,'0')}
+function fst(f,now){now=now||Date.now();if(!f||f.on===false)return 'off';if(now<f.start)return 'soon';if(now>=f.end)return 'end';return 'live'}
+function fdisc(p,f){var d=f.type==='pct'?Math.floor(p.price*f.val/100):f.val;return Math.max(0,Math.min(d,p.price))}
+function fprice(p,f){return p.price-fdisc(p,f)}
+function unit(p){var f=flashes[p.id];return f&&fst(f)==='live'?fprice(p,f):p.price}
+function flbl(f){return f.type==='pct'?'ลด '+f.val+'%':'ลด '+f.val+' 🪙'}
+function cdTxt(ms){if(ms<0)ms=0;var s=Math.floor(ms/1000),d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60),x=s%60;
+  return (d?d+' วัน ':'')+pad2(h)+':'+pad2(m)+':'+pad2(x)}
+function ldt(ms){var d=new Date(ms);return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate())+'T'+pad2(d.getHours())+':'+pad2(d.getMinutes())}
+function priceHTML(p,f,fs,u,fl){var now=Date.now();
+  if(fl)return '<s class="fold">'+p.price+'</s><span class="fnew">'+u+' 🪙</span><span class="fcd" data-cd="'+f.end+'" data-pre="⚡ เหลือเวลา ">⚡ เหลือเวลา '+cdTxt(f.end-now)+'</span>';
+  return p.price+' 🪙'+(fs==='soon'?'<span class="fcd soon" data-cd="'+f.start+'" data-pre="🔜 Flash sale เริ่มใน ">🔜 Flash sale เริ่มใน '+cdTxt(f.start-now)+'</span>':'')}
+function prodById(k){return prods.find(function(x){return String(x.id)===String(k)})}
+
+function showFlash(){var me=A();if(!me||!me.owner)return;
+  var now=Date.now(),ks=Object.keys(flashes).sort(function(x,y){return flashes[y].start-flashes[x].start}),
+      open=ks.filter(function(k){return fst(flashes[k],now)!=='end'}),
+      stT={live:'🔥 กำลังลดราคา',soon:'🔜 รอเริ่ม',end:'⌛ สิ้นสุดแล้ว',off:'⛔ ปิด'};
+  var h='<button type="button" class="lnk go2" id="fAdd">➕ ตั้ง Flash sale ใหม่</button>'+(open.length?'<button type="button" class="lnk go2 danger" id="fAll">⛔ ยกเลิกทั้งหมด ('+open.length+')</button>':'');
+  h+=ks.length?ks.map(function(k){var f=flashes[k],p=prodById(k),s=fst(f,now);
+    return '<div class="cf"><b>'+(p?esc(p.name):'(สินค้าถูกลบแล้ว)')+'</b> · '+flbl(f)+(p?'<br>'+p.price+' 🪙 → <b>'+fprice(p,f)+' 🪙</b>':'')+
+      '<br>เริ่ม '+fd(f.start)+'<br>จบ '+fd(f.end)+'<br><span class="fst '+s+'">'+stT[s]+'</span>'+
+      (s==='live'?'<span class="fcd" data-cd="'+f.end+'" data-pre="เหลือ ">เหลือ '+cdTxt(f.end-now)+'</span>':s==='soon'?'<span class="fcd soon" data-cd="'+f.start+'" data-pre="เริ่มใน ">เริ่มใน '+cdTxt(f.start-now)+'</span>':'')+
+      '<div class="row" style="margin-top:8px">'+(p?'<button type="button" class="ghost" data-fe="'+esc(k)+'">'+(s==='end'?'ตั้งใหม่':'แก้ไข / ตั้งเวลา')+'</button>':'')+
+      '<button type="button" class="ghost" data-fx="'+esc(k)+'">'+(s==='end'?'ลบรายการ':'ยกเลิก')+'</button></div></div>'}).join(''):'<p class="warn">ยังไม่มี Flash sale</p>';
+  info('⚡ Flash sale',h);flashView=true;
+  $('fAdd').onclick=function(){flashForm(null)};
+  if($('fAll'))$('fAll').onclick=function(){flashCancelAll(open)};
+  $('shB').querySelectorAll('[data-fe]').forEach(function(b){b.onclick=function(){flashForm(b.dataset.fe)}});
+  $('shB').querySelectorAll('[data-fx]').forEach(function(b){b.onclick=function(){flashCancel(b.dataset.fx)}})}
+
+function flashCancel(k){var f=flashes[k];if(!f)return showFlash();var p=prodById(k),ended=fst(f)==='end';flashView=false;
+  sheet(ended?'ลบรายการ Flash sale':'ยกเลิก Flash sale','<p class="warn">'+(ended?'ลบรายการ Flash sale ของ':'ยกเลิก Flash sale ของ')+' <b id="fcn"></b>'+(ended?'ออกจากรายการ?':' ทันที? ราคาจะกลับเป็นราคาปกติ')+'</p>',ended?'ยืนยันลบ':'ยืนยันยกเลิก',function(){
+    FB.delFlash(k).then(showFlash).catch(pe)},true);
+  $('fcn').textContent=p?p.name:'สินค้านี้';$('shC').onclick=showFlash}
+function flashCancelAll(keys){flashView=false;
+  sheet('ยกเลิก Flash sale ทั้งหมด','<p class="warn">ยกเลิก Flash sale ที่ยังไม่สิ้นสุดทั้ง <b>'+keys.length+'</b> รายการทันที? ราคาจะกลับเป็นราคาปกติ</p>','ยืนยันยกเลิกทั้งหมด',function(){
+    Promise.all(keys.map(function(k){return FB.delFlash(k)})).then(showFlash).catch(pe)},true);
+  $('shC').onclick=showFlash}
+
+function flashForm(k){flashView=false;
+  var ed=k!=null?flashes[k]:null,now=Date.now(),pl=ed?[prodById(k)].filter(Boolean):prods;
+  if(!pl.length)return info('⚡ Flash sale','<p class="warn">ยังไม่มีสินค้า กรุณาเพิ่มสินค้าก่อน</p>');
+  var h='<div class="lbl">'+(ed?'สินค้า':'เลือกสินค้า (เลือกได้หลายรายการ)')+'</div><div id="fx_l">'+pl.map(function(p){
+    var f0=flashes[p.id],on=f0&&fst(f0)!=='end';
+    return '<label class="chk"><input type="checkbox" class="fpc" value="'+p.id+'"'+(ed?' checked disabled':'')+'> <span>'+esc(p.name)+' · '+p.price+' 🪙'+(on?' ⚡':'')+'</span></label>'}).join('')+'</div>'+
+    '<div class="lbl">รูปแบบส่วนลด</div><select id="fx_t"><option value="pct">ลดเป็นเปอร์เซ็นต์ (%)</option><option value="coin">ลดเป็นคอยน์ (🪙) ต่อชิ้น</option></select>'+
+    fld('จำนวนส่วนลด','fx_v','number')+
+    '<div class="lbl">เวลาเริ่ม <span class="opt">(ตั้งเป็นเวลาปัจจุบันเพื่อเริ่มทันที)</span></div><input id="fx_s" type="datetime-local">'+
+    '<div class="lbl">เวลาสิ้นสุด</div><input id="fx_e" type="datetime-local">'+
+    '<div class="chips" style="margin-top:8px"><button type="button" class="chip" data-h="1">+1 ชม.</button><button type="button" class="chip" data-h="3">+3 ชม.</button><button type="button" class="chip" data-h="24">+1 วัน</button><button type="button" class="chip" data-h="72">+3 วัน</button></div>'+
+    '<div class="lbl">ตัวอย่างราคา</div><div class="cf" id="fx_p"></div>'+
+    '<div class="hint">เวลาอิงจากนาฬิกาของอุปกรณ์ · ยกเลิกหรือแก้ไขได้ทุกเมื่อจากหน้า ⚡ Flash sale</div>';
+  sheet(ed?'แก้ไข Flash sale':'ตั้ง Flash sale ใหม่',h,'บันทึก',function(){
+    var ids=ed?[String(k)]:Array.prototype.map.call(document.querySelectorAll('.fpc:checked'),function(c){return c.value});
+    if(!ids.length)return shErr('กรุณาเลือกสินค้าอย่างน้อย 1 รายการ');
+    var type=$('fx_t').value,val=Math.floor(+$('fx_v').value);
+    if(!(val>=1))return shErr('กรุณากรอกจำนวนส่วนลดให้ถูกต้อง');
+    if(type==='pct'&&val>100)return shErr('เปอร์เซ็นต์ต้องอยู่ระหว่าง 1–100');
+    if(type==='coin'){var bad=ids.map(prodById).find(function(p){return p&&val>p.price});
+      if(bad)return shErr('ลดได้ไม่เกินราคาสินค้า ('+bad.name+' ราคา '+bad.price+' 🪙)')}
+    if(!$('fx_s').value)return shErr('กรุณาเลือกเวลาเริ่ม');
+    if(!$('fx_e').value)return shErr('กรุณาเลือกเวลาสิ้นสุด');
+    var st=new Date($('fx_s').value).getTime(),en=new Date($('fx_e').value).getTime();
+    if(isNaN(st)||isNaN(en))return shErr('รูปแบบเวลาไม่ถูกต้อง');
+    if(en<=st)return shErr('เวลาสิ้นสุดต้องอยู่หลังเวลาเริ่ม');
+    if(en<=Date.now())return shErr('เวลาสิ้นสุดผ่านไปแล้ว');
+    $('shOk').disabled=true;
+    FB.saveFlash(ids.map(function(i){return{pid:i,type:type,val:val,start:st,end:en}})).then(function(){$('shOk').disabled=false;showFlash()}).catch(function(e){$('shOk').disabled=false;pe(e)})});
+  $('shC').onclick=showFlash;
+  if(ed){$('fx_t').value=ed.type;$('fx_v').value=ed.val}
+  $('fx_s').value=ldt(ed?ed.start:now);$('fx_e').value=ldt(ed?ed.end:now+36e5);
+  var pv=function(){var type=$('fx_t').value,val=Math.floor(+$('fx_v').value);
+    $('fx_v').placeholder=type==='pct'?'เช่น 20 (%)':'เช่น 10 (คอยน์)';
+    var ids=ed?[String(k)]:Array.prototype.map.call(document.querySelectorAll('.fpc:checked'),function(c){return c.value});
+    if(!ids.length)return $('fx_p').textContent='เลือกสินค้าเพื่อดูตัวอย่าง';
+    if(!(val>=1))return $('fx_p').textContent='กรอกจำนวนส่วนลดเพื่อดูตัวอย่าง';
+    $('fx_p').innerHTML=ids.map(function(i){var p=prodById(i);if(!p)return '';
+      return esc(p.name)+': '+p.price+' → <b>'+fprice(p,{type:type,val:val})+' 🪙</b>'}).join('<br>')};
+  $('fx_t').onchange=pv;$('fx_v').oninput=pv;
+  document.querySelectorAll('.fpc').forEach(function(c){c.onchange=pv});
+  $('shB').querySelectorAll('[data-h]').forEach(function(b){b.onclick=function(){
+    var s=new Date($('fx_s').value).getTime();if(isNaN(s))s=Date.now();
+    $('fx_e').value=ldt(s+(+b.dataset.h)*36e5)}});
+  pv()}
+
+setInterval(function(){if(!cur||!accounts[cur])return;var now=Date.now();
+  document.querySelectorAll('[data-cd]').forEach(function(e){e.textContent=e.dataset.pre+cdTxt(+e.dataset.cd-now)});
+  var sg=Object.keys(flashes).map(function(k){return k+fst(flashes[k],now)}).join('|')+'#'+iso(new Date());
+  if(sg!==flashSig){flashSig=sg;renderHome();if(flashView&&!$('sheet').classList.contains('hide'))showFlash()}},1000);
+
 function toggleShop(){var to=!shopOpen;
   sheet(to?'เปิดร้าน':'ปิดร้าน','<p class="warn">'+(to?'เปิดร้านให้สมาชิกสั่งซื้อได้ตามปกติ?':'ปิดร้าน สมาชิกจะสั่งซื้อไม่ได้จนกว่าจะเปิดใหม่?')+'</p>',to?'เปิดร้าน':'ปิดร้าน',function(){
     FB.setShop(to).then(closeSheet).catch(pe)},!to)}
@@ -779,7 +949,7 @@ renderPick();
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {getAuth,onAuthStateChanged,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,setPersistence,browserLocalPersistence,browserSessionPersistence,EmailAuthProvider,reauthenticateWithCredential,updatePassword,deleteUser} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {getFirestore,doc,collection,collectionGroup,query,where,onSnapshot,getDoc,getDocs,setDoc,updateDoc,deleteDoc,writeBatch,runTransaction,serverTimestamp,orderBy,limit} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {getFirestore,doc,collection,collectionGroup,query,where,onSnapshot,getDoc,getDocs,setDoc,updateDoc,deleteDoc,writeBatch,runTransaction,serverTimestamp,orderBy,limit,increment} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 /* ▼▼▼ วางค่า firebaseConfig ของคุณตรงนี้ (Firebase Console > Project settings > Your apps) ▼▼▼ */
 const firebaseConfig={
@@ -804,6 +974,19 @@ const mkAcc=(id,d)=>{const a=Object.assign({id:id},d);a.owner=isOwn(d);return a}
 const D=(...p)=>doc(db,...p);
 const errLog=e=>console.error('Firestore:',e.code,e.message);
 let unsubs=[],signing=false,rawCodes=[],rawUses=[];
+/* เจ้าของ: ซิงก์ตารางอันดับ (board) ให้ตรงกับประวัติคอยน์จริงของผู้ใช้ */
+let syncT=null;
+function syncBoard(){clearTimeout(syncT);syncT=setTimeout(async()=>{
+  const me=cur&&accounts[cur];if(!me||!me.owner)return;
+  const bm={};board.forEach(x=>{bm[x.uid]=x});const ops=[];
+  Object.keys(accounts).forEach(k=>{const a=accounts[k],bd=bm[k];
+    if(a.owner){if(bd)ops.push(b=>b.delete(D('board',k)));return}
+    const inc=sums(a).i;if(!bd&&!inc)return;
+    if(!bd||bd.inc!==inc||bd.name!==a.name||(bd.cls||'')!==(a.cls||'')||!!bd.banned!==!!a.banned)
+      ops.push(b=>b.set(D('board',k),{uid:k,name:a.name,cls:a.cls||'',inc:inc,banned:!!a.banned}))});
+  Object.keys(bm).forEach(k=>{if(!accounts[k])ops.push(b=>b.delete(D('board',k)))});
+  for(let i=0;i<ops.length;i+=400){const b=writeBatch(db);ops.slice(i,i+400).forEach(f=>f(b));try{await b.commit()}catch(e){errLog(e);break}}
+},1500)}
 
 function stop(){unsubs.forEach(f=>f());unsubs=[]}
 function banOut(d){
@@ -819,9 +1002,11 @@ function mergeCodes(){codes=rawCodes.map(c=>Object.assign({},c,{uses:rawUses.fil
 function attach(uid,own){
   unsubs.push(onSnapshot(D('config','shop'),s=>{shopOpen=s.exists()?s.data().open!==false:true;refresh()},errLog));
   unsubs.push(onSnapshot(collection(db,'products'),s=>{prods=s.docs.map(x=>x.data()).sort((a,b)=>(a.ord||0)-(b.ord||0));refresh()},errLog));
+  unsubs.push(onSnapshot(collection(db,'flash'),s=>{flashes={};s.docs.forEach(x=>{flashes[x.id]=x.data()});refresh()},errLog));
+  unsubs.push(onSnapshot(collection(db,'board'),s=>{board=s.docs.map(x=>x.data());refresh();if(own)syncBoard()},errLog));
   unsubs.push(onSnapshot(own?collection(db,'orders'):query(collection(db,'orders'),where('u','==',uid)),s=>{orders=s.docs.map(x=>x.data());refresh()},errLog));
   if(!own)return;
-  unsubs.push(onSnapshot(collection(db,'users'),s=>{accounts={};s.docs.forEach(x=>{accounts[x.id]=mkAcc(x.id,x.data())});refresh()},errLog));
+  unsubs.push(onSnapshot(collection(db,'users'),s=>{accounts={};s.docs.forEach(x=>{accounts[x.id]=mkAcc(x.id,x.data())});refresh();syncBoard()},errLog));
   unsubs.push(onSnapshot(collection(db,'codes'),s=>{rawCodes=s.docs.map(x=>x.data());mergeCodes();refresh()},errLog));
   unsubs.push(onSnapshot(collectionGroup(db,'uses'),s=>{rawUses=s.docs.map(x=>x.data());mergeCodes();refresh()},errLog));
   unsubs.push(onSnapshot(query(collection(db,'logs'),orderBy('t','desc'),limit(500)),s=>{logs=s.docs.map(x=>x.data());refresh()},errLog));
@@ -839,7 +1024,7 @@ function start(uid){
 if(ready)onAuthStateChanged(auth,u=>{
   if(signing)return;
   if(u){start(u.uid)}
-  else{stop();const was=cur;cur=null;accounts={};prods=[];orders=[];codes=[];logs=[];rawCodes=[];rawUses=[];if(was)leave()}
+  else{stop();const was=cur;cur=null;accounts={};prods=[];flashes={};board=[];orders=[];codes=[];logs=[];rawCodes=[];rawUses=[];if(was)leave()}
 });
 
 let ipCache=null;
@@ -863,33 +1048,67 @@ const FB={
       await b.commit()}
     catch(x){await cr.user.delete().catch(()=>{});signing=false;throw new Error(e?'อีเมลนี้ถูกใช้แล้ว หรือบันทึกไม่สำเร็จ':'สร้างบัญชีไม่สำเร็จ ('+(x.code||x.message)+')')}
     signing=false;start(cr.user.uid);addLog('signup',cr.user.uid,u,cls)},   // เข้าสู่ระบบให้อัตโนมัติหลังสมัคร
-  async login(u,p,rem){need();let name=u;
+  async login(u,p,rem){need();let name=u,chk=true;
     if(u.indexOf('@')>=0){const s=await getDoc(D('emailIndex',u.toLowerCase())).catch(()=>null);
       if(!s||!s.exists()||!s.data().name){const e=new Error('ไม่พบอีเมลนี้ กรุณาเข้าสู่ระบบด้วยชื่อผู้ใช้');e.cfg=1;throw e}
-      name=s.data().name}
-    await setPersistence(auth,rem?browserLocalPersistence:browserSessionPersistence);const cr=await signInWithEmailAndPassword(auth,em(name),p);
-    getDoc(D('users',cr.user.uid)).then(s=>{const d=s.exists()?s.data():{};addLog('login',cr.user.uid,d.name||name,d.cls||'')}).catch(()=>{})},
+      name=s.data().name;chk=false}
+    await setPersistence(auth,rem?browserLocalPersistence:browserSessionPersistence);signing=true;let cr;
+    try{cr=await signInWithEmailAndPassword(auth,em(name),p)}catch(x){signing=false;throw x}
+    let d={};try{const s=await getDoc(D('users',cr.user.uid));if(s.exists())d=s.data()}catch(x){}
+    if(chk&&d.name&&d.name!==u){try{await signOut(auth)}catch(x){}signing=false;const e=new Error('กรุณาใส่ชื่อผู้ใช้ให้ถูกต้อง เช็คตัวเล็กตัวใหญ่');e.cfg=1;throw e}
+    signing=false;start(cr.user.uid);addLog('login',cr.user.uid,d.name||name,d.cls||'')},
   async deleteAccount(pw){need();const us=auth.currentUser,a=accounts[cur];
     await reauthenticateWithCredential(us,EmailAuthProvider.credential(us.email,pw));
-    const b=writeBatch(db);b.delete(D('users',cur));if(a.email)b.delete(D('emailIndex',a.email));await b.commit();
+    const b=writeBatch(db);b.delete(D('users',cur));if(a.email)b.delete(D('emailIndex',a.email));await b.commit();await deleteDoc(D('board',cur)).catch(()=>{});
     await deleteUser(us)},
   logout(){return signOut(auth)},
   async changePass(o,n){need();const us=auth.currentUser;await reauthenticateWithCredential(us,EmailAuthProvider.credential(us.email,o));await updatePassword(us,n)},
   setAvatar(v){return updateDoc(D('users',cur),{avatar:v})},
-  setBan(uid,on,why){return updateDoc(D('users',uid),on?{banned:true,banReason:why||'',bannedAt:Date.now()}:{banned:false,banReason:'',bannedAt:0})},
+  setBan(uid,on,why){return updateDoc(D('users',uid),on?{banned:true,banReason:why||'',bannedAt:Date.now()}:{banned:false,banReason:'',bannedAt:0}).then(()=>setDoc(D('board',uid),{uid:uid,banned:!!on},{merge:true}).catch(()=>{}))},
   async sendWarn(uid,m){const r=D('users',uid),sn=await getDoc(r),w=((sn.exists()&&sn.data().warns)||[]).slice(-19);
     w.push({id:'w'+Date.now(),t:Date.now(),m:m});return updateDoc(r,{warns:w})},
   saveProduct(p){return setDoc(D('products',String(p.id)),p)},
-  delProduct(id){return deleteDoc(D('products',String(id)))},
+  delProduct(id){return deleteDoc(D('products',String(id))).then(()=>deleteDoc(D('flash',String(id))).catch(()=>{}))},
+  saveFlash(list){const b=writeBatch(db),now=Date.now();list.forEach(x=>b.set(D('flash',String(x.pid)),{pid:+x.pid,type:x.type,val:x.val,start:x.start,end:x.end,on:true,created:now}));return b.commit()},
+  delFlash(k){return deleteDoc(D('flash',String(k)))},
   swapProducts(a,b){const w=writeBatch(db);w.update(D('products',String(a.id)),{ord:b.ord});w.update(D('products',String(b.id)),{ord:a.ord});return w.commit()},
   saveCode(c){return setDoc(D('codes',c.code),{id:Date.now(),code:c.code,type:c.type,val:c.val,max:c.max,exp:c.exp,expMs:new Date(c.exp+'T23:59:59.999+07:00').getTime(),on:true,used:0,created:Date.now()})},
   toggleCode(code,on){return updateDoc(D('codes',code),{on:on})},
   setShop(open){return setDoc(D('config','shop'),{open:open})},
   async resetAll(){need();const ops=[];
     for(const n of ['products','orders','codes'])(await getDocs(collection(db,n))).forEach(x=>ops.push(b=>b.delete(x.ref)));
+    try{(await getDocs(collection(db,'flash'))).forEach(x=>ops.push(b=>b.delete(x.ref)))}catch(e){}
+    try{(await getDocs(collection(db,'board'))).forEach(x=>ops.push(b=>b.delete(x.ref)))}catch(e){}
     (await getDocs(collectionGroup(db,'uses'))).forEach(x=>{const u=x.data();ops.push(b=>b.delete(x.ref));ops.push(b=>b.delete(D('codes',u.cd,'users',u.u)))});
-    (await getDocs(collection(db,'users'))).forEach(x=>{if(!isOwn(x.data()))ops.push(b=>b.update(x.ref,{coins:0,ledger:[]}))});
+    (await getDocs(collection(db,'users'))).forEach(x=>{if(!isOwn(x.data()))ops.push(b=>b.update(x.ref,{coins:0,ledger:[],sub:null}))});
     for(let i=0;i<ops.length;i+=100){const b=writeBatch(db);ops.slice(i,i+100).forEach(f=>f(b));await b.commit()}},
+  async subscribe(pk){need();const a=accounts[cur],P=PKG.find(x=>x.id===pk);
+    if(!a||a.owner||!P)throw new Error('ข้อมูลไม่ถูกต้อง');
+    await runTransaction(db,async tx=>{const uR=D('users',cur),uS=await tx.get(uR);
+      if(!uS.exists())throw new Error('ไม่พบบัญชี');
+      const u=uS.data(),td=iso(new Date());
+      if(u.sub&&u.sub.end&&td<=u.sub.end)throw new Error('คุณเป็นสมาชิกอยู่แล้ว');
+      if((u.coins||0)<P.price)throw new Error('คอยน์ไม่พอ (ต้องใช้ '+P.price+' คอยน์ มี '+(u.coins||0)+' คอยน์)');
+      const now=Date.now();let b=(u.coins||0)-P.price;
+      const L=[...(u.ledger||[]),{t:now,d:-P.price,n:'สมัครสมาชิก '+P.name,b:b,rf:false}];
+      b+=P.up;L.push({t:now+1,d:P.up,n:'โบนัสสมาชิก (รับทันที) '+P.name,b:b,rf:false});
+      tx.update(uR,{coins:b,ledger:L,sub:{pk:P.id,start:td,end:addDays(td,P.days),last:'',n:0,t:now}})});
+    setDoc(D('board',cur),{uid:cur,name:a.name,cls:a.cls||'',inc:increment(P.up)},{merge:true}).catch(()=>{});
+    return{data:{}}},
+  async claimDaily(){need();const a=accounts[cur];if(!a||a.owner)throw new Error('ข้อมูลไม่ถูกต้อง');const res={};
+    await runTransaction(db,async tx=>{const uR=D('users',cur),uS=await tx.get(uR);
+      if(!uS.exists())throw new Error('ไม่พบบัญชี');
+      const u=uS.data(),s=u.sub,td=iso(new Date());
+      if(!s||!s.end)throw new Error('ยังไม่ได้สมัครสมาชิก');
+      const P=PKG.find(x=>x.id===s.pk)||PKG[0];
+      if(td>s.end)throw new Error('แพ็คเกจสมาชิกหมดอายุแล้ว');
+      if(td<=s.start)throw new Error('เริ่มเก็บคอยน์ได้ตั้งแต่พรุ่งนี้');
+      if((s.last||'')>=td)throw new Error('วันนี้คุณเก็บคอยน์แล้ว');
+      const now=Date.now(),nb=(u.coins||0)+P.daily,n=(s.n||0)+1;
+      tx.update(uR,{coins:nb,ledger:[...(u.ledger||[]),{t:now,d:P.daily,n:'เก็บคอยน์สมาชิกรายวัน ('+n+'/'+P.days+')',b:nb,rf:false}],sub:Object.assign({},s,{last:td,n:n})});
+      res.d=P.daily;res.n=n});
+    setDoc(D('board',cur),{uid:cur,name:a.name,cls:a.cls||'',inc:increment(res.d)},{merge:true}).catch(()=>{});
+    return{data:res}},
   confirmOrder(id){return updateDoc(D('orders',String(id)),{st:'confirmed'})},
 
   async checkCode(d){need();const k=String(d.code).trim().toUpperCase();
@@ -908,12 +1127,14 @@ const FB={
     const oid=Date.now(),code=d.code?String(d.code).toUpperCase():'',res={};
     await runTransaction(db,async tx=>{
       const pR=D('products',String(d.pid)),uR=D('users',cur);
-      const pS=await tx.get(pR),uS=await tx.get(uR),sS=await tx.get(D('config','shop'));
+      const pS=await tx.get(pR),uS=await tx.get(uR),sS=await tx.get(D('config','shop')),fS=await tx.get(D('flash',String(d.pid))).catch(()=>null);
       if(!a.owner&&sS.exists()&&sS.data().open===false)throw new Error('ร้านปิดอยู่ ยังสั่งซื้อไม่ได้');
       if(!pS.exists())throw new Error('ไม่พบสินค้า');
       const p=pS.data(),u=uS.data();
       if(q>p.stock)throw new Error('สินค้าไม่พอ');
-      const sub=q*p.price;let disc=0,c=null,cR,mR;
+      const fd0=fS&&fS.exists()?fS.data():null,fl=!!fd0&&fst(fd0)==='live'&&fprice(p,fd0)<p.price,up=fl?fprice(p,fd0):p.price;
+      if(d.ep!=null&&+d.ep!==up)throw new Error('ราคาสินค้าเปลี่ยนแปลง กรุณากดสั่งซื้อใหม่');
+      const sub=q*up;let disc=0,c=null,cR,mR;
       if(code){cR=D('codes',code);mR=D('codes',code,'users',cur);
         const cS=await tx.get(cR),mS=await tx.get(mR);
         if(!cS.exists())throw new Error('ไม่พบโค้ดนี้');
@@ -924,7 +1145,7 @@ const FB={
       const tot=sub-disc;
       if(!a.owner&&u.coins<tot)throw new Error('คอยน์ไม่พอ (ต้องใช้ '+tot+' คอยน์ มี '+u.coins+' คอยน์)');
       const now=Date.now();
-      tx.set(D('orders',String(oid)),{id:oid,u:cur,pid:p.id,n:p.name,q:q,pr:p.price,tot:tot,disc:disc,cd:code,pt:PTS[+d.pt],tm:d.tm,dy:d.dy,st:a.owner?'confirmed':'pending',t:now});
+      tx.set(D('orders',String(oid)),{id:oid,u:cur,pid:p.id,n:p.name,q:q,pr:up,po:p.price,fl:fl,tot:tot,disc:disc,cd:code,pt:PTS[+d.pt],tm:d.tm,dy:d.dy,st:a.owner?'confirmed':'pending',t:now});
       tx.update(pR,{stock:p.stock-q,lastOrder:String(oid)});
       if(!a.owner){const nb=u.coins-tot;tx.update(uR,{coins:nb,ledger:[...(u.ledger||[]),{t:now,d:-tot,n:'ซื้อ '+p.name+' ×'+q,b:nb,rf:false}]})}
       if(c){tx.update(cR,{used:(c.used||0)+1});tx.set(mR,{t:now});
@@ -954,6 +1175,7 @@ const FB={
       const u=uS.data(),nb=(u.coins||0)+v;
       if(nb<0)throw new Error('หักเกินยอดคงเหลือไม่ได้');
       tx.update(uR,{coins:nb,ledger:[...(u.ledger||[]),{t:Date.now(),d:v,n:(v>0?'เจ้าของให้คอยน์':'เจ้าของหักคอยน์')+(d.note?' · '+d.note:''),b:nb,rf:false}]})});
+    if(v>0){const bu=accounts[d.uid]||{};setDoc(D('board',d.uid),{uid:d.uid,name:bu.name||'',cls:bu.cls||'',inc:increment(v)},{merge:true}).catch(()=>{})}
     return{data:{}}}
 };
 window.FB=FB;window.CF=FB;
