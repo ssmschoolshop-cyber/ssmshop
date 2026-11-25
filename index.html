@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="th">
 <head>
 <meta charset="utf-8">
@@ -568,7 +568,13 @@ function rejectOrd(id){var o=orders.find(x=>x.id===id);if(!o||o.st!=='pending')r
   sheet('ไม่รับออเดอร์','<p class="warn">ยกเลิกออเดอร์ <b id="rn"></b> และคืนคอยน์ให้ผู้ซื้อ?</p>','ยืนยันไม่รับ',()=>{
     CF.rejectOrder({oid:o.id}).then(function(){showOrd()}).catch(function(e){shErr(e.message||'ผิดพลาด')})},true);
   $('rn').textContent=o.n+' ×'+o.q;$('shC').onclick=showOrd}
+function warnPop(){var w=(A().warns||[]).find(x=>!seen(x.id));if(!w)return false;
+  mark(w.id);
+  popup('⚠️ คำเตือนจากผู้ดูแลร้าน',b=>{b.textContent=w.m;var d=document.createElement('div');d.className='hint';d.textContent='ส่งเมื่อ '+fd(w.t);b.appendChild(d)},'รับทราบ',notify);
+  var t=document.querySelector('#modal .tick');t.textContent='⚠️';t.style.background='#e0b400';t.style.color='#000';
+  return true}
 function notify(){if(!cur||!A()||A().owner||!$('modal').classList.contains('hide'))return;
+  if(warnPop())return;
   var o=orders.find(x=>x.u===cur&&!seen(x.id)&&(x.st==='confirmed'||x.st==='rejected'));if(!o)return;
   mark(o.id);var ok=o.st==='confirmed';
   popup(ok?'ออร์เดอร์ได้รับการยืนยัน':'ออร์เดอร์ถูกยกเลิก',b=>{
@@ -636,10 +642,19 @@ function memDet(k,g){var me=A();if(!me||!me.owner)return;var a=accounts[k];if(!a
     row('สถานะ',a.owner?'เจ้าของ 👑':(a.banned?'🚫 ถูกแบน'+(a.banReason?' ('+esc(a.banReason)+')':''):'สมาชิก'))+
     row('คอยน์คงเหลือ',bal(a)+' 🪙')+
     row('จำนวนออเดอร์',oc+' รายการ')+
-    (a.owner?'':'<button type="button" class="lnk go2" id="mCoin">🪙 จัดการคอยน์</button><button type="button" class="lnk go2'+(a.banned?'':' danger')+'" id="mBan">'+(a.banned?'✅ ปลดแบน':'🚫 แบนผู้ใช้')+'</button>'),
+    (a.owner?'':row('คำเตือนที่เคยส่ง',(a.warns||[]).length+' ครั้ง'))+
+    (a.owner?'':'<button type="button" class="lnk go2" id="mCoin">🪙 จัดการคอยน์</button><button type="button" class="lnk go2" id="mWarn">⚠️ ส่งคำเตือน</button><button type="button" class="lnk go2'+(a.banned?'':' danger')+'" id="mBan">'+(a.banned?'✅ ปลดแบน':'🚫 แบนผู้ใช้')+'</button>'),
     'กลับ',function(){showMem(g)});
   $('shC').style.display='none';
-  if($('mCoin'))$('mCoin').onclick=function(){userDet(k)};if($('mBan'))$('mBan').onclick=function(){banForm(k,g)}}
+  if($('mCoin'))$('mCoin').onclick=function(){userDet(k)};if($('mBan'))$('mBan').onclick=function(){banForm(k,g)};if($('mWarn'))$('mWarn').onclick=function(){warnForm(k,g)}}
+
+function warnForm(k,g){var a=accounts[k];if(!a||a.owner)return;
+  var H=(a.warns||[]).slice().reverse().slice(0,5).map(w=>'<div class="cf"><span class="hint">'+fd(w.t)+'</span><br>'+esc(w.m)+'</div>').join('');
+  sheet('ส่งคำเตือน','<p class="warn">ส่งคำเตือนถึง <b id="wn"></b> ข้อความจะเด้งขึ้นหน้าจอผู้ใช้ทันที (ถ้าไม่ได้ออนไลน์ จะเด้งตอนเข้าสู่ระบบครั้งถัดไป)</p>'+fld('ข้อความคำเตือน','wm')+(H?'<div class="lbl">คำเตือนล่าสุด</div>'+H:''),'ส่งคำเตือน',function(){
+    var m=$('wm').value.trim();if(!m)return shErr('กรุณาพิมพ์ข้อความคำเตือน');
+    if(m.length>300)return shErr('ข้อความยาวเกินไป (ไม่เกิน 300 ตัวอักษร)');
+    FB.sendWarn(k,m).then(function(){memDet(k,g)}).catch(function(e){shErr('ส่งไม่สำเร็จ ('+(e.code||e.message)+')')})},true);
+  $('wn').textContent=a.name;$('shC').onclick=function(){memDet(k,g)}}
 function showUsr(){var ks=Object.keys(accounts);
   info('คอยน์ของผู้ใช้',ks.map(k=>'<button type="button" class="lnk ghost" data-k="'+esc(k)+'">'+esc(accounts[k].name)+' · '+esc(accounts[k].cls)+' · <b>'+bal(accounts[k])+' 🪙</b></button>').join(''));
   $('shB').querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>userDet(b.dataset.k))}
@@ -862,6 +877,8 @@ const FB={
   async changePass(o,n){need();const us=auth.currentUser;await reauthenticateWithCredential(us,EmailAuthProvider.credential(us.email,o));await updatePassword(us,n)},
   setAvatar(v){return updateDoc(D('users',cur),{avatar:v})},
   setBan(uid,on,why){return updateDoc(D('users',uid),on?{banned:true,banReason:why||'',bannedAt:Date.now()}:{banned:false,banReason:'',bannedAt:0})},
+  async sendWarn(uid,m){const r=D('users',uid),sn=await getDoc(r),w=((sn.exists()&&sn.data().warns)||[]).slice(-19);
+    w.push({id:'w'+Date.now(),t:Date.now(),m:m});return updateDoc(r,{warns:w})},
   saveProduct(p){return setDoc(D('products',String(p.id)),p)},
   delProduct(id){return deleteDoc(D('products',String(id)))},
   swapProducts(a,b){const w=writeBatch(db);w.update(D('products',String(a.id)),{ord:b.ord});w.update(D('products',String(b.id)),{ord:a.ord});return w.commit()},
