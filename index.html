@@ -309,6 +309,27 @@ button:focus-visible,.chip:focus-visible,.av:focus-visible{outline:none;box-shad
 .fcd.soon{color:var(--mute)}
 .fbar{background:linear-gradient(135deg,#ff3d54,#ff8a00);color:#fff;border-radius:16px;padding:10px 14px;font-size:14px;font-weight:700;margin-top:12px;text-align:center;box-shadow:0 6px 16px rgba(255,61,84,.35)}
 .fst{font-size:13px;font-weight:700}.fst.live{color:var(--err)}.fst.soon{color:#b07a00}.fst.end{color:var(--mute)}
+
+/* ===== ป้ายประกาศ + โหวต + เครื่องหมาย ❗ ===== */
+textarea{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;outline:none;resize:vertical}
+textarea:focus{border-color:var(--pri);box-shadow:0 0 0 4px var(--glow)}
+.bang{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom,0px));right:max(24px,calc(50vw - 240px + 24px));z-index:30;width:56px;height:56px;border:0;border-radius:50%;background:linear-gradient(135deg,#ff3d54,#ff8a00);color:#fff;font:inherit;font-size:30px;font-weight:700;line-height:1;cursor:pointer;box-shadow:0 8px 22px rgba(255,61,84,.55);animation:bangp 1.3s ease-in-out infinite}
+@keyframes bangp{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+.annb{background:var(--card);border:2px solid var(--err);border-radius:16px;padding:12px 14px;margin-top:14px;text-align:left}
+.annb .ah{color:var(--err);font-size:12px;font-weight:700;margin-bottom:4px}
+.annb .at{color:var(--err);font-weight:700;font-size:15px;line-height:1.6;white-space:pre-wrap;word-break:break-word}
+.poll{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:16px;padding:14px;margin-top:10px;text-align:left}
+.pq{font-weight:700;font-size:16px;line-height:1.5;margin-bottom:10px;word-break:break-word}
+.popt{display:block;width:100%;text-align:left;font:inherit;font-weight:500;font-size:15px;padding:12px 14px;margin-top:8px;border-radius:12px;border:1.5px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer;transition:all .2s var(--ease)}
+.popt:hover{border-color:var(--pri);transform:translateY(-1px)}
+.popt:active{transform:scale(.97)}
+.pwarn{font-size:12px;font-weight:700;color:#b07a00;margin-top:10px}
+.pres{position:relative;overflow:hidden;display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:8px;padding:11px 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);font-size:14px}
+.pres.me{border-color:var(--pri);font-weight:700}
+.pbar{position:absolute;left:0;top:0;bottom:0;background:rgba(47,128,237,.2);z-index:0;transition:width .4s var(--ease)}
+.pres span{position:relative;z-index:1}
+.pres .pl1{word-break:break-word}.pres .pl2{white-space:nowrap;color:var(--mute);font-size:13px}
+.pf{margin-top:10px}
 </style>
 </head>
 <body>
@@ -370,7 +391,7 @@ button:focus-visible,.chip:focus-visible,.av:focus-visible{outline:none;box-shad
   <div class="atop"><button type="button" class="cbtn" id="cBtn" aria-label="คอยน์">🪙 <span id="cBal">0</span></button><div class="who"><div id="aName"></div><div class="role" id="aRole"></div></div><button type="button" class="av" id="avTop" aria-label="แก้ไขโปรไฟล์"></button></div>
   <div class="logo sm" role="img" aria-label="Bell &amp; Buy"></div>
   <div class="amid" id="amid"></div>
-</div></div>
+</div><button type="button" class="bang hide" id="bang" aria-label="มีของใหม่ด้านล่าง">❗</button></div>
 
 <div class="modal hide" id="menuM"><div class="box sheet">
   <div class="menu">
@@ -501,13 +522,13 @@ function showCoin(){var a=A();
   $('lop').onclick=()=>window.open('https://line.me/R/ti/p/'+encodeURIComponent(LINE),'_blank')}
 $('cBtn').onclick=showCoin;
 
-function renderHome(){var a=A(),nl=prods.filter(function(p){return unit(p)<p.price}).length,h=memHome(a)+'<div class="menu">'+(a.owner?'':'<button type="button" id="bSub">'+subBtnTxt(a)+'</button>')+'<button type="button" id="bBoard">🏆 อันดับยอดคอยน์เข้า</button><button type="button" id="bHis">🧾 ประวัติการซื้อ (3 เดือน)</button>'+(a.owner?'<button type="button" id="bOrd">📋 ออเดอร์รอยืนยัน'+(orders.some(o=>o.st==='pending')?' ('+orders.filter(o=>o.st==='pending').length+')':'')+'</button><button type="button" id="bMan">⚙️ จัดการสินค้า</button><button type="button" id="bUsr">👥 คอยน์ของผู้ใช้</button><button type="button" id="bMem">🪪 ข้อมูลสมาชิก</button><button type="button" id="bFl">⚡ Flash sale</button><button type="button" id="bCod">🏷️ โค้ดส่วนลด</button><button type="button" id="bLog">🛡️ ประวัติเข้าสู่ระบบ / สมัคร</button><button type="button" id="bShop">'+(shopOpen?'🟢 ร้านเปิดอยู่ · กดเพื่อปิดร้าน':'🔴 ร้านปิดอยู่ · กดเพื่อเปิดร้าน')+'</button><button type="button" class="dng" id="bRst">🗑️ รีเซ็ตข้อมูลทั้งหมด</button>':'')+'</div>'+(shopOpen?'':'<div class="note">🔒 ร้านปิดอยู่ชั่วคราว ยังสั่งซื้อไม่ได้</div>')+(nl?'<div class="fbar">⚡ Flash sale กำลังลดราคา '+nl+' รายการ</div>':'')+'<div class="lbl">สินค้า</div><div class="grid">';
+function renderHome(){var a=A(),nl=prods.filter(function(p){return unit(p)<p.price}).length,h=memHome(a)+'<div class="menu">'+(a.owner?'':'<button type="button" id="bSub">'+subBtnTxt(a)+'</button>')+'<button type="button" id="bBoard">🏆 อันดับยอดคอยน์เข้า</button><button type="button" id="bHis">🧾 ประวัติการซื้อ (3 เดือน)</button>'+(a.owner?'<button type="button" id="bOrd">📋 ออเดอร์รอยืนยัน'+(orders.some(o=>o.st==='pending')?' ('+orders.filter(o=>o.st==='pending').length+')':'')+'</button><button type="button" id="bMan">⚙️ จัดการสินค้า</button><button type="button" id="bUsr">👥 คอยน์ของผู้ใช้</button><button type="button" id="bMem">🪪 ข้อมูลสมาชิก</button><button type="button" id="bFl">⚡ Flash sale</button><button type="button" id="bAnn">📢 ป้ายประกาศ</button><button type="button" id="bPoll">📊 จัดการโหวต</button><button type="button" id="bCod">🏷️ โค้ดส่วนลด</button><button type="button" id="bLog">🛡️ ประวัติเข้าสู่ระบบ / สมัคร</button><button type="button" id="bShop">'+(shopOpen?'🟢 ร้านเปิดอยู่ · กดเพื่อปิดร้าน':'🔴 ร้านปิดอยู่ · กดเพื่อเปิดร้าน')+'</button><button type="button" class="dng" id="bRst">🗑️ รีเซ็ตข้อมูลทั้งหมด</button>':'')+'</div>'+(shopOpen?'':'<div class="note">🔒 ร้านปิดอยู่ชั่วคราว ยังสั่งซื้อไม่ได้</div>')+(nl?'<div class="fbar">⚡ Flash sale กำลังลดราคา '+nl+' รายการ</div>':'')+'<div class="lbl">สินค้า</div><div class="grid">';
   if(!prods.length){h+='<p class="warn">ยังไม่มีสินค้า</p>'}
   prods.forEach(p=>{var f=flashes[p.id],fs=fst(f),u=unit(p),fl=u<p.price;h+='<div class="pc">'+(fl?'<span class="fbadge">⚡ '+(f.type==='pct'?'-'+f.val+'%':'-'+(p.price-u)+' 🪙')+'</span>':'')+(a.owner?'<button type="button" class="pdel" data-del="'+p.id+'" aria-label="ลบสินค้า">✕</button>':'')+(p.img?'<img src="'+p.img+'" alt="">':'<div class="ph">🛍️</div>')+'<b>'+esc(p.name)+'</b><div>'+priceHTML(p,f,fs,u,fl)+'</div><div class="hint" style="color:var(--mute)">'+(p.stock>0?'เหลือ '+p.stock:'หมด')+'</div><button type="button" data-buy="'+p.id+'"'+(p.stock>0&&(shopOpen||a.owner)?'':' disabled')+'>ซื้อ</button></div>'});
-  $('amid').innerHTML=h+'</div>';
+  $('amid').innerHTML=h+'</div>'+annHTML()+pollsHTML(a);wirePolls(a);
   $('amid').querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>buy(+b.dataset.buy));
   $('amid').querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>delProd(+b.dataset.del));
-  $('bHis').onclick=showHis;$('bBoard').onclick=showBoard;if($('bSub'))$('bSub').onclick=showSub;if($('bClaim'))$('bClaim').onclick=claimDay;if(a.owner){$('bOrd').onclick=showOrd;$('bMan').onclick=showMan;$('bUsr').onclick=showUsr;$('bMem').onclick=function(){showMem(0)};$('bCod').onclick=showCodes;$('bFl').onclick=showFlash;$('bLog').onclick=function(){showLogs('all')};$('bShop').onclick=toggleShop;$('bRst').onclick=resetAll}}
+  $('bHis').onclick=showHis;$('bBoard').onclick=showBoard;if($('bSub'))$('bSub').onclick=showSub;if($('bClaim'))$('bClaim').onclick=claimDay;if(a.owner){$('bOrd').onclick=showOrd;$('bMan').onclick=showMan;$('bUsr').onclick=showUsr;$('bMem').onclick=function(){showMem(0)};$('bCod').onclick=showCodes;$('bFl').onclick=showFlash;$('bAnn').onclick=showAnn;$('bPoll').onclick=showPolls;$('bLog').onclick=function(){showLogs('all')};$('bShop').onclick=toggleShop;$('bRst').onclick=resetAll}}
 
 function delProd(id,after){var p=prods.find(x=>x.id===id);if(!p||!A().owner)return;
   sheet('ลบสินค้า','<p class="warn">ลบ <b id="dpn"></b> ออกจากร้านถาวรใช่ไหม?</p>','ยืนยันลบ',()=>{
@@ -817,6 +838,7 @@ function subConfirm(id){var a=A(),P=pkgOf(id);
 
 /* ===== Flash sale ===== */
 var flashes={},flashView=false,flashSig='';
+var polls=[],pvotes={},pvReady={},ann=null,pollIO=null;
 function pad2(n){return String(n).padStart(2,'0')}
 function fst(f,now){now=now||Date.now();if(!f||f.on===false)return 'off';if(now<f.start)return 'soon';if(now>=f.end)return 'end';return 'live'}
 function fdisc(p,f){var d=f.type==='pct'?Math.floor(p.price*f.val/100):f.val;return Math.max(0,Math.min(d,p.price))}
@@ -905,7 +927,7 @@ function flashForm(k){flashView=false;
 
 setInterval(function(){if(!cur||!accounts[cur])return;var now=Date.now();
   document.querySelectorAll('[data-cd]').forEach(function(e){e.textContent=e.dataset.pre+cdTxt(+e.dataset.cd-now)});
-  var sg=Object.keys(flashes).map(function(k){return k+fst(flashes[k],now)}).join('|')+'#'+iso(new Date());
+  var sg=Object.keys(flashes).map(function(k){return k+fst(flashes[k],now)}).join('|')+'#'+iso(new Date())+'#'+polls.map(function(p){return p.id+(pollOpen(p,now)?1:0)}).join('|');
   if(sg!==flashSig){flashSig=sg;renderHome();if(flashView&&!$('sheet').classList.contains('hide'))showFlash()}},1000);
 
 function toggleShop(){var to=!shopOpen;
@@ -944,6 +966,93 @@ function showLogs(f){var me=A();if(!me||!me.owner)return;f=f||'all';
   $('shB').querySelectorAll('#lgc [data-f]').forEach(function(b){b.onclick=function(){showLogs(b.dataset.f)}});
   $('lq').oninput=function(){var q=this.value.trim().toLowerCase();
     $('shB').querySelectorAll('#lls [data-s]').forEach(function(b){b.style.display=(!q||b.dataset.s.indexOf(q)>=0)?'':'none'})}}
+/* ===================== ป้ายประกาศ + โหวต ===================== */
+function pollOpen(p,now){now=now||Date.now();return !p.end||now<p.end}
+function pollTotal(p){var t=0;Object.keys(p.c||{}).forEach(function(k){t+=(+p.c[k]||0)});return t}
+function pollNew(a){if(!a||a.owner)return[];
+  return polls.filter(function(p){return pollOpen(p)&&pvReady[p.id]&&pvotes[p.id]===undefined&&!seen('p'+p.id)}).sort(function(x,y){return y.t-x.t})}
+function annHTML(){if(!ann||!ann.text)return '';
+  return '<div class="annb"><div class="ah">📢 ประกาศ</div><div class="at">'+esc(ann.text)+'</div></div>'}
+function pollHTML(p,a){var now=Date.now(),open=pollOpen(p,now),mine=pvotes[p.id],voted=mine!==undefined,
+  wait=!a.owner&&open&&!pvReady[p.id],canVote=!a.owner&&open&&pvReady[p.id]&&!voted,tot=pollTotal(p),
+  h='<div class="poll" data-poll="'+p.id+'"><div class="pq">📊 '+esc(p.q)+'</div>';
+  if(wait){h+='<div class="hint">กำลังโหลด…</div>'}
+  else if(canVote){
+    h+=p.opts.map(function(o,i){return '<button type="button" class="popt" data-pv="'+p.id+'" data-o="'+i+'">'+esc(o)+'</button>'}).join('')+'<div class="pwarn">⚠️ โหวตแล้วไม่สามารถเปลี่ยนได้</div>'}
+  else{
+    h+=p.opts.map(function(o,i){var n=+(p.c&&p.c[i])||0,pc=tot?Math.round(n*100/tot):0;
+      return '<div class="pres'+(mine===i?' me':'')+'"><div class="pbar" style="width:'+pc+'%"></div><span class="pl1">'+esc(o)+(mine===i?' ✓':'')+'</span><span class="pl2">'+n+' · '+pc+'%</span></div>'}).join('')}
+  h+='<div class="hint pf">'+(voted?'✅ คุณโหวตแล้ว · ':'')+'ทั้งหมด '+tot+' โหวต · '+(p.end?(open?'<span data-cd="'+p.end+'" data-pre="⏳ เหลือเวลา ">⏳ เหลือเวลา '+cdTxt(p.end-now)+'</span>':'🔒 ปิดโหวตแล้ว'):'ไม่กำหนดเวลาปิด')+'</div></div>';
+  return h}
+function pollsHTML(a){if(!polls.length)return '';
+  return '<div class="lbl">โหวต</div>'+polls.slice().sort(function(x,y){return y.t-x.t}).map(function(p){return pollHTML(p,a)}).join('')}
+function wirePolls(a){var bang=$('bang'),nw=pollNew(a);
+  if(pollIO){pollIO.disconnect();pollIO=null}
+  bang.classList.toggle('hide',!nw.length);
+  bang.onclick=function(){var l=pollNew(A())[0];if(!l)return;var e=document.querySelector('[data-poll="'+l.id+'"]');if(e)e.scrollIntoView({behavior:'smooth',block:'center'})};
+  $('amid').querySelectorAll('[data-pv]').forEach(function(b){b.onclick=function(){voteAsk(+b.dataset.pv,+b.dataset.o)}});
+  if(nw.length&&window.IntersectionObserver){
+    pollIO=new IntersectionObserver(function(es){es.forEach(function(en){
+      if(en.isIntersecting){mark('p'+en.target.dataset.poll);pollIO.unobserve(en.target);bang.classList.toggle('hide',!pollNew(A()).length)}})},{threshold:.5});
+    nw.forEach(function(p){var e=document.querySelector('[data-poll="'+p.id+'"]');if(e)pollIO.observe(e)})}}
+function voteAsk(pid,o){var p=polls.find(function(x){return x.id===pid});if(!p||!pollOpen(p))return;
+  sheet('ยืนยันการโหวต','<p class="warn">คุณเลือก: <b id="vq"></b></p><div class="note" style="margin-top:8px">⚠️ เมื่อกดยืนยันแล้ว <b>ไม่สามารถเปลี่ยนคำตอบได้</b></div>','ยืนยันโหวต',function(){
+    $('shOk').disabled=true;
+    FB.vote(pid,o).then(function(){$('shOk').disabled=false;closeSheet()}).catch(function(e){$('shOk').disabled=false;shErr('โหวตไม่สำเร็จ โหวตอาจปิดแล้วหรือคุณโหวตไปแล้ว ('+(e.code||e.message)+')')})});
+  $('vq').textContent=p.opts[o]}
+
+/* ---- เจ้าของ: ป้ายประกาศ ---- */
+function showAnn(){var me=A();if(!me||!me.owner)return;
+  sheet('📢 ป้ายประกาศ','<p class="warn">แสดงเป็นตัวหนังสือสีแดงใต้รายการสินค้า (ไม่มีการเด้งแจ้งเตือนผู้ใช้) แก้ไขหรือเอาออกได้ทุกเมื่อ</p><textarea id="an_t" rows="4" maxlength="300" placeholder="พิมพ์ข้อความประกาศ…"></textarea><div class="hint" id="an_c"></div>'+(ann&&ann.text?'<button type="button" class="lnk go2 danger" id="an_x">🗑️ เอาประกาศออก</button>':''),'บันทึกประกาศ',function(){
+    var t=$('an_t').value.trim();if(!t)return shErr('กรุณาพิมพ์ข้อความประกาศ');
+    $('shOk').disabled=true;FB.saveAnn(t).then(function(){$('shOk').disabled=false;closeSheet()}).catch(function(e){$('shOk').disabled=false;pe(e)})});
+  $('an_t').value=ann&&ann.text?ann.text:'';
+  var c=function(){$('an_c').textContent=$('an_t').value.length+'/300'};$('an_t').oninput=c;c();
+  if($('an_x'))$('an_x').onclick=function(){$('an_x').disabled=true;FB.delAnn().then(closeSheet).catch(function(e){$('an_x').disabled=false;pe(e)})}}
+
+/* ---- เจ้าของ: จัดการโหวต ---- */
+function showPolls(){var me=A();if(!me||!me.owner)return;var now=Date.now(),L=polls.slice().sort(function(x,y){return y.t-x.t});
+  var h='<button type="button" class="lnk go2" id="pl_add">➕ สร้างโหวตใหม่</button>';
+  h+=L.length?L.map(function(p){var open=pollOpen(p,now);
+    return '<div class="cf"><b>'+esc(p.q)+'</b><br>'+p.opts.map(function(o,i){return esc(o)+': <b>'+((p.c&&+p.c[i])||0)+'</b>'}).join(' · ')+'<br>ทั้งหมด '+pollTotal(p)+' โหวต<br><span class="fst '+(open?'live':'end')+'">'+(open?'🔥 เปิดโหวตอยู่':'🔒 ปิดโหวตแล้ว')+'</span>'+(p.end?' · หมดเขต '+fd(p.end):' · ไม่กำหนดเวลาปิด')+'<div class="row" style="margin-top:8px"><button type="button" class="ghost" data-pe="'+p.id+'">ตั้งเวลาหมดเขต</button><button type="button" class="ghost" data-px="'+p.id+'">ลบโหวต</button></div></div>'}).join(''):'<p class="warn">ยังไม่มีโหวต</p>';
+  info('📊 จัดการโหวต',h);
+  $('pl_add').onclick=pollForm;
+  $('shB').querySelectorAll('[data-pe]').forEach(function(b){b.onclick=function(){pollEnd(+b.dataset.pe)}});
+  $('shB').querySelectorAll('[data-px]').forEach(function(b){b.onclick=function(){pollDel(+b.dataset.px)}})}
+function pollChips(){return '<div class="chips" style="margin-top:8px"><button type="button" class="chip" data-h="1">+1 ชม.</button><button type="button" class="chip" data-h="24">+1 วัน</button><button type="button" class="chip" data-h="72">+3 วัน</button><button type="button" class="chip" data-h="168">+7 วัน</button></div>'}
+function pollForm(){
+  var h=fld('คำถามโหวต','pf_q')+'<div class="lbl">ตัวเลือก <span class="opt">(อย่างน้อย 2 ข้อ สูงสุด 6 ข้อ)</span></div>';
+  for(var i=1;i<=6;i++)h+='<input id="pf_o'+i+'" maxlength="60" placeholder="ตัวเลือก '+i+(i>2?' (ไม่บังคับ)':'')+'" style="margin-top:6px">';
+  h+='<label class="chk"><input type="checkbox" id="pf_on"> ตั้งเวลาหมดเขต</label><div id="pf_t" class="hide"><input id="pf_e" type="datetime-local" style="margin-top:8px">'+pollChips()+'</div><div class="note">⚠️ ผู้ใช้จะเห็นคำเตือนว่าโหวตแล้วเปลี่ยนไม่ได้ · เจ้าของแก้เวลาหมดเขตหรือลบโหวตได้ทุกเมื่อ</div>';
+  sheet('สร้างโหวตใหม่',h,'สร้างโหวต',function(){
+    var q=$('pf_q').value.trim();if(!q)return shErr('กรุณากรอกคำถาม');
+    var os=[];for(var i=1;i<=6;i++){var v=$('pf_o'+i).value.trim();if(v)os.push(v)}
+    if(os.length<2)return shErr('ต้องมีตัวเลือกอย่างน้อย 2 ข้อ');
+    var end=0;if($('pf_on').checked){end=new Date($('pf_e').value).getTime();if(isNaN(end))return shErr('กรุณาเลือกเวลาหมดเขต');if(end<=Date.now())return shErr('เวลาหมดเขตผ่านไปแล้ว')}
+    $('shOk').disabled=true;
+    FB.savePoll(q,os,end).then(function(){$('shOk').disabled=false;showPolls()}).catch(function(e){$('shOk').disabled=false;pe(e)})});
+  $('shC').onclick=showPolls;$('pf_q').maxLength=120;
+  $('pf_e').value=ldt(Date.now()+864e5);
+  $('pf_on').onchange=function(){$('pf_t').classList.toggle('hide',!this.checked)};
+  $('shB').querySelectorAll('[data-h]').forEach(function(b){b.onclick=function(){var s=Date.now();$('pf_e').value=ldt(s+(+b.dataset.h)*36e5)}})}
+function pollEnd(id){var p=polls.find(function(x){return x.id===id});if(!p)return showPolls();
+  var h='<p class="warn" id="pe_q"></p><label class="chk"><input type="checkbox" id="pe_on"> กำหนดเวลาหมดเขต <span class="opt">(ไม่ติ๊ก = ไม่มีเวลาปิด)</span></label><div id="pe_t"><input id="pe_e" type="datetime-local" style="margin-top:8px">'+pollChips()+'</div><button type="button" class="lnk ghost" id="pe_now">⏹️ ปิดโหวตทันที</button><div class="hint">เปลี่ยนเวลาได้ทุกเมื่อ · ถ้าตั้งเป็นเวลาในอดีตหรือกดปิดทันที โหวตจะปิดและแสดงผลลัพธ์</div>';
+  sheet('ตั้งเวลาหมดเขต',h,'บันทึก',function(){
+    var end=0;if($('pe_on').checked){end=new Date($('pe_e').value).getTime();if(isNaN(end))return shErr('กรุณาเลือกเวลาหมดเขต')}
+    $('shOk').disabled=true;FB.setPollEnd(id,end).then(showPolls).catch(function(e){$('shOk').disabled=false;pe(e)})});
+  $('shC').onclick=showPolls;$('pe_q').textContent=p.q;
+  $('pe_on').checked=!!p.end;$('pe_t').classList.toggle('hide',!p.end);
+  $('pe_e').value=ldt(p.end&&p.end>Date.now()?p.end:Date.now()+864e5);
+  $('pe_on').onchange=function(){$('pe_t').classList.toggle('hide',!this.checked)};
+  $('shB').querySelectorAll('[data-h]').forEach(function(b){b.onclick=function(){
+    var s=new Date($('pe_e').value).getTime();if(isNaN(s)||s<Date.now())s=Date.now();
+    $('pe_on').checked=true;$('pe_t').classList.remove('hide');$('pe_e').value=ldt(s+(+b.dataset.h)*36e5)}});
+  $('pe_now').onclick=function(){$('pe_now').disabled=true;FB.setPollEnd(id,Date.now()).then(showPolls).catch(function(e){$('pe_now').disabled=false;pe(e)})}}
+function pollDel(id){var p=polls.find(function(x){return x.id===id});if(!p)return showPolls();
+  sheet('ลบโหวต','<p class="warn">ลบโหวต <b id="pd_q"></b> พร้อมผลโหวตทั้งหมดออกถาวร?</p>','ยืนยันลบ',function(){
+    $('shOk').disabled=true;FB.delPoll(id).then(showPolls).catch(function(e){$('shOk').disabled=false;pe(e)})},true);
+  $('pd_q').textContent=p.q;$('shC').onclick=showPolls}
+
 renderPick();
 </script>
 <script type="module">
@@ -988,7 +1097,8 @@ function syncBoard(){clearTimeout(syncT);syncT=setTimeout(async()=>{
   for(let i=0;i<ops.length;i+=400){const b=writeBatch(db);ops.slice(i,i+400).forEach(f=>f(b));try{await b.commit()}catch(e){errLog(e);break}}
 },1500)}
 
-function stop(){unsubs.forEach(f=>f());unsubs=[]}
+let vU={};   // ตัวฟังสถานะ "โหวตแล้ว" ของผู้ใช้แต่ละโหวต
+function stop(){unsubs.forEach(f=>f());unsubs=[];Object.keys(vU).forEach(k=>{try{vU[k]()}catch(e){}});vU={}}
 function banOut(d){
   const why=d.banReason||'';
   stop();
@@ -1005,6 +1115,14 @@ function attach(uid,own){
   unsubs.push(onSnapshot(collection(db,'flash'),s=>{flashes={};s.docs.forEach(x=>{flashes[x.id]=x.data()});refresh()},errLog));
   unsubs.push(onSnapshot(collection(db,'board'),s=>{board=s.docs.map(x=>x.data());refresh();if(own)syncBoard()},errLog));
   unsubs.push(onSnapshot(own?collection(db,'orders'):query(collection(db,'orders'),where('u','==',uid)),s=>{orders=s.docs.map(x=>x.data());refresh()},errLog));
+  unsubs.push(onSnapshot(D('config','announce'),s=>{ann=s.exists()&&s.data().text?s.data():null;refresh()},errLog));
+  unsubs.push(onSnapshot(collection(db,'polls'),s=>{
+    polls=s.docs.map(x=>x.data());
+    const ids=new Set(polls.map(p=>String(p.id)));
+    Object.keys(vU).forEach(k=>{if(!ids.has(k)){vU[k]();delete vU[k];delete pvotes[k];delete pvReady[k]}});
+    if(!own)polls.forEach(p=>{const k=String(p.id);if(vU[k])return;
+      vU[k]=onSnapshot(D('polls',k,'votes',uid),m=>{if(m.exists())pvotes[k]=m.data().o;else delete pvotes[k];pvReady[k]=true;refresh()},e=>{errLog(e);pvReady[k]=true;refresh()})});
+    refresh()},errLog));
   if(!own)return;
   unsubs.push(onSnapshot(collection(db,'users'),s=>{accounts={};s.docs.forEach(x=>{accounts[x.id]=mkAcc(x.id,x.data())});refresh();syncBoard()},errLog));
   unsubs.push(onSnapshot(collection(db,'codes'),s=>{rawCodes=s.docs.map(x=>x.data());mergeCodes();refresh()},errLog));
@@ -1024,7 +1142,7 @@ function start(uid){
 if(ready)onAuthStateChanged(auth,u=>{
   if(signing)return;
   if(u){start(u.uid)}
-  else{stop();const was=cur;cur=null;accounts={};prods=[];flashes={};board=[];orders=[];codes=[];logs=[];rawCodes=[];rawUses=[];if(was)leave()}
+  else{stop();const was=cur;cur=null;accounts={};prods=[];flashes={};board=[];orders=[];codes=[];logs=[];rawCodes=[];rawUses=[];polls=[];pvotes={};pvReady={};ann=null;if(was)leave()}
 });
 
 let ipCache=null;
@@ -1075,6 +1193,20 @@ const FB={
   saveCode(c){return setDoc(D('codes',c.code),{id:Date.now(),code:c.code,type:c.type,val:c.val,max:c.max,exp:c.exp,expMs:new Date(c.exp+'T23:59:59.999+07:00').getTime(),on:true,used:0,created:Date.now()})},
   toggleCode(code,on){return updateDoc(D('codes',code),{on:on})},
   setShop(open){return setDoc(D('config','shop'),{open:open})},
+  saveAnn(text){return setDoc(D('config','announce'),{text:String(text).slice(0,300),t:Date.now(),on:true})},
+  delAnn(){return deleteDoc(D('config','announce'))},
+  savePoll(q,opts,end){const id=Date.now(),c={};opts.forEach((_,i)=>{c[String(i)]=0});
+    return setDoc(D('polls',String(id)),{id:id,q:q,opts:opts,c:c,end:end||0,t:id})},
+  setPollEnd(id,end){return updateDoc(D('polls',String(id)),{end:end||0})},
+  async delPoll(id){const sn=await getDocs(collection(db,'polls',String(id),'votes')),refs=sn.docs.map(x=>x.ref);
+    for(let i=0;i<refs.length;i+=400){const b=writeBatch(db);refs.slice(i,i+400).forEach(r=>b.delete(r));await b.commit()}
+    await deleteDoc(D('polls',String(id)))},
+  // โหวตได้ครั้งเดียว: สร้างเอกสารยืนยัน (create อย่างเดียว) + บวกคะแนน 1 ใน batch เดียวกัน
+  async vote(id,o){need();const a=accounts[cur];if(!a||a.owner)throw new Error('ข้อมูลไม่ถูกต้อง');
+    const b=writeBatch(db);
+    b.set(D('polls',String(id),'votes',cur),{o:o,t:Date.now()});
+    b.update(D('polls',String(id)),{['c.'+o]:increment(1)});
+    await b.commit()},
   async resetAll(){need();const ops=[];
     for(const n of ['products','orders','codes'])(await getDocs(collection(db,n))).forEach(x=>ops.push(b=>b.delete(x.ref)));
     try{(await getDocs(collection(db,'flash'))).forEach(x=>ops.push(b=>b.delete(x.ref)))}catch(e){}
