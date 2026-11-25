@@ -257,6 +257,36 @@ h1,.shopname{color:#1459c9;-webkit-text-fill-color:#1459c9;text-shadow:0 2px 12p
 /* ขอบขาวเวลากด / โฟกัสปุ่ม */
 button:active,.chip:active,.av:active,.cbtn:active,.tabs button:active,.menu button:active,.pc button:active{box-shadow:0 0 0 3px #fff,0 0 0 5px rgba(47,128,237,.6)!important}
 button:focus-visible,.chip:focus-visible,.av:focus-visible{outline:none;box-shadow:0 0 0 3px #fff,0 0 0 5px var(--pri)!important}
+/* ===== Static pretty background (no motion, no blur) ===== */
+.bg,.bg::before,.bg::after,.bg i{animation:none!important}
+.bg i{display:none!important;filter:none!important}
+.bg{
+  background:
+    radial-gradient(520px 380px at 8% 6%,rgba(255,226,140,.55),transparent 70%),
+    radial-gradient(620px 460px at 96% 12%,rgba(190,170,255,.45),transparent 70%),
+    radial-gradient(700px 520px at 88% 92%,rgba(120,200,255,.55),transparent 70%),
+    radial-gradient(560px 420px at 6% 88%,rgba(255,190,225,.42),transparent 70%),
+    radial-gradient(900px 600px at 50% 40%,rgba(255,255,255,.65),transparent 75%),
+    linear-gradient(165deg,#f2f9ff 0%,#dcefff 50%,#c9e4ff 100%)!important;
+  background-size:auto!important}
+.bg::before{
+  opacity:.5!important;
+  background-image:
+    radial-gradient(circle,rgba(255,255,255,.95) 0 1.5px,transparent 2.5px),
+    radial-gradient(circle,rgba(47,128,237,.18) 0 1.2px,transparent 2px)!important;
+  background-size:46px 46px,46px 46px!important;
+  background-position:0 0,23px 23px!important;
+  -webkit-mask-image:radial-gradient(ellipse at center,#000 20%,transparent 85%);
+  mask-image:radial-gradient(ellipse at center,#000 20%,transparent 85%)}
+.bg::after{display:block!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.55),transparent 28%,transparent 72%,rgba(47,128,237,.10))!important;
+  -webkit-mask-image:none!important;mask-image:none!important}
+/* remove all backdrop blur, use solid-ish glass instead */
+.tabs,.card,.frame,.menu button,.modal{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+.card{background:rgba(255,255,255,.96)}
+.frame{background:rgba(255,255,255,.82)}
+.tabs{background:rgba(255,255,255,.85)}
+.modal{background:rgba(10,30,70,.62)}
 </style>
 </head>
 <body>
