@@ -332,28 +332,6 @@ textarea:focus{border-color:var(--pri);box-shadow:0 0 0 4px var(--glow)}
 .pres span{position:relative;z-index:1}
 .pres .pl1{word-break:break-word}.pres .pl2{white-space:nowrap;color:var(--mute);font-size:13px}
 .pf{margin-top:10px}
-
-/* ===== รถเข็น ===== */
-.atl{margin-right:auto;display:flex;gap:8px;align-items:center}
-.atl .cbtn{margin-right:0}
-.cartb{position:relative}
-.cartb.has{animation:cartpop .35s var(--ease,ease)}
-@keyframes cartpop{50%{transform:scale(1.12)}}
-.cl{display:flex;flex-direction:column;gap:8px;margin-top:6px}
-.ci{display:grid;grid-template-columns:52px 1fr auto;gap:10px;align-items:center;background:var(--chip);border-radius:14px;padding:8px 10px}
-.ci.off{opacity:.55}
-.ci img,.ci .ph{width:52px;height:52px;aspect-ratio:1/1;border-radius:10px;object-fit:cover;font-size:22px}
-.ci b{font-size:14px;display:block;line-height:1.3}
-.ci .pr{font-size:12px;color:var(--mute);margin-top:2px}
-.qs{display:flex;align-items:center;gap:6px;margin-top:6px}
-.qs button{width:30px;height:30px;padding:0;border:0;border-radius:50%;font:inherit;font-weight:700;font-size:16px;line-height:1;background:var(--card);color:var(--ink);cursor:pointer;border:1px solid var(--line)}
-.qs button:disabled{opacity:.4;cursor:default}
-.qs span{min-width:22px;text-align:center;font-weight:700}
-.ci .sub{text-align:right;font-weight:700;font-size:14px;white-space:nowrap}
-.ci .rm{display:block;margin:6px 0 0 auto;border:0;background:none;color:var(--err);font:inherit;font-size:12px;cursor:pointer;padding:2px 0}
-.toast{position:fixed;left:50%;bottom:calc(28px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;background:#0f2257;color:#fff;border-radius:999px;padding:10px 18px;font-size:14px;font-weight:500;box-shadow:0 8px 24px rgba(0,0,0,.35);animation:toast 2s ease forwards;max-width:90vw;text-align:center}
-@keyframes toast{0%{opacity:0;transform:translate(-50%,10px)}12%,80%{opacity:1;transform:translate(-50%,0)}100%{opacity:0}}
-@media (prefers-reduced-motion:reduce){.cartb.has,.toast{animation:none}}
 </style>
 </head>
 <body>
@@ -412,7 +390,7 @@ textarea:focus{border-color:var(--pri);box-shadow:0 0 0 4px var(--glow)}
 </div>
 
 <div class="app hide" id="app"><div class="frame">
-  <div class="atop"><div class="atl"><button type="button" class="cbtn" id="cBtn" aria-label="คอยน์">🪙 <span id="cBal">0</span></button><button type="button" class="cbtn cartb" id="cartBtn" aria-label="รถเข็น">🛒 <span id="cartN">0</span></button></div><div class="who"><div id="aName"></div><div class="role" id="aRole"></div></div><button type="button" class="av" id="avTop" aria-label="แก้ไขโปรไฟล์"></button></div>
+  <div class="atop"><button type="button" class="cbtn" id="cBtn" aria-label="คอยน์">🪙 <span id="cBal">0</span></button><div class="who"><div id="aName"></div><div class="role" id="aRole"></div></div><button type="button" class="av" id="avTop" aria-label="แก้ไขโปรไฟล์"></button></div>
   <div class="logo sm" role="img" aria-label="Bell &amp; Buy"></div>
   <div class="amid" id="amid"></div>
 </div><button type="button" class="bang hide" id="bang" aria-label="มีของใหม่ด้านล่าง">❗</button></div>
@@ -548,9 +526,9 @@ $('cBtn').onclick=showCoin;
 
 function renderHome(){var a=A(),nl=prods.filter(function(p){return unit(p)<p.price}).length,h=memHome(a)+'<div class="menu">'+(a.owner?'':'<button type="button" id="bSub">'+subBtnTxt(a)+'</button>')+'<button type="button" id="bBoard">🏆 อันดับยอดคอยน์เข้า</button><button type="button" id="bHis">🧾 ประวัติการซื้อ (3 เดือน)</button>'+(a.owner?'<button type="button" id="bOrd">📋 ออเดอร์รอยืนยัน'+(orders.some(o=>o.st==='pending')?' ('+orders.filter(o=>o.st==='pending').length+')':'')+'</button><button type="button" id="bMan">⚙️ จัดการสินค้า</button><button type="button" id="bUsr">👥 คอยน์ของผู้ใช้</button><button type="button" id="bMem">🪪 ข้อมูลสมาชิก</button><button type="button" id="bFl">⚡ Flash sale</button><button type="button" id="bAnn">📢 ป้ายประกาศ</button><button type="button" id="bPoll">📊 จัดการโหวต</button><button type="button" id="bCod">🏷️ โค้ดส่วนลด</button><button type="button" id="bLog">🛡️ ประวัติเข้าสู่ระบบ / สมัคร</button><button type="button" id="bShop">'+(shopOpen?'🟢 ร้านเปิดอยู่ · กดเพื่อปิดร้าน':'🔴 ร้านปิดอยู่ · กดเพื่อเปิดร้าน')+'</button><button type="button" class="dng" id="bRst">🗑️ รีเซ็ตข้อมูลทั้งหมด</button>':'')+'</div>'+(shopOpen?'':'<div class="note">🔒 ร้านปิดอยู่ชั่วคราว ยังสั่งซื้อไม่ได้</div>')+(nl?'<div class="fbar">⚡ Flash sale กำลังลดราคา '+nl+' รายการ</div>':'')+'<div class="lbl">สินค้า</div><div class="grid">';
   if(!prods.length){h+='<p class="warn">ยังไม่มีสินค้า</p>'}
-  prods.forEach(p=>{var f=flashes[p.id],fs=fst(f),u=unit(p),fl=u<p.price;h+='<div class="pc">'+(fl?'<span class="fbadge">⚡ '+(f.type==='pct'?'-'+f.val+'%':'-'+(p.price-u)+' 🪙')+'</span>':'')+(a.owner?'<button type="button" class="pdel" data-del="'+p.id+'" aria-label="ลบสินค้า">✕</button>':'')+(p.img?'<img src="'+p.img+'" alt="">':'<div class="ph">🛍️</div>')+'<b>'+esc(p.name)+'</b><div>'+priceHTML(p,f,fs,u,fl)+'</div><div class="hint" style="color:var(--mute)">'+(p.stock>0?'เหลือ '+p.stock:'หมด')+'</div><button type="button" data-add="'+p.id+'"'+(p.stock>0&&(shopOpen||a.owner)?'':' disabled')+'>🛒 เพิ่มลงรถเข็น</button></div>'});
+  prods.forEach(p=>{var f=flashes[p.id],fs=fst(f),u=unit(p),fl=u<p.price;h+='<div class="pc">'+(fl?'<span class="fbadge">⚡ '+(f.type==='pct'?'-'+f.val+'%':'-'+(p.price-u)+' 🪙')+'</span>':'')+(a.owner?'<button type="button" class="pdel" data-del="'+p.id+'" aria-label="ลบสินค้า">✕</button>':'')+(p.img?'<img src="'+p.img+'" alt="">':'<div class="ph">🛍️</div>')+'<b>'+esc(p.name)+'</b><div>'+priceHTML(p,f,fs,u,fl)+'</div><div class="hint" style="color:var(--mute)">'+(p.stock>0?'เหลือ '+p.stock:'หมด')+'</div><button type="button" data-buy="'+p.id+'"'+(p.stock>0&&(shopOpen||a.owner)?'':' disabled')+'>ซื้อ</button></div>'});
   $('amid').innerHTML=h+'</div>'+annHTML()+pollsHTML(a);wirePolls(a);
-  $('amid').querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>cartAdd(+b.dataset.add));paintCart();
+  $('amid').querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>buy(+b.dataset.buy));
   $('amid').querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>delProd(+b.dataset.del));
   $('bHis').onclick=showHis;$('bBoard').onclick=showBoard;if($('bSub'))$('bSub').onclick=showSub;if($('bClaim'))$('bClaim').onclick=claimDay;if(a.owner){$('bOrd').onclick=showOrd;$('bMan').onclick=showMan;$('bUsr').onclick=showUsr;$('bMem').onclick=function(){showMem(0)};$('bCod').onclick=showCodes;$('bFl').onclick=showFlash;$('bAnn').onclick=showAnn;$('bPoll').onclick=showPolls;$('bLog').onclick=function(){showLogs('all')};$('bShop').onclick=toggleShop;$('bRst').onclick=resetAll}}
 
@@ -560,113 +538,6 @@ function delProd(id,after){var p=prods.find(x=>x.id===id);if(!p||!A().owner)retu
   $('dpn').textContent=p.name;$('shC').onclick=after||closeSheet}
 
 var PTS=['หน้าอาคาร 2','บ่อเต่าข้างอาคาร 2','หน้าเสาธง'],TMS=['10:50','10:55','11:00','11:05','11:10','11:15'];
-
-/* ================= รถเข็น ================= */
-var cart=[],CART_MAX=20;
-function cartKey(){return 'cart_'+cur}
-function cartLoad(){cart=[];try{var l=JSON.parse(localStorage.getItem(cartKey())||'[]');if(Array.isArray(l))cart=l.filter(function(x){return x&&+x.id>0&&+x.q>=1}).map(function(x){return{id:+x.id,q:Math.floor(+x.q)}})}catch(e){}}
-function cartSave(){try{localStorage.setItem(cartKey(),JSON.stringify(cart))}catch(e){}}
-function cartLimit(p){return Math.max(0,Math.min(p.stock,CART_MAX))}
-function cartQty(){return cart.reduce(function(s,x){return s+x.q},0)}
-function paintCart(){var n=$('cartN');if(n)n.textContent=cartQty()}
-function toast(t){var o=document.querySelector('.toast');if(o)o.remove();var d=document.createElement('div');d.className='toast';d.setAttribute('role','status');d.textContent=t;document.body.appendChild(d);setTimeout(function(){d.remove()},2000)}
-function cartAdd(id){var a=A(),p=prodById(id);if(!a||!p||p.stock<1)return;if(!shopOpen&&!a.owner)return;
-  var ln=cart.find(function(x){return x.id===id}),lim=cartLimit(p);
-  if(ln){if(ln.q>=lim)return toast('เพิ่มได้สูงสุด '+lim+' ชิ้นสำหรับ '+p.name);ln.q++}else cart.push({id:id,q:1});
-  cartSave();paintCart();var b=$('cartBtn');b.classList.remove('has');void b.offsetWidth;b.classList.add('has');
-  toast('เพิ่ม '+p.name+' ลงรถเข็นแล้ว')}
-
-/* รายการที่ซื้อได้จริง ณ ตอนนี้ (ตัดสินค้าที่ถูกลบ, ปรับจำนวนไม่ให้เกินสต็อก) */
-function cartLines(){var out=[],ch=false;
-  cart=cart.filter(function(x){if(prodById(x.id))return true;ch=true;return false});
-  cart.forEach(function(x){var p=prodById(x.id),lim=cartLimit(p);
-    if(lim>0&&x.q>lim){x.q=lim;ch=true}
-    var u=unit(p);out.push({id:x.id,p:p,q:x.q,u:u,fl:u<p.price,ok:lim>0,lim:lim,sub:u*x.q})});
-  if(ch){cartSave();paintCart()}
-  return out}
-
-function showCart(){var a=A();if(!a)return;
-  var ap=null,shown={};
-  sheet('🛒 รถเข็น',
-    '<div class="cl" id="cl"></div>'+
-    '<div id="cform">'+
-    '<div class="lbl">จุดนัดพบ</div>'+PTS.map(function(x,i){return '<label class="chk"><input type="radio" name="pt" value="'+i+'"> '+esc(x)+'</label>'}).join('')+
-    '<div class="lbl">วันที่รับสินค้า <span class="opt">(ไม่รวมเสาร์-อาทิตย์)</span></div><select id="bd"><option value="">เลือกวัน</option>'+dayOpts().map(function(x){return '<option value="'+x.v+'">'+x.l+'</option>'}).join('')+'</select>'+
-    '<div class="lbl">เวลานัดรับ</div><select id="bt2"><option value="">เลือกเวลา</option>'+TMS.map(function(x){return '<option value="'+x+'">'+x+' น.</option>'}).join('')+'</select><div class="hint">อาจมาสายประมาณ 1–5 นาที</div>'+
-    '<div class="lbl">โค้ดส่วนลด <span class="opt">(ถ้ามี)</span></div><div style="display:flex;gap:8px"><input id="bc" placeholder="กรอกโค้ดส่วนลด" autocomplete="off" autocapitalize="characters" style="text-transform:uppercase"><button type="button" class="ghost" id="bca" style="border:0;border-radius:12px;padding:0 16px;font:inherit;font-weight:700;cursor:pointer;flex:none">ใช้โค้ด</button></div><div class="live" id="bcl"></div>'+
-    '<div class="lbl">การชำระเงิน</div><div class="cf">จ่ายด้วยคอยน์เท่านั้น (คงเหลือ '+bal(a)+' 🪙)<br><span id="bt"></span></div>'+
-    '</div>','ยืนยันการซื้อ',checkout);
-
-  /* ส่วนลด: โค้ดใช้ได้ 1 ครั้งต่อ 1 ออเดอร์ → ใช้กับรายการที่ให้ส่วนลดมากที่สุด */
-  function discPlan(L){if(!ap)return{id:null,d:0};var best=null,bd=0;
-    L.forEach(function(l){if(!l.ok)return;var d=codeDisc(ap,l.sub);if(d>bd){bd=d;best=l}});
-    return{id:best?best.id:null,d:bd,name:best?best.p.name:''}}
-
-  function paintLines(){var L=cartLines(),ok=L.filter(function(l){return l.ok}),h='',sub=0;
-    shown={};
-    if(!L.length)h='<p class="warn">รถเข็นว่างอยู่ — กด “🛒 เพิ่มลงรถเข็น” ที่สินค้าที่ต้องการ</p>';
-    L.forEach(function(l){shown[l.id]=l.u;if(l.ok)sub+=l.sub;
-      h+='<div class="ci'+(l.ok?'':' off')+'">'+(l.p.img?'<img src="'+l.p.img+'" alt="">':'<div class="ph">🛍️</div>')+
-        '<div><b>'+esc(l.p.name)+'</b><div class="pr">'+(l.fl?'⚡ ':'')+l.u+' 🪙 / ชิ้น'+(l.fl?' (ปกติ '+l.p.price+')':'')+'</div>'+
-        (l.ok?'<div class="qs"><button type="button" data-q="-1" data-i="'+l.id+'" aria-label="ลดจำนวน"'+(l.q<=1?' disabled':'')+'>−</button><span>'+l.q+'</span><button type="button" data-q="1" data-i="'+l.id+'" aria-label="เพิ่มจำนวน"'+(l.q>=l.lim?' disabled':'')+'>+</button></div>'
-          :'<div class="pr" style="color:var(--err)">สินค้าหมดแล้ว (ไม่นับในการสั่งซื้อ)</div>')+'</div>'+
-        '<div><div class="sub">'+(l.ok?l.sub+' 🪙':'—')+'</div><button type="button" class="rm" data-rm="'+l.id+'">ลบ</button></div></div>'});
-    $('cl').innerHTML=h;
-    $('cl').querySelectorAll('[data-q]').forEach(function(b){b.onclick=function(){var ln=cart.find(function(x){return x.id===+b.dataset.i}),p=prodById(+b.dataset.i);if(!ln||!p)return;
-      ln.q=Math.max(1,Math.min(cartLimit(p),ln.q+(+b.dataset.q)));cartSave();paintCart();paintLines()}});
-    $('cl').querySelectorAll('[data-rm]').forEach(function(b){b.onclick=function(){cart=cart.filter(function(x){return x.id!==+b.dataset.rm});cartSave();paintCart();paintLines()}});
-    var pl=discPlan(L),tot=sub-pl.d;
-    if(ap){if(pl.d>0)live('bcl','✓ ใช้โค้ด '+ap.code+' ได้ ลด '+pl.d+' คอยน์ (กับ '+pl.name+')','ok');else live('bcl','โค้ดนี้ไม่ลดราคารายการในรถเข็น','err')}
-    $('bt').innerHTML=(pl.d?'ราคารวม '+sub+' − ส่วนลด '+pl.d+' = ':'')+'รวม <b>'+tot+' 🪙</b> ('+ok.reduce(function(s,l){return s+l.q},0)+' ชิ้น)';
-    $('shOk').disabled=!ok.length;
-    return{L:L,ok:ok,sub:sub,pl:pl,tot:tot}}
-
-  $('bc').oninput=function(){ap=null;live('bcl','');paintLines()};
-  $('bca').onclick=function(){var v=$('bc').value.trim();if(!v){return live('bcl','กรุณากรอกโค้ดส่วนลด','err')}
-    CF.checkCode({code:v}).then(function(r){ap=r.data;paintLines()}).catch(function(e){ap=null;paintLines();live('bcl',e.message||'โค้ดใช้ไม่ได้','err')})};
-  paintLines();
-
-  function checkout(){
-    var S=paintLines(),a=A();
-    if(!S.ok.length)return shErr('รถเข็นว่าง');
-    if(!shopOpen&&!a.owner)return shErr('ร้านปิดอยู่ ยังสั่งซื้อไม่ได้');
-    var pe=document.querySelector('input[name=pt]:checked'),tm=$('bt2').value,dy=$('bd').value;
-    if(!dy)return shErr('กรุณาเลือกวันที่รับสินค้า');
-    var wd=new Date(dy+'T00:00:00').getDay();if(wd===0||wd===6)return shErr('รับสินค้าไม่ได้ในวันเสาร์-อาทิตย์');
-    if(!pe)return shErr('กรุณาเลือกจุดนัดพบ');
-    if(!tm)return shErr('กรุณาเลือกเวลานัดรับ');
-    var cv=$('bc').value.trim();
-    if(cv&&(!ap||ap.code!==cv.toUpperCase()))return shErr('กรุณากดปุ่ม "ใช้โค้ด" เพื่อตรวจโค้ดก่อน');
-    if(!a.owner&&(a.coins||0)<S.tot)return shErr('คอยน์ไม่พอ (ต้องใช้ '+S.tot+' คอยน์ มี '+(a.coins||0)+' คอยน์)');
-    $('shM').textContent='';$('shM').className='msg';
-    $('shOk').disabled=true;$('shC').disabled=true;
-    var done=[],fail=[],plan=S.pl;
-    /* สั่งทีละรายการ (แต่ละรายการเป็น transaction ของตัวเอง ตาม Firestore rules เดิม) — รายการที่ใช้โค้ดไปก่อน */
-    var queue=S.ok.slice().sort(function(x,y){return (y.id===plan.id)-(x.id===plan.id)});
-    var chain=Promise.resolve();
-    queue.forEach(function(l,idx){chain=chain.then(function(){
-      if(idx>0)return new Promise(function(r){setTimeout(r,20)});}).then(function(){
-      var p=prodById(l.id);
-      if(!p||unit(p)!==l.u)throw new Error('ราคาสินค้าเปลี่ยนแปลง กรุณาตรวจสอบรถเข็นอีกครั้ง');
-      return CF.placeOrder({pid:l.id,ep:l.u,q:l.q,pt:+pe.value,tm:tm,dy:dy,code:(plan.id===l.id&&ap)?ap.code:''})
-    }).then(function(r){done.push({l:l,o:r.data});cart=cart.filter(function(x){return x.id!==l.id});cartSave();paintCart()
-    }).catch(function(e){fail.push({l:l,m:(e&&e.message)||'สั่งซื้อไม่สำเร็จ'})})});
-    chain.then(function(){
-      $('shC').disabled=false;$('shOk').disabled=false;
-      if(!done.length){paintLines();return shErr(fail.map(function(f){return f.l.p.name+': '+f.m}).join(' / '))}
-      closeSheet();
-      popup(fail.length?'สั่งซื้อสำเร็จบางรายการ':'ส่งออเดอร์แล้ว',function(b){
-        var add=function(s,st){var d=document.createElement('div');d.textContent=s;if(st)d.style.cssText=st;b.appendChild(d)},total=0;
-        done.forEach(function(x){total+=x.o.tot;add(x.l.p.name+' ×'+x.l.q+' = '+x.o.tot+' 🪙'+(x.o.disc?' (ใช้โค้ด '+x.o.cd+' ลด '+x.o.disc+' 🪙)':''))});
-        add('รวมทั้งหมด '+total+' 🪙','font-weight:700;margin-top:6px');
-        add('วัน: '+dlabel(dy));add('เวลา: '+tm+' น.');add('จุดนัดพบ: '+PTS[+pe.value]);
-        if(!a.owner)add('รอเจ้าของร้านยืนยันออเดอร์');
-        if(fail.length){add('— ไม่สำเร็จ (ยังอยู่ในรถเข็น) —','margin-top:8px;font-weight:700');fail.forEach(function(f){add(f.l.p.name+': '+f.m,'color:#ff8a8a')})}
-      },'ตกลง')});
-  }
-}
-$('cartBtn').onclick=showCart;
-
 function buy(id){var a=A(),p=prods.find(x=>x.id===id);if(!p||p.stock<1)return;if(!shopOpen&&!a.owner)return;
   var u1=unit(p),fl=u1<p.price,ap=null,sub=()=>(+$('bq').value)*u1,disc=()=>ap?codeDisc(ap,sub()):0,tot=()=>sub()-disc();
   sheet('ซื้อ '+p.name,'<div class="lbl">จำนวน</div>'+sel('bq',Math.min(p.stock,20),'')+'<div class="lbl">จุดนัดพบ</div>'+PTS.map((x,i)=>'<label class="chk"><input type="radio" name="pt" value="'+i+'"> '+esc(x)+'</label>').join('')+'<div class="lbl">วันที่รับสินค้า <span class="opt">(ไม่รวมเสาร์-อาทิตย์)</span></div><select id="bd"><option value="">เลือกวัน</option>'+dayOpts().map(x=>'<option value="'+x.v+'">'+x.l+'</option>').join('')+'</select><div class="lbl">เวลานัดรับ</div><select id="bt2"><option value="">เลือกเวลา</option>'+TMS.map(x=>'<option value="'+x+'">'+x+' น.</option>').join('')+'</select><div class="hint">อาจมาสายประมาณ 1–5 นาที</div><div class="lbl">โค้ดส่วนลด <span class="opt">(ถ้ามี)</span></div><div style="display:flex;gap:8px"><input id="bc" placeholder="กรอกโค้ดส่วนลด" autocomplete="off" autocapitalize="characters" style="text-transform:uppercase"><button type="button" class="ghost" id="bca" style="border:0;border-radius:12px;padding:0 16px;font:inherit;font-weight:700;cursor:pointer;flex:none">ใช้โค้ด</button></div><div class="live" id="bcl"></div><div class="lbl">การชำระเงิน</div><div class="cf">จ่ายด้วยคอยน์เท่านั้น (คงเหลือ '+bal(a)+' 🪙)<br><span id="bt"></span></div>','ยืนยันการซื้อ',()=>{
@@ -850,11 +721,11 @@ function paintAv(el,a,big){el.innerHTML='';el.className='av'+(big?' big':'')+(a.
   if(a.avatar){var im=document.createElement('img');im.src=a.avatar;im.alt='';el.appendChild(im)}else{el.textContent=a.name.charAt(0).toUpperCase()}}
 function paintApp(){var a=A();paintAv($('avTop'),a);var n=$('aName');n.textContent=(a.owner?'👑 ':'')+a.name;n.className=a.owner?'gold':'';
   $('aRole').textContent=(a.owner?'เจ้าของ · ':'')+a.cls;paintCoin();renderHome()}
-function enterApp(k){cur=k;cartLoad();$('auth').classList.add('hide');$('app').classList.remove('hide');paintApp();paintCart();notify()}
-function leave(){cur=null;cart=[];clearSess();$('app').classList.add('hide');$('auth').classList.remove('hide');mode('login')}
+function enterApp(k){cur=k;$('auth').classList.add('hide');$('app').classList.remove('hide');paintApp();notify()}
+function leave(){cur=null;clearSess();$('app').classList.add('hide');$('auth').classList.remove('hide');mode('login')}
 function closeSheet(){$('sheet').classList.add('hide');flashView=false}
 function shErr(t){$('shM').textContent=t;$('shM').className='msg err'}
-function sheet(t,h,ok,fn,danger){$('shOk').disabled=false;$('shC').style.display='';$('shC').textContent='ยกเลิก';$('shT').textContent=t;$('shB').innerHTML=h;$('shM').textContent='';$('shM').className='msg';
+function sheet(t,h,ok,fn,danger){$('shC').style.display='';$('shC').textContent='ยกเลิก';$('shT').textContent=t;$('shB').innerHTML=h;$('shM').textContent='';$('shM').className='msg';
   $('shOk').textContent=ok;$('shOk').className='go2'+(danger?' danger':'');$('sheet').classList.remove('hide');
   $('shC').onclick=closeSheet;$('shOk').onclick=fn}
 function fld(l,id,t){return '<label for="'+id+'">'+l+'</label><input id="'+id+'" type="'+(t||'text')+'">'}
