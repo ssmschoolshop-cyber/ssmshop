@@ -702,10 +702,10 @@ function memDet(k,g){var me=A();if(!me||!me.owner)return;var a=accounts[k];if(!a
     row('คอยน์คงเหลือ',bal(a)+' 🪙')+
     row('จำนวนออเดอร์',oc+' รายการ')+
     (a.owner?'':row('คำเตือนที่เคยส่ง',(a.warns||[]).length+' ครั้ง'))+
-    (a.owner?'':'<button type="button" class="lnk go2" id="mCoin">🪙 จัดการคอยน์</button><button type="button" class="lnk go2" id="mWarn">⚠️ ส่งคำเตือน</button><button type="button" class="lnk go2'+(a.banned?'':' danger')+'" id="mBan">'+(a.banned?'✅ ปลดแบน':'🚫 แบนผู้ใช้')+'</button>'),
+    (a.owner?'':'<button type="button" class="lnk go2" id="mCoin">🪙 จัดการคอยน์</button><button type="button" class="lnk go2" id="mWarn">⚠️ ส่งคำเตือน</button><button type="button" class="lnk go2'+(a.banned?'':' danger')+'" id="mBan">'+(a.banned?'✅ ปลดแบน':'🚫 แบนผู้ใช้')+'</button><button type=\"button\" class=\"lnk go2 danger\" id=\"mDel\">🗑️ ลบบัญชีผู้ใช้</button>'),
     'กลับ',function(){showMem(g)});
   $('shC').style.display='none';
-  if($('mCoin'))$('mCoin').onclick=function(){userDet(k)};if($('mBan'))$('mBan').onclick=function(){banForm(k,g)};if($('mWarn'))$('mWarn').onclick=function(){warnForm(k,g)}}
+  if($('mCoin'))$('mCoin').onclick=function(){userDet(k)};if($('mBan'))$('mBan').onclick=function(){banForm(k,g)};if($('mWarn'))$('mWarn').onclick=function(){warnForm(k,g)};if($('mDel'))$('mDel').onclick=function(){delUser(k,g)}}
 
 function warnForm(k,g){var a=accounts[k];if(!a||a.owner)return;
   var H=(a.warns||[]).slice().reverse().slice(0,5).map(w=>'<div class="cf"><span class="hint">'+fd(w.t)+'</span><br>'+esc(w.m)+'</div>').join('');
@@ -954,6 +954,16 @@ function resetAll(){
     if($('rsT').value.trim()!==RESET_CODE)return shErr('โค้ดลับไม่ถูกต้อง');
     $('shOk').disabled=true;$('shM').className='msg';$('shM').textContent='กำลังลบข้อมูล...';
     FB.resetAll().then(function(){$('shOk').disabled=false;closeSheet();popup('รีเซ็ตเรียบร้อย',function(b){b.textContent='ลบสินค้า ออเดอร์ โค้ดส่วนลด และตั้งคอยน์สมาชิกเป็น 0 แล้ว'},'ตกลง')}).catch(function(e){$('shOk').disabled=false;shErr('รีเซ็ตไม่สำเร็จ ('+(e.code||e.message)+')')})},true)}
+/* ===== เจ้าของลบบัญชีผู้ใช้ (ต้องใส่โค้ดลับ) ===== */
+function delUser(k,g){var me=A();if(!me||!me.owner)return;var a=accounts[k];if(!a||a.owner)return;
+  var pn=orders.filter(function(o){return o.u===k&&o.st==='pending'}).length;
+  if(pn)return info('ลบบัญชีผู้ใช้','<p class="warn">'+esc(a.name)+' ยังมีออเดอร์รอยืนยัน '+pn+' รายการ กรุณายืนยันหรือยกเลิกออเดอร์ก่อน แล้วค่อยลบบัญชี</p>');
+  sheet('ลบบัญชีผู้ใช้','<p class="warn">ลบบัญชี <b id="duN"></b> ถาวร คอยน์คงเหลือ <b>'+bal(a)+' 🪙</b> จะหายทั้งหมดและกู้คืนไม่ได้</p><label for="duC">ใส่ <b>โค้ดลับ</b> เพื่อยืนยันการลบ</label><input id="duC" type="password" inputmode="numeric" autocomplete="off" placeholder="โค้ดลับ">','ลบบัญชีถาวร',function(){
+    if($('duC').value.trim()!==RESET_CODE)return shErr('โค้ดลับไม่ถูกต้อง');
+    $('shOk').disabled=true;$('shM').className='msg';$('shM').textContent='กำลังลบบัญชี...';
+    FB.deleteUser(k).then(function(){$('shOk').disabled=false;closeSheet();popup('ลบบัญชีเรียบร้อย',function(b){b.textContent='ลบบัญชี '+a.name+' แล้ว'},'ตกลง',function(){showMem(g)})})
+      .catch(function(e){$('shOk').disabled=false;shErr('ลบไม่สำเร็จ ('+((e&&e.code)||(e&&e.message))+')')})},true);
+  $('duN').textContent=a.name;$('shC').onclick=function(){memDet(k,g)}}
 /* ===== แบน / ปลดแบน ===== */
 function banForm(k,g){var a=accounts[k];if(!a||a.owner)return;
   var fail=function(e){shErr('ไม่สำเร็จ ('+(e.code||e.message)+')')};
@@ -1010,7 +1020,7 @@ const isOwn=d=>!!d&&(d.owner===true||String(d.name||'').toLowerCase()===OWNER_NA
 const mkAcc=(id,d)=>{const a=Object.assign({id:id},d);a.owner=isOwn(d);return a};
 const D=(...p)=>doc(db,...p);
 const errLog=e=>console.error('Firestore:',e.code,e.message);
-let unsubs=[],signing=false,rawCodes=[],rawUses=[];
+let unsubs=[],signing=false,selfDel=false,rawCodes=[],rawUses=[];
 /* เจ้าของ: ซิงก์ตารางอันดับ (board) ให้ตรงกับประวัติคอยน์จริงของผู้ใช้ */
 let syncT=null;
 function syncBoard(){clearTimeout(syncT);syncT=setTimeout(async()=>{
@@ -1052,7 +1062,9 @@ function attach(uid,own){
 function start(uid){
   stop();let attached=false;
   unsubs.push(onSnapshot(D('users',uid),s=>{
-    if(!s.exists())return;
+    if(!s.exists()){
+      if(!selfDel)getDoc(D('users',uid)).then(x=>{if(!x.exists()&&!selfDel){FB.logout();setTimeout(()=>msg('บัญชีนี้ถูกลบโดยเจ้าของแล้ว','err'),150)}}).catch(()=>{});
+      return}
     if(s.data().banned&&!isOwn(s.data())){banOut(s.data());return}
     accounts[uid]=mkAcc(uid,s.data());
     if(!attached){attached=true;attach(uid,isOwn(s.data()));enterApp(uid);
@@ -1079,7 +1091,14 @@ async function addLog(type,uid,name,cls){
 const FB={
   async signup(u,cls,e,p){need();signing=true;let cr;
     try{await setPersistence(auth,browserSessionPersistence);cr=await createUserWithEmailAndPassword(auth,em(u),p)}
-    catch(x){signing=false;throw new Error(x.code==='auth/email-already-in-use'?'ชื่อผู้ใช้นี้ถูกใช้แล้ว':'สร้างบัญชีไม่สำเร็จ ('+x.code+')')}
+    catch(x){
+      if(x.code!=='auth/email-already-in-use'){signing=false;throw new Error('สร้างบัญชีไม่สำเร็จ ('+x.code+')')}
+      /* ชื่อนี้อาจเป็นบัญชีที่เจ้าของลบข้อมูลไปแล้ว (Auth ยังเหลือ) -> สมัครใหม่ได้ถ้าใช้รหัสผ่านเดิม */
+      const used=new Error('ชื่อผู้ใช้นี้ถูกใช้แล้ว');
+      try{cr=await signInWithEmailAndPassword(auth,em(u),p)}catch(y){signing=false;throw used}
+      let ex=true;try{ex=(await getDoc(D('users',cr.user.uid))).exists()}catch(y){}
+      if(ex){await signOut(auth).catch(()=>{});signing=false;throw used}
+    }
     try{const b=writeBatch(db);
       b.set(D('users',cr.user.uid),{name:u,cls:cls,email:e||'',avatar:'',coins:0,ledger:[],owner:false,createdAt:serverTimestamp()});
       if(e)b.set(D('emailIndex',e),{u:cr.user.uid,name:u});
@@ -1092,13 +1111,21 @@ const FB={
       name=s.data().name;chk=false}
     await setPersistence(auth,rem?browserLocalPersistence:browserSessionPersistence);signing=true;let cr;
     try{cr=await signInWithEmailAndPassword(auth,em(name),p)}catch(x){signing=false;throw x}
-    let d={};try{const s=await getDoc(D('users',cr.user.uid));if(s.exists())d=s.data()}catch(x){}
+    let d={},ex=true;try{const s=await getDoc(D('users',cr.user.uid));ex=s.exists();if(ex)d=s.data()}catch(x){}
+    if(!ex){try{await signOut(auth)}catch(x){}signing=false;const e=new Error('บัญชีนี้ถูกลบแล้ว หากต้องการใช้งานต่อให้กด "สร้างบัญชี" ด้วยชื่อผู้ใช้และรหัสผ่านเดิม');e.cfg=1;throw e}
     if(chk&&d.name&&d.name!==u){try{await signOut(auth)}catch(x){}signing=false;const e=new Error('กรุณาใส่ชื่อผู้ใช้ให้ถูกต้อง เช็คตัวเล็กตัวใหญ่');e.cfg=1;throw e}
     signing=false;start(cr.user.uid);addLog('login',cr.user.uid,d.name||name,d.cls||'')},
   async deleteAccount(pw){need();const us=auth.currentUser,a=accounts[cur];
     await reauthenticateWithCredential(us,EmailAuthProvider.credential(us.email,pw));
-    const b=writeBatch(db);b.delete(D('users',cur));if(a.email)b.delete(D('emailIndex',a.email));await b.commit();await deleteDoc(D('board',cur)).catch(()=>{});
-    await deleteUser(us)},
+    selfDel=true;
+    try{const b=writeBatch(db);b.delete(D('users',cur));if(a.email)b.delete(D('emailIndex',a.email));await b.commit();await deleteDoc(D('board',cur)).catch(()=>{});
+      await deleteUser(us)}
+    finally{selfDel=false}},
+  /* เจ้าของลบบัญชีผู้ใช้อื่น: ลบข้อมูลใน Firestore (users / emailIndex / board) */
+  async deleteUser(uid){need();const o=accounts[cur];if(!o||!o.owner)throw new Error('เฉพาะเจ้าของเท่านั้น');
+    const a=accounts[uid];if(!a||a.owner)throw new Error('ไม่พบผู้ใช้');
+    const b=writeBatch(db);b.delete(D('users',uid));if(a.email)b.delete(D('emailIndex',a.email));await b.commit();
+    await deleteDoc(D('board',uid)).catch(()=>{})},
   logout(){return signOut(auth)},
   async changePass(o,n){need();const us=auth.currentUser;await reauthenticateWithCredential(us,EmailAuthProvider.credential(us.email,o));await updatePassword(us,n)},
   setAvatar(v){return updateDoc(D('users',cur),{avatar:v})},
