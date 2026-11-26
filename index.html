@@ -318,9 +318,59 @@ button:focus-visible,.chip:focus-visible,.av:focus-visible{outline:none;box-shad
 .tqbox{text-align:center;margin:10px 0}
 .tqimg{width:100%;max-width:260px;border-radius:14px;border:1px solid var(--line);background:#fff;display:block;margin:0 auto}
 .note.bad{border-left-color:#e5484d}
+.a2{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(4,10,38,.5);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.a2.hide{display:none}
+.a2b{width:100%;max-width:380px;background:#fff;color:#14213d;border-radius:26px;padding:24px 22px 18px;box-shadow:0 30px 80px rgba(0,0,0,.5);animation:pop .35s var(--ease);text-align:center}
+.a2b h3{margin:0 0 4px;font-size:19px}
+.a2b .a2s{margin:0 0 14px;font-size:13px;opacity:.7}
+.a2st{display:flex;align-items:center;gap:12px;text-align:left;background:#f1f5ff;border-radius:16px;padding:12px 14px;margin:8px 0;font-size:14.5px;line-height:1.4}
+.a2n{flex:none;width:30px;height:30px;border-radius:50%;background:var(--grad);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center}
+.a2b .a2x{display:block;width:100%;margin-top:10px;padding:13px;border:0;border-radius:14px;font:inherit;font-weight:700;cursor:pointer}
+.a2b .a2c{background:var(--grad);color:#fff}
+.a2b .a2o{background:transparent;color:#5b6784;font-weight:600;font-size:13.5px}
+.spl{position:fixed;inset:0;z-index:100000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;background:radial-gradient(circle at 50% 38%,#ffffff 0,#eaf4ff 45%,#cfe6ff 100%);transition:opacity .3s ease,visibility .3s}
+.spl .logo{margin:0;width:150px;height:150px;min-width:150px;min-height:150px;position:relative;box-shadow:0 0 0 4px #fff,0 0 0 6px rgba(47,128,237,.5),0 18px 46px rgba(31,111,224,.38);animation:splIn .5s cubic-bezier(.22,1.3,.36,1) both;transition:transform .35s ease}
+.spl .logo::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:3px solid rgba(47,128,237,.55);animation:splRing .8s ease-out .2s 1}
+.spl .dots{display:flex;gap:8px;opacity:0;animation:splDots .2s ease .25s forwards}
+.spl .dots i{width:9px;height:9px;border-radius:50%;background:var(--pri);animation:splDot 1s ease-in-out infinite}
+.spl .dots i:nth-child(2){animation-delay:.15s}.spl .dots i:nth-child(3){animation-delay:.3s}
+.spl.out{opacity:0;visibility:hidden;pointer-events:none}
+.spl.out .logo{transform:scale(1.2)}
+@keyframes splIn{from{opacity:0;transform:scale(.4) rotate(-12deg)}to{opacity:1;transform:none}}
+@keyframes splFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes splRing{from{transform:scale(1);opacity:.8}to{transform:scale(1.45);opacity:0}}
+@keyframes splDots{to{opacity:1}}
+@keyframes splDot{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-6px);opacity:1}}
+@media (prefers-reduced-motion:reduce){.spl .logo,.spl .logo::after,.spl .dots i{animation:none}}
+/* ===== เต็มจอ + เมนูขีด 3 ขีด ===== */
+.app{padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+.app .frame{max-width:none;width:100%;margin:0;border:0;border-radius:0;box-shadow:none;animation:none}
+.app .amid{width:100%;max-width:960px;margin:0 auto}
+.app .grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+.atop{gap:10px}
+.hamb{flex:none;width:44px;height:44px;padding:0;border-radius:14px;border:1px solid #cfe1f7;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;margin:0}
+.hamb i{display:block;width:20px;height:3px;border-radius:2px;background:var(--pri)}
+.hamb.x{font-size:20px;font-weight:700;color:var(--pri);line-height:1}
+#sheet{padding:0;align-items:stretch;justify-content:stretch;background:var(--page,#eaf4ff)}
+#sheet .box.sheet{max-width:none;max-height:none;width:100%;height:100%;border-radius:0;border:0;box-shadow:none;animation:none;display:flex;flex-direction:column;overflow:hidden;padding:calc(14px + env(safe-area-inset-top,0px)) 16px calc(14px + env(safe-area-inset-bottom,0px))}
+#sheet .box.sheet>*{width:100%;max-width:720px;margin-left:auto;margin-right:auto;flex:none}
+#sheet .shHd{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+#sheet .shHd h2{flex:1;margin:0;text-align:center}
+#sheet #shB{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:8px}
+#sheet #shM{margin-top:6px}
+#sheet .row{margin-top:8px}
+.drw{position:fixed;inset:0;z-index:70}
+.drw.hide{display:none}
+.drwBk{position:absolute;inset:0;background:rgba(10,30,70,.5);animation:fade .2s ease}
+.drwP{position:absolute;top:0;left:0;bottom:0;width:min(84vw,320px);background:var(--card,#fff);overflow-y:auto;box-shadow:12px 0 40px rgba(12,42,92,.35);padding:calc(16px + env(safe-area-inset-top,0px)) 14px calc(16px + env(safe-area-inset-bottom,0px));animation:drwIn .25s var(--ease)}
+.drwP .logo.sm{margin:0 auto 6px}
+.drwP .dn{text-align:center;font-weight:700;margin:6px 0 14px}
+@keyframes drwIn{from{transform:translateX(-100%)}to{transform:none}}
 </style>
 </head>
 <body>
+<div class="spl" id="splash" aria-hidden="true"><div class="logo"></div><div class="dots"><i></i><i></i><i></i></div></div>
+<script>setTimeout(function(){var e=document.getElementById('splash');if(e)e.classList.add('out')},8000)</script>
 <div class="bg" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
 <div class="wrap" id="auth">
   <div class="logo" role="img" aria-label="Bell &amp; Buy"></div>
@@ -376,10 +426,12 @@ button:focus-visible,.chip:focus-visible,.av:focus-visible{outline:none;box-shad
 </div>
 
 <div class="app hide" id="app"><div class="frame">
-  <div class="atop"><span class="cwrap"><button type="button" class="cbtn" id="cBtn" aria-label="คอยน์">🪙 <span id="cBal">0</span></button><button type="button" class="cbtn plus" id="cPlus" aria-label="เติมคอยน์">＋</button></span><div class="who"><div id="aName"></div><div class="role" id="aRole"></div></div><button type="button" class="av" id="avTop" aria-label="แก้ไขโปรไฟล์"></button></div>
+  <div class="atop"><button type="button" class="hamb" id="hamb" aria-label="เมนู"><i></i><i></i><i></i></button><span class="cwrap"><button type="button" class="cbtn" id="cBtn" aria-label="คอยน์">🪙 <span id="cBal">0</span></button><button type="button" class="cbtn plus" id="cPlus" aria-label="เติมคอยน์">＋</button></span><div class="who"><div id="aName"></div><div class="role" id="aRole"></div></div><button type="button" class="av" id="avTop" aria-label="แก้ไขโปรไฟล์"></button></div>
   <div class="logo sm" role="img" aria-label="Bell &amp; Buy"></div>
   <div class="amid" id="amid"></div>
 </div></div>
+
+<div class="drw hide" id="drw"><div class="drwBk" id="drwBk"></div><nav class="drwP"><div class="logo sm" role="img" aria-label="Bell &amp; Buy"></div><div class="dn" id="drwN"></div><div class="menu" id="drwM"></div></nav></div>
 
 <div class="modal hide" id="menuM"><div class="box sheet">
   <div class="menu">
@@ -392,7 +444,7 @@ button:focus-visible,.chip:focus-visible,.av:focus-visible{outline:none;box-shad
 </div></div>
 
 <div class="modal hide" id="sheet"><div class="box sheet">
-  <h2 id="shT"></h2><div id="shB"></div><div class="msg" id="shM"></div>
+  <div class="shHd"><button type="button" class="hamb" id="shMenu" aria-label="เมนู"><i></i><i></i><i></i></button><h2 id="shT"></h2><button type="button" class="hamb x" id="shX" aria-label="กลับ">✕</button></div><div id="shB"></div><div class="msg" id="shM"></div>
   <div class="row"><button type="button" class="ghost" id="shC">ยกเลิก</button><button type="button" class="go2" id="shOk">บันทึก</button></div>
 </div></div>
 
@@ -405,6 +457,14 @@ button:focus-visible,.chip:focus-visible,.av:focus-visible{outline:none;box-shad
   </div>
 </div>
 
+<div class="a2 hide" id="a2hs" role="dialog" aria-modal="true" aria-labelledby="a2t"><div class="a2b">
+<h3 id="a2t">📲 เพิ่ม Bell &amp; Buy ไว้ที่หน้าจอโฮม</h3>
+<p class="a2s">เปิดใช้งานได้เร็วเหมือนแอป</p>
+<div class="a2st"><span class="a2n">1</span><span>กดปุ่ม <b>แชร์</b> ในเบราว์เซอร์</span></div>
+<div class="a2st"><span class="a2n">2</span><span>เลือก <b>เพิ่มไปยังหน้าจอโฮม</b></span></div>
+<button type="button" class="a2x a2c" id="a2Close">ปิด</button>
+<button type="button" class="a2x a2o" id="a2Off">ไม่ต้องแสดงอีก</button>
+</div></div>
 <script>
 var accounts={};
 var $=function(i){return document.getElementById(i)};
@@ -463,7 +523,7 @@ $('goSign').onclick=function(){
   var proceed=function(){
   sheet('ตรวจสอบก่อนสร้างบัญชี','<p class="warn">ข้อมูลต่อไปนี้ <b>เปลี่ยนไม่ได้</b> หลังสร้างบัญชี กรุณาตรวจสอบให้ถูกต้อง</p><p class="warn">🔑 <b>ตรวจสอบข้อมูลให้แน่ใจก่อนสร้างบัญชี</b> และจำรหัสผ่านให้ดี ถ้าลืมรหัสผ่านจะรีเซ็ตรหัสผ่านไม่ได้</p><div class="cf" id="cf"></div>','ยืนยันสร้างบัญชี',function(){
     closeSheet();msg('กำลังสร้างบัญชี...');busy=true;
-    FB.signup(u,cls,em,p).then(function(){busy=false;msg('');$('se').value='';$('su').value='';$('sp').value='';grade=null;room=null;renderPick();chkU();chkE();chkP();popup('สร้างบัญชีสำเร็จ',function(b){b.textContent='ยินดีต้อนรับ '+u+' · ห้อง '+cls+' (เข้าสู่ระบบให้แล้ว)'},'เริ่มใช้งาน')}).catch(function(e){busy=false;msg(e.message||'สร้างบัญชีไม่สำเร็จ','err')});
+    FB.signup(u,cls,em,p).then(function(){busy=false;msg('');$('se').value='';$('su').value='';$('sp').value='';grade=null;room=null;renderPick();chkU();chkE();chkP();popup('สร้างบัญชีสำเร็จ',function(b){b.textContent='ยินดีต้อนรับ '+u+' · ห้อง '+cls+' (เข้าสู่ระบบให้แล้ว)'},'เริ่มใช้งาน',function(){setTimeout(a2hsShow,200)})}).catch(function(e){busy=false;msg(e.message||'สร้างบัญชีไม่สำเร็จ','err')});
   });
   [['ชื่อผู้ใช้',u],['ห้องเรียน',cls],['อีเมล',em||'ไม่ได้ใส่']].forEach(function(r){
     var d=document.createElement('div');d.appendChild(document.createTextNode(r[0]+': '));
@@ -482,7 +542,7 @@ $('goLogin').onclick=function(){
   var u=$('lu').value.trim(),p=$('lp').value;
   if(!u||!p){return msg('กรุณากรอกชื่อผู้ใช้และรหัสผ่าน','err')}
   msg('กำลังเข้าสู่ระบบ...');
-  FB.login(u,p,$('rm').checked).then(function(){msg('');$('lp').value=''}).catch(function(e){msg(e&&e.cfg?e.message:'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง','err')});
+  FB.login(u,p,$('rm').checked).then(function(){msg('');$('lp').value='';setTimeout(a2hsShow,500)}).catch(function(e){msg(e&&e.cfg?e.message:'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง','err')});
 };
 var prods=[],orders=[],codes=[],logs=[],LINE='bren2024';
 function saveC(){save()}
@@ -509,6 +569,14 @@ function showCoin(){var a=A();
   $('lTop').onclick=showTopup}
 $('cBtn').onclick=showCoin;
 $('cPlus').onclick=function(){showTopup()};
+
+/* ===== คำแนะนำเพิ่มไปยังหน้าจอโฮม (แสดงหลังเข้าสู่ระบบใหม่) ===== */
+function a2hsShow(){
+  try{if(localStorage.getItem('a2hsOff')==='1')return}catch(e){}
+  try{if((window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone)return}catch(e){}
+  $('a2hs').classList.remove('hide')}
+$('a2Close').onclick=function(){$('a2hs').classList.add('hide')};
+$('a2Off').onclick=function(){try{localStorage.setItem('a2hsOff','1')}catch(e){}$('a2hs').classList.add('hide')};
 
 /* ===== เติมคอยน์ผ่าน QR พร้อมเพย์ ===== */
 var tqPend=null;
@@ -538,13 +606,26 @@ function showTopup(){var a=A();if(!a)return;var own=a.owner,memo=(own?'username'
       im.onerror=function(){shErr('ไฟล์รูปไม่ถูกต้อง')};im.src=rd.result};
     rd.readAsDataURL(f)}}
 
-function renderHome(){var a=A(),nl=prods.filter(function(p){return unit(p)<p.price}).length,h=memHome(a)+'<div class="menu">'+(a.owner?'':'<button type="button" id="bSub">'+subBtnTxt(a)+'</button>')+'<button type="button" id="bBoard">🏆 อันดับยอดคอยน์เข้า</button><button type="button" id="bHis">🧾 ประวัติการซื้อ (3 เดือน)</button>'+(a.owner?'<button type="button" id="bOrd">📋 ออเดอร์รอยืนยัน'+(orders.some(o=>o.st==='pending')?' ('+orders.filter(o=>o.st==='pending').length+')':'')+'</button><button type="button" id="bMan">⚙️ จัดการสินค้า</button><button type="button" id="bUsr">👥 คอยน์ของผู้ใช้</button><button type="button" id="bMem">🪪 ข้อมูลสมาชิก</button><button type="button" id="bFl">⚡ Flash sale</button><button type="button" id="bCod">🏷️ โค้ดส่วนลด</button><button type="button" id="bLog">🛡️ ประวัติเข้าสู่ระบบ / สมัคร</button><button type="button" id="bShop">'+(shopOpen?'🟢 ร้านเปิดอยู่ · กดเพื่อปิดร้าน':'🔴 ร้านปิดอยู่ · กดเพื่อเปิดร้าน')+'</button><button type="button" class="dng" id="bRst">🗑️ รีเซ็ตข้อมูลทั้งหมด</button>':'')+'</div>'+(shopOpen?'':'<div class="note">🔒 ร้านปิดอยู่ชั่วคราว ยังสั่งซื้อไม่ได้</div>')+(nl?'<div class="fbar">⚡ Flash sale กำลังลดราคา '+nl+' รายการ</div>':'')+'<div class="lbl">สินค้า</div><div class="grid">';
+function renderHome(){var a=A(),nl=prods.filter(function(p){return unit(p)<p.price}).length,mh='<button type="button" id="bHome">🏠 หน้าหลัก</button>'+(a.owner?'':'<button type="button" id="bSub">'+subBtnTxt(a)+'</button>')+'<button type="button" id="bBoard">🏆 อันดับยอดคอยน์เข้า</button><button type="button" id="bHis">🧾 ประวัติการซื้อ (3 เดือน)</button><button type="button" id="bInv">🎁 ชวนเพื่อน</button>'+(a.owner?'<button type="button" id="bOrd">📋 ออเดอร์รอยืนยัน'+(orders.some(o=>o.st==='pending')?' ('+orders.filter(o=>o.st==='pending').length+')':'')+'</button><button type="button" id="bMan">⚙️ จัดการสินค้า</button><button type="button" id="bUsr">👥 คอยน์ของผู้ใช้</button><button type="button" id="bMem">🪪 ข้อมูลสมาชิก</button><button type="button" id="bFl">⚡ Flash sale</button><button type="button" id="bCod">🏷️ โค้ดส่วนลด</button><button type="button" id="bLog">🛡️ ประวัติเข้าสู่ระบบ / สมัคร</button><button type="button" id="bShop">'+(shopOpen?'🟢 ร้านเปิดอยู่ · กดเพื่อปิดร้าน':'🔴 ร้านปิดอยู่ · กดเพื่อเปิดร้าน')+'</button><button type="button" class="dng" id="bRst">🗑️ รีเซ็ตข้อมูลทั้งหมด</button>':''),h=memHome(a)+(shopOpen?'':'<div class="note">🔒 ร้านปิดอยู่ชั่วคราว ยังสั่งซื้อไม่ได้</div>')+(nl?'<div class="fbar">⚡ Flash sale กำลังลดราคา '+nl+' รายการ</div>':'')+'<div class="lbl">สินค้า</div><div class="grid">';
+  $('drwM').innerHTML=mh;$('drwN').textContent=(a.owner?'👑 ':'')+a.name;
   if(!prods.length){h+='<p class="warn">ยังไม่มีสินค้า</p>'}
   prods.forEach(p=>{var f=flashes[p.id],fs=fst(f),u=unit(p),fl=u<p.price;h+='<div class="pc">'+(fl?'<span class="fbadge">⚡ '+(f.type==='pct'?'-'+f.val+'%':'-'+(p.price-u)+' 🪙')+'</span>':'')+(a.owner?'<button type="button" class="pdel" data-del="'+p.id+'" aria-label="ลบสินค้า">✕</button>':'')+(p.img?'<img src="'+p.img+'" alt="">':'<div class="ph">🛍️</div>')+'<b>'+esc(p.name)+'</b><div>'+priceHTML(p,f,fs,u,fl)+'</div><div class="hint" style="color:var(--mute)">'+(p.stock>0?'เหลือ '+p.stock:'หมด')+'</div><button type="button" data-buy="'+p.id+'"'+(p.stock>0&&(shopOpen||a.owner)?'':' disabled')+'>ซื้อ</button></div>'});
   $('amid').innerHTML=h+'</div>';
   $('amid').querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>buy(+b.dataset.buy));
   $('amid').querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>delProd(+b.dataset.del));
-  $('bHis').onclick=showHis;$('bBoard').onclick=showBoard;if($('bSub'))$('bSub').onclick=showSub;if($('bClaim'))$('bClaim').onclick=claimDay;if(a.owner){$('bOrd').onclick=showOrd;$('bMan').onclick=showMan;$('bUsr').onclick=showUsr;$('bMem').onclick=function(){showMem(0)};$('bCod').onclick=showCodes;$('bFl').onclick=showFlash;$('bLog').onclick=function(){showLogs('all')};$('bShop').onclick=toggleShop;$('bRst').onclick=resetAll}}
+  $('bHome').onclick=closeSheet;$('bHis').onclick=showHis;$('bInv').onclick=showInvite;$('bBoard').onclick=showBoard;if($('bSub'))$('bSub').onclick=showSub;if($('bClaim'))$('bClaim').onclick=claimDay;if(a.owner){$('bOrd').onclick=showOrd;$('bMan').onclick=showMan;$('bUsr').onclick=showUsr;$('bMem').onclick=function(){showMem(0)};$('bCod').onclick=showCodes;$('bFl').onclick=showFlash;$('bLog').onclick=function(){showLogs('all')};$('bShop').onclick=toggleShop;$('bRst').onclick=resetAll}}
+
+/* ===== ชวนเพื่อน: แสดงลิงก์เว็บให้คัดลอก/แชร์ ===== */
+function showInvite(){
+  var url=location.href.split(/[#?]/)[0].replace(/index\.html$/,'');
+  info('🎁 ชวนเพื่อน','<p class="warn" style="margin-top:0">ส่งลิงก์นี้ให้เพื่อนเพื่อมาสมัครและใช้ Bell &amp; Buy</p>'
+    +'<input id="invL" type="text" readonly value="" style="text-align:center">'
+    +'<button type="button" class="lnk go2" id="invCp" style="margin-top:10px">คัดลอกลิงก์</button>'
+    +(navigator.share?'<button type="button" class="lnk ghost" id="invSh">📤 แชร์ผ่านแอปอื่น</button>':''));
+  var i=$('invL');i.value=url;i.onfocus=i.onclick=function(){this.select()};
+  $('invCp').onclick=function(){cp(url,this,'คัดลอกลิงก์')};
+  if($('invSh'))$('invSh').onclick=function(){navigator.share({title:'Bell & Buy',text:'มาใช้ Bell & Buy กัน',url:url}).catch(function(){})};
+}
 
 function delProd(id,after){var p=prods.find(x=>x.id===id);if(!p||!A().owner)return;
   sheet('ลบสินค้า','<p class="warn">ลบ <b id="dpn"></b> ออกจากร้านถาวรใช่ไหม?</p>','ยืนยันลบ',()=>{
@@ -735,8 +816,12 @@ function paintAv(el,a,big){el.innerHTML='';el.className='av'+(big?' big':'')+(a.
   if(a.avatar){var im=document.createElement('img');im.src=a.avatar;im.alt='';el.appendChild(im)}else{el.textContent=a.name.charAt(0).toUpperCase()}}
 function paintApp(){var a=A();paintAv($('avTop'),a);var n=$('aName');n.textContent=(a.owner?'👑 ':'')+a.name;n.className=a.owner?'gold':'';
   $('aRole').textContent=(a.owner?'เจ้าของ · ':'')+a.cls;paintCoin();renderHome()}
-function enterApp(k){cur=k;$('auth').classList.add('hide');$('app').classList.remove('hide');paintApp();notify()}
-function leave(){cur=null;clearSess();$('app').classList.add('hide');$('auth').classList.remove('hide');mode('login')}
+var splOk=false;
+function splHide(){var e=$('splash');if(!e||e.dataset.gone)return;e.dataset.gone='1';e.classList.add('out');setTimeout(function(){if(e.parentNode)e.parentNode.removeChild(e)},450)}
+/* ปิดโลโก้เปิดเว็บเมื่อรู้สถานะล็อกอินแล้ว (แสดงสั้นๆ อย่างน้อย ~0.65 วินาที) -> ไม่เห็นหน้าสร้างบัญชีวูบขึ้นมาก่อน */
+function bootDone(){if(splOk)return;splOk=true;setTimeout(splHide,Math.max(0,650-(window.performance?performance.now():0)))}
+function enterApp(k){bootDone();cur=k;$('auth').classList.add('hide');$('app').classList.remove('hide');paintApp();notify()}
+function leave(){cur=null;clearSess();$('drw').classList.add('hide');$('sheet').classList.add('hide');$('app').classList.add('hide');$('auth').classList.remove('hide');mode('login')}
 function closeSheet(){$('sheet').classList.add('hide');flashView=false}
 function shErr(t){$('shM').textContent=t;$('shM').className='msg err'}
 function sheet(t,h,ok,fn,danger){$('shC').style.display='';$('shC').textContent='ยกเลิก';$('shT').textContent=t;$('shB').innerHTML=h;$('shM').textContent='';$('shM').className='msg';
@@ -776,6 +861,11 @@ var acts={
 document.querySelectorAll('[data-act]').forEach(function(b){b.onclick=function(){$('menuM').classList.add('hide');acts[b.dataset.act]()}});
 $('menuX').onclick=function(){$('menuM').classList.add('hide')};
 $('avTop').onclick=function(){$('menuM').classList.remove('hide')};
+function drwOpen(){$('drw').classList.remove('hide')}
+function drwClose(){$('drw').classList.add('hide')}
+$('hamb').onclick=drwOpen;$('shMenu').onclick=drwOpen;$('drwBk').onclick=drwClose;
+$('drwM').addEventListener('click',function(e){if(e.target.closest('button'))drwClose()});
+$('shX').onclick=function(){if($('shC').style.display!=='none')$('shC').click();else closeSheet()};
 function live(id,t,k){var e=$(id);e.textContent=t;e.className='live '+(k||'')}
 function chkU(){var u=$('su').value.trim();
   if(!u){return live('suL','')}
@@ -1071,7 +1161,9 @@ function start(uid){
       if(s.data().email)setDoc(D('emailIndex',s.data().email),{u:uid,name:s.data().name},{merge:true}).catch(()=>{})}else{refresh()}
   },errLog));
 }
+if(!ready)bootDone();
 if(ready)onAuthStateChanged(auth,u=>{
+  if(!u)bootDone();
   if(signing)return;
   if(u){start(u.uid)}
   else{stop();const was=cur;cur=null;accounts={};prods=[];flashes={};board=[];orders=[];codes=[];logs=[];rawCodes=[];rawUses=[];if(was)leave()}
