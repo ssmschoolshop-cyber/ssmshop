@@ -366,6 +366,25 @@ button:focus-visible,.chip:focus-visible,.av:focus-visible{outline:none;box-shad
 .drwP .logo.sm{margin:0 auto 6px}
 .drwP .dn{text-align:center;font-weight:700;margin:6px 0 14px}
 @keyframes drwIn{from{transform:translateX(-100%)}to{transform:none}}
+
+/* ===== FIX: แถบบนในมือถือแนวตั้ง — ปุ่มเครดิตไม่หดและไม่ตัดบรรทัด ===== */
+.atop{flex:none;flex-wrap:nowrap;min-width:0}
+.atop .cwrap{flex:0 0 auto;min-width:0;margin-right:auto}
+.atop .cbtn{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap;word-break:keep-all;line-height:1.2;writing-mode:horizontal-tb;height:auto;min-height:0;max-height:48px}
+.atop .cbtn #cBal{white-space:nowrap}
+.atop .who{flex:1 1 0;min-width:0;overflow:hidden}
+.atop .who #aName,.atop .who .role{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:420px){
+  .atop{gap:8px}
+  .atop .cbtn{padding:8px 11px;font-size:15px}
+  .atop .cbtn.plus{padding:8px 11px;font-size:16px}
+  .hamb{width:40px;height:40px}
+  .av{width:42px;height:42px}
+  #aName{font-size:15px}
+}
+@media (max-width:340px){
+  .atop .who{display:none}
+}
 </style>
 </head>
 <body>
@@ -426,7 +445,7 @@ button:focus-visible,.chip:focus-visible,.av:focus-visible{outline:none;box-shad
 </div>
 
 <div class="app hide" id="app"><div class="frame">
-  <div class="atop"><button type="button" class="hamb" id="hamb" aria-label="เมนู"><i></i><i></i><i></i></button><span class="cwrap"><button type="button" class="cbtn" id="cBtn" aria-label="คอยน์">🪙 <span id="cBal">0</span></button><button type="button" class="cbtn plus" id="cPlus" aria-label="เติมคอยน์">＋</button></span><div class="who"><div id="aName"></div><div class="role" id="aRole"></div></div><button type="button" class="av" id="avTop" aria-label="แก้ไขโปรไฟล์"></button></div>
+  <div class="atop"><button type="button" class="hamb" id="hamb" aria-label="เมนู"><i></i><i></i><i></i></button><span class="cwrap"><button type="button" class="cbtn" id="cBtn" aria-label="เครดิต">💵 <span id="cBal">0</span></button><button type="button" class="cbtn plus" id="cPlus" aria-label="เติมเครดิต">＋</button></span><div class="who"><div id="aName"></div><div class="role" id="aRole"></div></div><button type="button" class="av" id="avTop" aria-label="แก้ไขโปรไฟล์"></button></div>
   <div class="logo sm" role="img" aria-label="Bell &amp; Buy"></div>
   <div class="amid" id="amid"></div>
 </div></div>
@@ -557,14 +576,14 @@ function info(t,h){sheet(t,h,'ปิด',closeSheet);$('shC').style.display='non
 function paintCoin(){$('cBal').textContent=bal(A())}
 function sums(a){var i=0,o=0;(a.ledger||[]).forEach(e=>{if(e.rf){o-=e.d}else if(e.d>0){i+=e.d}else{o-=e.d}});return{i:i,o:o}}
 function sumTwo(a){var s=sums(a);return '<div class="two"><div class="cf">ยอดเข้า<br><b style="color:var(--ok)">+'+s.i+'</b></div><div class="cf">ยอดออก<br><b style="color:var(--err)">-'+s.o+'</b></div></div>'}
-function sumHTML(a){var s=sums(a);return '<div class="two"><div class="cf">ยอดเข้า<br><b style="color:var(--ok)">+'+s.i+'</b></div><div class="cf">ยอดออก<br><b style="color:var(--err)">-'+s.o+'</b></div></div><div class="cf">คงเหลือ: <b>'+bal(a)+' 🪙</b></div>'}
+function sumHTML(a){var s=sums(a);return '<div class="two"><div class="cf">ยอดเข้า<br><b style="color:var(--ok)">+'+s.i+'</b></div><div class="cf">ยอดออก<br><b style="color:var(--err)">-'+s.o+'</b></div></div><div class="cf">คงเหลือ: <b>'+bal(a)+' 💵</b></div>'}
 function ledHTML(a){var L=(a.ledger||[]).slice().reverse();if(!L.length)return '<p class="warn">ยังไม่มีรายการ</p>';
-  return L.map(e=>'<div class="cf"><b style="color:var(--'+(e.d>0?'ok':'err')+')">'+(e.d>0?'+':'')+e.d+' 🪙</b> · คงเหลือ '+e.b+'<div class="hint">'+fd(e.t)+' · '+esc(e.n)+'</div></div>').join('')}
+  return L.map(e=>'<div class="cf"><b style="color:var(--'+(e.d>0?'ok':'err')+')">'+(e.d>0?'+':'')+e.d+' 💵</b> · คงเหลือ '+e.b+'<div class="hint">'+fd(e.t)+' · '+esc(e.n)+'</div></div>').join('')}
 function cp(t,btn,lb){lb=lb||'คัดลอก ID';var ok=()=>{btn.textContent='คัดลอกแล้ว ✓';setTimeout(()=>{btn.textContent=lb},1800)};
   var fb=()=>{var x=document.createElement('textarea');x.value=t;document.body.appendChild(x);x.select();try{document.execCommand('copy');ok()}catch(e){}x.remove()};
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,fb)}else{fb()}}
 function showCoin(){var a=A();
-  info('คอยน์ของฉัน','<div class="cf">คงเหลือ: <b>'+bal(a)+' 🪙</b>'+(a.owner?' <span class="hint">เจ้าของมีคอยน์ไม่จำกัด</span>':'')+'</div>'+(a.owner?'':sumTwo(a)+'<button type="button" class="lnk go2" id="lTop">➕ เติมคอยน์</button><div class="lbl">ประวัติคอยน์</div>'+ledHTML(a)));
+  info('เครดิตของฉัน','<div class="cf">คงเหลือ: <b>'+bal(a)+' 💵</b>'+(a.owner?' <span class="hint">เจ้าของมีเครดิตไม่จำกัด</span>':'')+'</div>'+(a.owner?'':sumTwo(a)+'<button type="button" class="lnk go2" id="lTop">➕ เติมเครดิต</button><div class="lbl">ประวัติเครดิต</div>'+ledHTML(a)));
   if(a.owner)return;
   $('lTop').onclick=showTopup}
 $('cBtn').onclick=showCoin;
@@ -578,23 +597,23 @@ function a2hsShow(){
 $('a2Close').onclick=function(){$('a2hs').classList.add('hide')};
 $('a2Off').onclick=function(){try{localStorage.setItem('a2hsOff','1')}catch(e){}$('a2hs').classList.add('hide')};
 
-/* ===== เติมคอยน์ผ่าน QR พร้อมเพย์ ===== */
+/* ===== เติมเครดิตผ่าน QR พร้อมเพย์ ===== */
 var tqPend=null;
 function showTopup(){var a=A();if(!a)return;var own=a.owner,memo=(own?'username':a.name)+' bellbuy';tqPend=null;
-  var rules='<div class="note"><b>⚠️ ข้อควรทราบก่อนโอนเงิน</b><br>1. ต้องตั้งหมายเหตุการโอนเป็น "<b>'+esc(memo)+'</b>"<br>2. 1 บาท = 1 คอยน์<br>3. คอยน์จะเข้าบัญชีก็ต่อเมื่อเจ้าของตรวจสอบและเพิ่มให้เท่านั้น</div>';
-  if(!own&&!topupOpen){info('เติมคอยน์','<div class="note bad">🔒 เจ้าของยังไม่เปิดให้เติมเงินขณะนี้</div>');return}
+  var rules='<div class="note"><b>⚠️ ข้อควรทราบก่อนโอนเงิน</b><br>1. ต้องตั้งหมายเหตุการโอนเป็น "<b>'+esc(memo)+'</b>"<br>2. 1 บาท = 1 เครดิต<br>3. เครดิตจะเข้าบัญชีก็ต่อเมื่อเจ้าของตรวจสอบและเพิ่มให้เท่านั้น</div>';
+  if(!own&&!topupOpen){info('เติมเครดิต','<div class="note bad">🔒 เจ้าของยังไม่เปิดให้เติมเงินขณะนี้</div>');return}
   var loadQr=function(){FB.getTopupQr().then(function(q){var b=$('tqBox');if(!b)return;
       b.innerHTML=q?'<img class="tqimg" src="'+q+'" alt="QR พร้อมเพย์">':'<p class="warn">'+(own?'ยังไม่ได้อัปโหลด QR':'ยังไม่มี QR กรุณารอเจ้าของอัปโหลด')+'</p>'})
     .catch(function(){var b=$('tqBox');if(b)b.innerHTML='<p class="warn">โหลด QR ไม่ได้ ลองใหม่อีกครั้ง</p>'})};
   if(!own){
-    info('เติมคอยน์','<div class="tqbox" id="tqBox"><div class="hint">กำลังโหลด QR...</div></div>'+rules+'<button type="button" class="lnk ghost" id="tqCp">คัดลอกหมายเหตุ</button>');
+    info('เติมเครดิต','<div class="tqbox" id="tqBox"><div class="hint">กำลังโหลด QR...</div></div>'+rules+'<button type="button" class="lnk ghost" id="tqCp">คัดลอกหมายเหตุ</button>');
     $('tqCp').onclick=function(){cp(memo,this,'คัดลอกหมายเหตุ')};loadQr();return}
   sheet('ตั้งค่าเติมเงิน (เจ้าของ)','<button type="button" class="lnk ghost" id="tqTg">'+(topupOpen?'🟢 เปิดให้เติมเงินอยู่ · กดเพื่อปิด':'🔴 ปิดการเติมเงินอยู่ · กดเพื่อเปิด')+'</button>'
     +'<div class="lbl">QR พร้อมเพย์</div><div class="tqbox" id="tqBox"><div class="hint">กำลังโหลด QR...</div></div>'
     +'<button type="button" class="lnk ghost" id="tqUp">📤 อัปโหลด QR code</button><input id="tqIn" type="file" accept="image/*" style="display:none">'
     +'<div class="hint" style="margin-top:8px">สมาชิกจะเห็นข้อความเตือนด้านล่างนี้</div>'+rules,'บันทึก QR',function(){
       if(tqPend===null)return shErr('ยังไม่ได้เลือกรูป QR ใหม่');
-      var q=tqPend;FB.saveTopupQr(q).then(function(){closeSheet();popup('บันทึก QR สำเร็จ',function(b){b.textContent='สมาชิกจะเห็น QR ใหม่ตอนเปิดหน้าเติมคอยน์'},'ตกลง')}).catch(pe)});
+      var q=tqPend;FB.saveTopupQr(q).then(function(){closeSheet();popup('บันทึก QR สำเร็จ',function(b){b.textContent='สมาชิกจะเห็น QR ใหม่ตอนเปิดหน้าเติมเครดิต'},'ตกลง')}).catch(pe)});
   loadQr();
   $('tqTg').onclick=function(){var to=!topupOpen;FB.setTopup(to).then(function(){topupOpen=to;showTopup()}).catch(pe)};
   $('tqUp').onclick=function(){$('tqIn').click()};
@@ -606,10 +625,10 @@ function showTopup(){var a=A();if(!a)return;var own=a.owner,memo=(own?'username'
       im.onerror=function(){shErr('ไฟล์รูปไม่ถูกต้อง')};im.src=rd.result};
     rd.readAsDataURL(f)}}
 
-function renderHome(){var a=A(),nl=prods.filter(function(p){return unit(p)<p.price}).length,mh='<button type="button" id="bHome">🏠 หน้าหลัก</button>'+(a.owner?'':'<button type="button" id="bSub">'+subBtnTxt(a)+'</button>')+'<button type="button" id="bBoard">🏆 อันดับยอดคอยน์เข้า</button><button type="button" id="bHis">🧾 ประวัติการซื้อ (3 เดือน)</button><button type="button" id="bInv">🎁 ชวนเพื่อน</button>'+(a.owner?'<button type="button" id="bOrd">📋 ออเดอร์รอยืนยัน'+(orders.some(o=>o.st==='pending')?' ('+orders.filter(o=>o.st==='pending').length+')':'')+'</button><button type="button" id="bMan">⚙️ จัดการสินค้า</button><button type="button" id="bUsr">👥 คอยน์ของผู้ใช้</button><button type="button" id="bMem">🪪 ข้อมูลสมาชิก</button><button type="button" id="bFl">⚡ Flash sale</button><button type="button" id="bCod">🏷️ โค้ดส่วนลด</button><button type="button" id="bLog">🛡️ ประวัติเข้าสู่ระบบ / สมัคร</button><button type="button" id="bShop">'+(shopOpen?'🟢 ร้านเปิดอยู่ · กดเพื่อปิดร้าน':'🔴 ร้านปิดอยู่ · กดเพื่อเปิดร้าน')+'</button><button type="button" class="dng" id="bRst">🗑️ รีเซ็ตข้อมูลทั้งหมด</button>':''),h=memHome(a)+(shopOpen?'':'<div class="note">🔒 ร้านปิดอยู่ชั่วคราว ยังสั่งซื้อไม่ได้</div>')+(nl?'<div class="fbar">⚡ Flash sale กำลังลดราคา '+nl+' รายการ</div>':'')+'<div class="lbl">สินค้า</div><div class="grid">';
+function renderHome(){var a=A(),nl=prods.filter(function(p){return unit(p)<p.price}).length,mh='<button type="button" id="bHome">🏠 หน้าหลัก</button>'+(a.owner?'':'<button type="button" id="bSub">'+subBtnTxt(a)+'</button>')+'<button type="button" id="bBoard">🏆 อันดับยอดเครดิตเข้า</button><button type="button" id="bHis">🧾 ประวัติการซื้อ (3 เดือน)</button><button type="button" id="bInv">🎁 ชวนเพื่อน</button>'+(a.owner?'<button type="button" id="bOrd">📋 ออเดอร์รอยืนยัน'+(orders.some(o=>o.st==='pending')?' ('+orders.filter(o=>o.st==='pending').length+')':'')+'</button><button type="button" id="bMan">⚙️ จัดการสินค้า</button><button type="button" id="bUsr">👥 เครดิตของผู้ใช้</button><button type="button" id="bMem">🪪 ข้อมูลสมาชิก</button><button type="button" id="bFl">⚡ Flash sale</button><button type="button" id="bCod">🏷️ โค้ดส่วนลด</button><button type="button" id="bLog">🛡️ ประวัติเข้าสู่ระบบ / สมัคร</button><button type="button" id="bShop">'+(shopOpen?'🟢 ร้านเปิดอยู่ · กดเพื่อปิดร้าน':'🔴 ร้านปิดอยู่ · กดเพื่อเปิดร้าน')+'</button><button type="button" class="dng" id="bRst">🗑️ รีเซ็ตข้อมูลทั้งหมด</button>':''),h=memHome(a)+(shopOpen?'':'<div class="note">🔒 ร้านปิดอยู่ชั่วคราว ยังสั่งซื้อไม่ได้</div>')+(nl?'<div class="fbar">⚡ Flash sale กำลังลดราคา '+nl+' รายการ</div>':'')+'<div class="lbl">สินค้า</div><div class="grid">';
   $('drwM').innerHTML=mh;$('drwN').textContent=(a.owner?'👑 ':'')+a.name;
   if(!prods.length){h+='<p class="warn">ยังไม่มีสินค้า</p>'}
-  prods.forEach(p=>{var f=flashes[p.id],fs=fst(f),u=unit(p),fl=u<p.price;h+='<div class="pc">'+(fl?'<span class="fbadge">⚡ '+(f.type==='pct'?'-'+f.val+'%':'-'+(p.price-u)+' 🪙')+'</span>':'')+(a.owner?'<button type="button" class="pdel" data-del="'+p.id+'" aria-label="ลบสินค้า">✕</button>':'')+(p.img?'<img src="'+p.img+'" alt="">':'<div class="ph">🛍️</div>')+'<b>'+esc(p.name)+'</b><div>'+priceHTML(p,f,fs,u,fl)+'</div><div class="hint" style="color:var(--mute)">'+(p.stock>0?'เหลือ '+p.stock:'หมด')+'</div><button type="button" data-buy="'+p.id+'"'+(p.stock>0&&(shopOpen||a.owner)?'':' disabled')+'>ซื้อ</button></div>'});
+  prods.forEach(p=>{var f=flashes[p.id],fs=fst(f),u=unit(p),fl=u<p.price;h+='<div class="pc">'+(fl?'<span class="fbadge">⚡ '+(f.type==='pct'?'-'+f.val+'%':'-'+(p.price-u)+' 💵')+'</span>':'')+(a.owner?'<button type="button" class="pdel" data-del="'+p.id+'" aria-label="ลบสินค้า">✕</button>':'')+(p.img?'<img src="'+p.img+'" alt="">':'<div class="ph">🛍️</div>')+'<b>'+esc(p.name)+'</b><div>'+priceHTML(p,f,fs,u,fl)+'</div><div class="hint" style="color:var(--mute)">'+(p.stock>0?'เหลือ '+p.stock:'หมด')+'</div><button type="button" data-buy="'+p.id+'"'+(p.stock>0&&(shopOpen||a.owner)?'':' disabled')+'>ซื้อ</button></div>'});
   $('amid').innerHTML=h+'</div>';
   $('amid').querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>buy(+b.dataset.buy));
   $('amid').querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>delProd(+b.dataset.del));
@@ -635,7 +654,7 @@ function delProd(id,after){var p=prods.find(x=>x.id===id);if(!p||!A().owner)retu
 var PTS=['หน้าอาคาร 2','บ่อเต่าข้างอาคาร 2','หน้าเสาธง'],TMS=['10:50','10:55','11:00','11:05','11:10','11:15'];
 function buy(id){var a=A(),p=prods.find(x=>x.id===id);if(!p||p.stock<1)return;if(!shopOpen&&!a.owner)return;
   var u1=unit(p),fl=u1<p.price,ap=null,sub=()=>(+$('bq').value)*u1,disc=()=>ap?codeDisc(ap,sub()):0,tot=()=>sub()-disc();
-  sheet('ซื้อ '+p.name,'<div class="lbl">จำนวน</div>'+sel('bq',Math.min(p.stock,20),'')+'<div class="lbl">จุดนัดพบ</div>'+PTS.map((x,i)=>'<label class="chk"><input type="radio" name="pt" value="'+i+'"> '+esc(x)+'</label>').join('')+'<div class="lbl">วันที่รับสินค้า <span class="opt">(ไม่รวมเสาร์-อาทิตย์)</span></div><select id="bd"><option value="">เลือกวัน</option>'+dayOpts().map(x=>'<option value="'+x.v+'">'+x.l+'</option>').join('')+'</select><div class="lbl">เวลานัดรับ</div><select id="bt2"><option value="">เลือกเวลา</option>'+TMS.map(x=>'<option value="'+x+'">'+x+' น.</option>').join('')+'</select><div class="hint">อาจมาสายประมาณ 1–5 นาที</div><div class="lbl">โค้ดส่วนลด <span class="opt">(ถ้ามี)</span></div><div style="display:flex;gap:8px"><input id="bc" placeholder="กรอกโค้ดส่วนลด" autocomplete="off" autocapitalize="characters" style="text-transform:uppercase"><button type="button" class="ghost" id="bca" style="border:0;border-radius:12px;padding:0 16px;font:inherit;font-weight:700;cursor:pointer;flex:none">ใช้โค้ด</button></div><div class="live" id="bcl"></div><div class="lbl">การชำระเงิน</div><div class="cf">จ่ายด้วยคอยน์เท่านั้น (คงเหลือ '+bal(a)+' 🪙)<br><span id="bt"></span></div>','ยืนยันการซื้อ',()=>{
+  sheet('ซื้อ '+p.name,'<div class="lbl">จำนวน</div>'+sel('bq',Math.min(p.stock,20),'')+'<div class="lbl">จุดนัดพบ</div>'+PTS.map((x,i)=>'<label class="chk"><input type="radio" name="pt" value="'+i+'"> '+esc(x)+'</label>').join('')+'<div class="lbl">วันที่รับสินค้า <span class="opt">(ไม่รวมเสาร์-อาทิตย์)</span></div><select id="bd"><option value="">เลือกวัน</option>'+dayOpts().map(x=>'<option value="'+x.v+'">'+x.l+'</option>').join('')+'</select><div class="lbl">เวลานัดรับ</div><select id="bt2"><option value="">เลือกเวลา</option>'+TMS.map(x=>'<option value="'+x+'">'+x+' น.</option>').join('')+'</select><div class="hint">อาจมาสายประมาณ 1–5 นาที</div><div class="lbl">โค้ดส่วนลด <span class="opt">(ถ้ามี)</span></div><div style="display:flex;gap:8px"><input id="bc" placeholder="กรอกโค้ดส่วนลด" autocomplete="off" autocapitalize="characters" style="text-transform:uppercase"><button type="button" class="ghost" id="bca" style="border:0;border-radius:12px;padding:0 16px;font:inherit;font-weight:700;cursor:pointer;flex:none">ใช้โค้ด</button></div><div class="live" id="bcl"></div><div class="lbl">การชำระเงิน</div><div class="cf">จ่ายด้วยเครดิตเท่านั้น (คงเหลือ '+bal(a)+' 💵)<br><span id="bt"></span></div>','ยืนยันการซื้อ',()=>{
     var q=+$('bq').value,pe=document.querySelector('input[name=pt]:checked'),tm=$('bt2').value,dy=$('bd').value;
     if(q>p.stock)return shErr('สินค้าไม่พอ');
     if(!dy)return shErr('กรุณาเลือกวันที่รับสินค้า');
@@ -647,11 +666,11 @@ function buy(id){var a=A(),p=prods.find(x=>x.id===id);if(!p||p.stock<1)return;if
     $('shOk').disabled=true;
     CF.placeOrder({pid:p.id,ep:u1,q:q,pt:+pe.value,tm:tm,dy:dy,code:ap?ap.code:''}).then(function(r){
       var o=r.data;closeSheet();$('shOk').disabled=false;
-      popup('ส่งออเดอร์แล้ว',function(b){b.textContent=p.name+' ×'+q+' = '+o.tot+' 🪙';[o.disc?'ใช้โค้ด '+o.cd+' ลด '+o.disc+' 🪙':'','วัน: '+dlabel(dy),'เวลา: '+tm+' น.','จุดนัดพบ: '+PTS[+pe.value],a.owner?'':'รอเจ้าของร้านยืนยันออเดอร์'].filter(Boolean).forEach(function(s){var d=document.createElement('div');d.textContent=s;b.appendChild(d)})},'ตกลง')
+      popup('ส่งออเดอร์แล้ว',function(b){b.textContent=p.name+' ×'+q+' = '+o.tot+' 💵';[o.disc?'ใช้โค้ด '+o.cd+' ลด '+o.disc+' 💵':'','วัน: '+dlabel(dy),'เวลา: '+tm+' น.','จุดนัดพบ: '+PTS[+pe.value],a.owner?'':'รอเจ้าของร้านยืนยันออเดอร์'].filter(Boolean).forEach(function(s){var d=document.createElement('div');d.textContent=s;b.appendChild(d)})},'ตกลง')
     }).catch(function(e){$('shOk').disabled=false;shErr(e.message||'สั่งซื้อไม่สำเร็จ')});
   });
-  var okMsg=()=>live('bcl','✓ ใช้โค้ด '+ap.code+' ได้ ลด '+codeDisc(ap,sub())+' คอยน์','ok');
-  var up=()=>{var d=disc();$('bt').innerHTML=(fl?'⚡ Flash sale ราคาชิ้นละ '+u1+' 🪙 (ปกติ '+p.price+')<br>':'')+(d?'ราคา '+sub()+' − ส่วนลด '+d+' = ':'')+'รวม <b>'+tot()+' 🪙</b>'};up();
+  var okMsg=()=>live('bcl','✓ ใช้โค้ด '+ap.code+' ได้ ลด '+codeDisc(ap,sub())+' เครดิต','ok');
+  var up=()=>{var d=disc();$('bt').innerHTML=(fl?'⚡ Flash sale ราคาชิ้นละ '+u1+' 💵 (ปกติ '+p.price+')<br>':'')+(d?'ราคา '+sub()+' − ส่วนลด '+d+' = ':'')+'รวม <b>'+tot()+' 💵</b>'};up();
   $('bq').onchange=function(){if(ap)okMsg();up()};
   $('bc').oninput=function(){ap=null;live('bcl','');up()};
   $('bca').onclick=function(){var v=$('bc').value.trim();if(!v){return live('bcl','กรุณากรอกโค้ดส่วนลด','err')}
@@ -663,7 +682,7 @@ function codeStat(c){var td=iso(new Date());
   if(c.exp<td)return{k:'exp',t:'⌛ หมดเขตแล้ว'};
   if(codeActive(c).length>=c.max)return{k:'full',t:'🈵 ใช้ครบแล้ว'};
   return{k:'ok',t:'✅ ใช้งานได้'}}
-function codeLbl(c){return c.type==='pct'?'ลด '+c.val+'%':'ลด '+c.val+' 🪙'}
+function codeLbl(c){return c.type==='pct'?'ลด '+c.val+'%':'ลด '+c.val+' 💵'}
 function codeDisc(c,s){var d=c.type==='pct'?Math.floor(s*c.val/100):c.val;return Math.max(0,Math.min(d,s))}
 function codeCheck(str,s){var k=String(str).trim().toUpperCase(),c=codes.find(x=>x.code===k);
   if(!c)return{ok:false,msg:'ไม่พบโค้ดนี้'};
@@ -679,11 +698,11 @@ function showCodes(){
   $('shB').querySelectorAll('[data-ch]').forEach(b=>b.onclick=()=>codeHist(+b.dataset.ch));
   $('shB').querySelectorAll('[data-ct]').forEach(b=>b.onclick=()=>{var c=codes.find(x=>x.id===+b.dataset.ct);if(c){FB.toggleCode(c.code,!c.on).then(showCodes).catch(pe)}})}
 function codeForm(){
-  sheet('สร้างโค้ดส่วนลด',fld('ชื่อโค้ด (A-Z, 0-9, _ , -)','kc')+'<div class="lbl">ประเภทส่วนลด</div><select id="kt"><option value="pct">ลดเป็นเปอร์เซ็นต์ (%)</option><option value="coin">ลดเป็นคอยน์ (🪙)</option></select>'+fld('จำนวนส่วนลด','kv','number')+fld('ใช้ได้กี่คน','km','number')+fld('หมดเขตวันที่ (ใช้ได้ถึงสิ้นวันนั้น)','ke','date'),'สร้างโค้ด',()=>{
+  sheet('สร้างโค้ดส่วนลด',fld('ชื่อโค้ด (A-Z, 0-9, _ , -)','kc')+'<div class="lbl">ประเภทส่วนลด</div><select id="kt"><option value="pct">ลดเป็นเปอร์เซ็นต์ (%)</option><option value="coin">ลดเป็นเครดิต (💵)</option></select>'+fld('จำนวนส่วนลด','kv','number')+fld('ใช้ได้กี่คน','km','number')+fld('หมดเขตวันที่ (ใช้ได้ถึงสิ้นวันนั้น)','ke','date'),'สร้างโค้ด',()=>{
     var code=$('kc').value.trim().toUpperCase(),type=$('kt').value,val=Math.floor(+$('kv').value),max=Math.floor(+$('km').value),exp=$('ke').value;
     if(!/^[A-Z0-9_-]{3,20}$/.test(code))return shErr('ชื่อโค้ดใช้ A-Z, 0-9, _ และ - (3–20 ตัว)');
     if(codes.some(c=>c.code===code))return shErr('มีโค้ดนี้อยู่แล้ว ห้ามสร้างซ้ำ');
-    if(!(val>=1)||(type==='pct'&&val>100))return shErr(type==='pct'?'เปอร์เซ็นต์ต้องอยู่ระหว่าง 1–100':'จำนวนคอยน์ต้องมากกว่า 0');
+    if(!(val>=1)||(type==='pct'&&val>100))return shErr(type==='pct'?'เปอร์เซ็นต์ต้องอยู่ระหว่าง 1–100':'จำนวนเครดิตต้องมากกว่า 0');
     if(!(max>=1))return shErr('จำนวนคนต้องอย่างน้อย 1');
     if(!exp)return shErr('กรุณาเลือกวันหมดเขต');
     if(exp<iso(new Date()))return shErr('วันหมดเขตต้องไม่ใช่วันที่ผ่านมาแล้ว');
@@ -691,7 +710,7 @@ function codeForm(){
   $('shC').onclick=showCodes;
   $('kv').placeholder='เช่น 10';$('km').placeholder='เช่น 20';$('ke').min=iso(new Date())}
 function codeHist(id){var c=codes.find(x=>x.id===id);if(!c)return;
-  sheet('ประวัติโค้ด '+c.code,'<div class="cf">'+codeLbl(c)+' · ใช้แล้ว '+codeActive(c).length+'/'+c.max+' คน<br>หมดเขต '+esc(dlabel(c.exp))+'</div><div class="lbl">ผู้ที่ใช้โค้ด</div>'+(c.uses.length?c.uses.slice().reverse().map(u=>'<div class="cf"><b>'+esc(u.un)+'</b> '+esc(u.cls||'')+'<br>'+esc(u.n)+' ×'+u.q+' · ลด '+u.disc+' 🪙'+(u.void?'<br>❌ ออเดอร์ถูกยกเลิก (คืนสิทธิ์โค้ดแล้ว)':'')+'<div class="hint">'+fd(u.t)+' · #'+String(u.oid).slice(-6)+'</div></div>').join(''):'<p class="warn">ยังไม่มีใครใช้โค้ดนี้</p>'),'กลับ',showCodes);
+  sheet('ประวัติโค้ด '+c.code,'<div class="cf">'+codeLbl(c)+' · ใช้แล้ว '+codeActive(c).length+'/'+c.max+' คน<br>หมดเขต '+esc(dlabel(c.exp))+'</div><div class="lbl">ผู้ที่ใช้โค้ด</div>'+(c.uses.length?c.uses.slice().reverse().map(u=>'<div class="cf"><b>'+esc(u.un)+'</b> '+esc(u.cls||'')+'<br>'+esc(u.n)+' ×'+u.q+' · ลด '+u.disc+' 💵'+(u.void?'<br>❌ ออเดอร์ถูกยกเลิก (คืนสิทธิ์โค้ดแล้ว)':'')+'<div class="hint">'+fd(u.t)+' · #'+String(u.oid).slice(-6)+'</div></div>').join(''):'<p class="warn">ยังไม่มีใครใช้โค้ดนี้</p>'),'กลับ',showCodes);
   $('shC').style.display='none'}
 function iso(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function dlabel(v){var p=String(v).split('-');return new Date(+p[0],+p[1]-1,+p[2]).toLocaleDateString('th-TH',{weekday:'long',day:'numeric',month:'long'})}
@@ -699,13 +718,13 @@ function dayOpts(){var out=[],n=new Date(),c=new Date(n.getFullYear(),n.getMonth
   c.setDate(c.getDate()+1);
   while(out.length<2){var w=c.getDay();if(w!==0&&w!==6)out.push({v:iso(c),l:dlabel(iso(c))});c.setDate(c.getDate()+1)}
   return out}
-function stLbl(o){return o.st==='pending'?'⏳ รอเจ้าของยืนยัน':o.st==='rejected'?'❌ ถูกยกเลิก (คืนคอยน์แล้ว)':'✅ ยืนยันแล้ว'}
+function stLbl(o){return o.st==='pending'?'⏳ รอเจ้าของยืนยัน':o.st==='rejected'?'❌ ถูกยกเลิก (คืนเครดิตแล้ว)':'✅ ยืนยันแล้ว'}
 function showOrd(){var L=orders.filter(o=>o.st==='pending');
-  info('ออเดอร์รอยืนยัน',L.length?L.map(o=>{var u=accounts[o.u]||{name:o.u,cls:''};return '<div class="cf"><b>'+esc(o.n)+'</b> ×'+o.q+' = <b>'+o.tot+' 🪙</b>'+(o.disc?' <span class="hint">(โค้ด '+esc(o.cd)+' ลด '+o.disc+')</span>':'')+'<br>ผู้ซื้อ:'+esc(u.name)+' '+esc(u.cls||'')+'<br>'+esc(dlabel(o.dy))+' · '+esc(o.tm)+' น.<br>จุดนัดพบ: '+esc(o.pt)+'<div class="row" style="margin-top:8px"><button type="button" class="go2 danger" data-r="'+o.id+'">ไม่รับ</button><button type="button" class="go2" data-a="'+o.id+'">รับออเดอร์</button></div><div class="hint">'+fd(o.t)+' · #'+String(o.id).slice(-6)+'</div></div>'}).join(''):'<p class="warn">ไม่มีออเดอร์รอยืนยัน</p>');
+  info('ออเดอร์รอยืนยัน',L.length?L.map(o=>{var u=accounts[o.u]||{name:o.u,cls:''};return '<div class="cf"><b>'+esc(o.n)+'</b> ×'+o.q+' = <b>'+o.tot+' 💵</b>'+(o.disc?' <span class="hint">(โค้ด '+esc(o.cd)+' ลด '+o.disc+')</span>':'')+'<br>ผู้ซื้อ:'+esc(u.name)+' '+esc(u.cls||'')+'<br>'+esc(dlabel(o.dy))+' · '+esc(o.tm)+' น.<br>จุดนัดพบ: '+esc(o.pt)+'<div class="row" style="margin-top:8px"><button type="button" class="go2 danger" data-r="'+o.id+'">ไม่รับ</button><button type="button" class="go2" data-a="'+o.id+'">รับออเดอร์</button></div><div class="hint">'+fd(o.t)+' · #'+String(o.id).slice(-6)+'</div></div>'}).join(''):'<p class="warn">ไม่มีออเดอร์รอยืนยัน</p>');
   $('shB').querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{var o=orders.find(x=>x.id===+b.dataset.a);if(o&&o.st==='pending'){FB.confirmOrder(o.id).then(showOrd).catch(pe)}});
   $('shB').querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>rejectOrd(+b.dataset.r))}
 function rejectOrd(id){var o=orders.find(x=>x.id===id);if(!o||o.st!=='pending')return;
-  sheet('ไม่รับออเดอร์','<p class="warn">ยกเลิกออเดอร์ <b id="rn"></b> และคืนคอยน์ให้ผู้ซื้อ?</p>','ยืนยันไม่รับ',()=>{
+  sheet('ไม่รับออเดอร์','<p class="warn">ยกเลิกออเดอร์ <b id="rn"></b> และคืนเครดิตให้ผู้ซื้อ?</p>','ยืนยันไม่รับ',()=>{
     CF.rejectOrder({oid:o.id}).then(function(){showOrd()}).catch(function(e){shErr(e.message||'ผิดพลาด')})},true);
   $('rn').textContent=o.n+' ×'+o.q;$('shC').onclick=showOrd}
 function warnPop(){var w=(A().warns||[]).find(x=>!seen(x.id));if(!w)return false;
@@ -719,12 +738,12 @@ function notify(){if(!cur||!A()||A().owner||!$('modal').classList.contains('hide
   mark(o.id);var ok=o.st==='confirmed';
   popup(ok?'ออร์เดอร์ได้รับการยืนยัน':'ออร์เดอร์ถูกยกเลิก',b=>{
     b.textContent=ok?'ออร์เดอร์ของคุณได้รับการคอนเฟิรม์เรียบร้อยแล้ว':'ขออภัยในความไม่สะดวก ออร์เดอร์ของคุณถูกยกเลิก';
-    [o.n+' ×'+o.q,o.dy?dlabel(o.dy)+' · '+o.tm+' น. · '+o.pt:'',ok?'':'คืนคอยน์ให้แล้ว'].filter(Boolean).forEach(s=>{var d=document.createElement('div');d.className='hint';d.textContent=s;b.appendChild(d)})},'ตกลง',notify);
+    [o.n+' ×'+o.q,o.dy?dlabel(o.dy)+' · '+o.tm+' น. · '+o.pt:'',ok?'':'คืนเครดิตให้แล้ว'].filter(Boolean).forEach(s=>{var d=document.createElement('div');d.className='hint';d.textContent=s;b.appendChild(d)})},'ตกลง',notify);
   if(!ok){var t=document.querySelector('#modal .tick');t.textContent='✕';t.style.background='var(--err)';t.style.color='#fff'}}
 function showHis(){var lim=Date.now()-90*864e5,L=orders.filter(o=>o.u===cur&&o.t>=lim).reverse();
-  info('ประวัติการซื้อ (ย้อนหลัง 3 เดือน)',L.length?L.map(o=>'<div class="cf"><b>'+esc(o.n)+'</b> ×'+o.q+'<br>'+o.pr+' × '+o.q+' = <b>'+o.tot+' 🪙</b>'+(o.fl?' ⚡ Flash sale (ปกติ '+o.po+')':'')+(o.disc?'<br>ใช้โค้ด '+esc(o.cd)+' ลด '+o.disc+' 🪙':'')+(o.pt?'<br>'+(o.dy?esc(dlabel(o.dy))+' · ':'')+esc(o.tm)+' น. · '+esc(o.pt):'')+'<br>'+stLbl(o)+'<div class="hint">'+fd(o.t)+' · #'+String(o.id).slice(-6)+'</div></div>').join(''):'<p class="warn">ยังไม่มีประวัติการซื้อ</p>')}
+  info('ประวัติการซื้อ (ย้อนหลัง 3 เดือน)',L.length?L.map(o=>'<div class="cf"><b>'+esc(o.n)+'</b> ×'+o.q+'<br>'+o.pr+' × '+o.q+' = <b>'+o.tot+' 💵</b>'+(o.fl?' ⚡ Flash sale (ปกติ '+o.po+')':'')+(o.disc?'<br>ใช้โค้ด '+esc(o.cd)+' ลด '+o.disc+' 💵':'')+(o.pt?'<br>'+(o.dy?esc(dlabel(o.dy))+' · ':'')+esc(o.tm)+' น. · '+esc(o.pt):'')+'<br>'+stLbl(o)+'<div class="hint">'+fd(o.t)+' · #'+String(o.id).slice(-6)+'</div></div>').join(''):'<p class="warn">ยังไม่มีประวัติการซื้อ</p>')}
 
-function showMan(){info('จัดการสินค้า','<button type="button" class="lnk go2" id="pAdd">➕ เพิ่มสินค้า</button>'+prods.map((p,i)=>'<div class="cf"><b>'+esc(p.name)+'</b> · '+p.price+' 🪙 · เหลือ '+p.stock+'<div class="row" style="margin-top:8px"><button type="button" class="ghost" data-m="up" data-i="'+i+'">▲</button><button type="button" class="ghost" data-m="dn" data-i="'+i+'">▼</button><button type="button" class="ghost" data-m="ed" data-i="'+i+'">แก้ไข</button><button type="button" class="ghost" data-m="rm" data-i="'+i+'">ลบ</button></div></div>').join(''));
+function showMan(){info('จัดการสินค้า','<button type="button" class="lnk go2" id="pAdd">➕ เพิ่มสินค้า</button>'+prods.map((p,i)=>'<div class="cf"><b>'+esc(p.name)+'</b> · '+p.price+' 💵 · เหลือ '+p.stock+'<div class="row" style="margin-top:8px"><button type="button" class="ghost" data-m="up" data-i="'+i+'">▲</button><button type="button" class="ghost" data-m="dn" data-i="'+i+'">▼</button><button type="button" class="ghost" data-m="ed" data-i="'+i+'">แก้ไข</button><button type="button" class="ghost" data-m="rm" data-i="'+i+'">ลบ</button></div></div>').join(''));
   $('pAdd').onclick=()=>prodForm(-1);
   $('shB').querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{var i=+b.dataset.i,m=b.dataset.m;
     if(m==='ed')return prodForm(i);
@@ -734,7 +753,7 @@ function showMan(){info('จัดการสินค้า','<button type="bu
     var j=m==='up'?i-1:i+1;if(j<0||j>=prods.length)return;FB.swapProducts(prods[i],prods[j]).then(showMan).catch(pe)})}
 
 function prodForm(i){var p=i>=0?prods[i]:{name:'',price:'',stock:'',img:''},img=p.img;
-  sheet(i>=0?'แก้ไขสินค้า':'เพิ่มสินค้า',fld('ชื่อสินค้า','pn')+fld('ราคา (คอยน์)','pp','number')+fld('จำนวนในสต็อก','ps','number')+'<div class="lbl">หน้าปกสินค้า</div><div id="pv"></div><input id="pi" type="file" accept="image/*">','บันทึก',()=>{
+  sheet(i>=0?'แก้ไขสินค้า':'เพิ่มสินค้า',fld('ชื่อสินค้า','pn')+fld('ราคา (เครดิต)','pp','number')+fld('จำนวนในสต็อก','ps','number')+'<div class="lbl">หน้าปกสินค้า</div><div id="pv"></div><input id="pi" type="file" accept="image/*">','บันทึก',()=>{
     var n=$('pn').value.trim(),pr=Math.floor(+$('pp').value),st=Math.floor(+$('ps').value);
     if(!n)return shErr('กรุณาใส่ชื่อสินค้า');
     if($('pp').value===''||!(pr>=0))return shErr('ราคาไม่ถูกต้อง');
@@ -780,10 +799,10 @@ function memDet(k,g){var me=A();if(!me||!me.owner)return;var a=accounts[k];if(!a
     row('ห้องเรียน',esc(a.cls||'-'))+
     row('อีเมล',a.email?esc(a.email):'ไม่ได้ใส่')+
     row('สถานะ',a.owner?'เจ้าของ 👑':(a.banned?'🚫 ถูกแบน'+(a.banReason?' ('+esc(a.banReason)+')':''):'สมาชิก'))+
-    row('คอยน์คงเหลือ',bal(a)+' 🪙')+
+    row('เครดิตคงเหลือ',bal(a)+' 💵')+
     row('จำนวนออเดอร์',oc+' รายการ')+
     (a.owner?'':row('คำเตือนที่เคยส่ง',(a.warns||[]).length+' ครั้ง'))+
-    (a.owner?'':'<button type="button" class="lnk go2" id="mCoin">🪙 จัดการคอยน์</button><button type="button" class="lnk go2" id="mWarn">⚠️ ส่งคำเตือน</button><button type="button" class="lnk go2'+(a.banned?'':' danger')+'" id="mBan">'+(a.banned?'✅ ปลดแบน':'🚫 แบนผู้ใช้')+'</button><button type=\"button\" class=\"lnk go2 danger\" id=\"mDel\">🗑️ ลบบัญชีผู้ใช้</button>'),
+    (a.owner?'':'<button type="button" class="lnk go2" id="mCoin">💵 จัดการเครดิต</button><button type="button" class="lnk go2" id="mWarn">⚠️ ส่งคำเตือน</button><button type="button" class="lnk go2'+(a.banned?'':' danger')+'" id="mBan">'+(a.banned?'✅ ปลดแบน':'🚫 แบนผู้ใช้')+'</button><button type=\"button\" class=\"lnk go2 danger\" id=\"mDel\">🗑️ ลบบัญชีผู้ใช้</button>'),
     'กลับ',function(){showMem(g)});
   $('shC').style.display='none';
   if($('mCoin'))$('mCoin').onclick=function(){userDet(k)};if($('mBan'))$('mBan').onclick=function(){banForm(k,g)};if($('mWarn'))$('mWarn').onclick=function(){warnForm(k,g)};if($('mDel'))$('mDel').onclick=function(){delUser(k,g)}}
@@ -796,16 +815,16 @@ function warnForm(k,g){var a=accounts[k];if(!a||a.owner)return;
     FB.sendWarn(k,m).then(function(){memDet(k,g)}).catch(function(e){shErr('ส่งไม่สำเร็จ ('+(e.code||e.message)+')')})},true);
   $('wn').textContent=a.name;$('shC').onclick=function(){memDet(k,g)}}
 function showUsr(){var ks=Object.keys(accounts);
-  info('คอยน์ของผู้ใช้',ks.map(k=>'<button type="button" class="lnk ghost" data-k="'+esc(k)+'">'+esc(accounts[k].name)+' · '+esc(accounts[k].cls)+' · <b>'+bal(accounts[k])+' 🪙</b></button>').join(''));
+  info('เครดิตของผู้ใช้',ks.map(k=>'<button type="button" class="lnk ghost" data-k="'+esc(k)+'">'+esc(accounts[k].name)+' · '+esc(accounts[k].cls)+' · <b>'+bal(accounts[k])+' 💵</b></button>').join(''));
   $('shB').querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>userDet(b.dataset.k))}
 function userDet(k,flash){var a=accounts[k];
-  if(a.owner){sheet(a.name+' · '+a.cls,'<div class="cf">คงเหลือ: <b>∞ 🪙</b><div class="hint">เจ้าของมีคอยน์ไม่จำกัด ไม่ต้องให้หรือหักคอยน์</div></div>','กลับ',showUsr);$('shC').style.display='none';return}
-  sheet(a.name+' · '+a.cls,sumHTML(a)+'<div class="lbl">จัดการคอยน์</div><input id="gv" type="number" min="1" inputmode="numeric" placeholder="จำนวนคอยน์"><input id="gn" style="margin-top:8px" placeholder="หมายเหตุ (ไม่บังคับ)"><div class="two" style="margin-top:10px"><button type="button" class="lnk go2" style="margin:0" id="gGive">➕ ให้คอยน์</button><button type="button" class="lnk go2 danger" style="margin:0" id="gTake">➖ หักคอยน์</button></div><div class="lbl">ประวัติคอยน์</div>'+ledHTML(a),'กลับ',showUsr);
+  if(a.owner){sheet(a.name+' · '+a.cls,'<div class="cf">คงเหลือ: <b>∞ 💵</b><div class="hint">เจ้าของมีเครดิตไม่จำกัด ไม่ต้องให้หรือหักเครดิต</div></div>','กลับ',showUsr);$('shC').style.display='none';return}
+  sheet(a.name+' · '+a.cls,sumHTML(a)+'<div class="lbl">จัดการเครดิต</div><input id="gv" type="number" min="1" inputmode="numeric" placeholder="จำนวนเครดิต"><input id="gn" style="margin-top:8px" placeholder="หมายเหตุ (ไม่บังคับ)"><div class="two" style="margin-top:10px"><button type="button" class="lnk go2" style="margin:0" id="gGive">➕ ให้เครดิต</button><button type="button" class="lnk go2 danger" style="margin:0" id="gTake">➖ หักเครดิต</button></div><div class="lbl">ประวัติเครดิต</div>'+ledHTML(a),'กลับ',showUsr);
   $('shC').style.display='none';
   var amt=()=>Math.floor(+$('gv').value);
   var adj=(v,t)=>CF.adjustCoins({uid:k,amt:v,note:$('gn').value.trim()}).then(()=>{userDet(k,t)}).catch(e=>shErr(e.message||'ผิดพลาด'));
-  $('gGive').onclick=()=>{var v=amt();if(!(v>0))return shErr('ใส่จำนวนคอยน์ให้ถูกต้อง');adj(v,'ให้ '+v+' คอยน์เรียบร้อย')};
-  $('gTake').onclick=()=>{var v=amt();if(!(v>0))return shErr('ใส่จำนวนคอยน์ให้ถูกต้อง');if(v>(a.coins||0))return shErr('หักเกินยอดคงเหลือไม่ได้ (คงเหลือ '+(a.coins||0)+' คอยน์)');adj(-v,'หัก '+v+' คอยน์เรียบร้อย')};
+  $('gGive').onclick=()=>{var v=amt();if(!(v>0))return shErr('ใส่จำนวนเครดิตให้ถูกต้อง');adj(v,'ให้ '+v+' เครดิตเรียบร้อย')};
+  $('gTake').onclick=()=>{var v=amt();if(!(v>0))return shErr('ใส่จำนวนเครดิตให้ถูกต้อง');if(v>(a.coins||0))return shErr('หักเกินยอดคงเหลือไม่ได้ (คงเหลือ '+(a.coins||0)+' เครดิต)');adj(-v,'หัก '+v+' เครดิตเรียบร้อย')};
   if(flash){$('shM').textContent='✓ '+flash;$('shM').className='msg ok'}}
 
 var cur=null,pend;
@@ -852,7 +871,7 @@ var acts={
  del:function(){var a=A();
   if(a.owner)return info('ลบบัญชี','<p class="warn">บัญชีเจ้าของลบเองไม่ได้</p>');
   if(orders.some(function(o){return o.u===cur&&o.st==='pending'}))return info('ลบบัญชี','<p class="warn">ยังมีออเดอร์รอยืนยันอยู่ ลบบัญชีไม่ได้ กรุณารอให้เจ้าของร้านจัดการก่อน</p>');
-  sheet('ลบบัญชี','<p class="warn">ลบบัญชี <b id="dn"></b> ถาวร คอยน์คงเหลือ <b>'+bal(a)+' 🪙</b> จะหายทั้งหมดและกู้คืนไม่ได้</p>'+fld('ใส่รหัสผ่านเพื่อยืนยัน','dpw','password'),'ลบบัญชีถาวร',function(){
+  sheet('ลบบัญชี','<p class="warn">ลบบัญชี <b id="dn"></b> ถาวร เครดิตคงเหลือ <b>'+bal(a)+' 💵</b> จะหายทั้งหมดและกู้คืนไม่ได้</p>'+fld('ใส่รหัสผ่านเพื่อยืนยัน','dpw','password'),'ลบบัญชีถาวร',function(){
     if(!$('dpw').value)return shErr('กรุณาใส่รหัสผ่าน');
     $('shOk').disabled=true;
     FB.deleteAccount($('dpw').value).then(function(){$('shOk').disabled=false;closeSheet()}).catch(function(e){$('shOk').disabled=false;shErr((e&&(e.code==='auth/invalid-credential'||e.code==='auth/wrong-password'))?'รหัสผ่านไม่ถูกต้อง':'ลบบัญชีไม่สำเร็จ ('+((e&&e.code)||(e&&e.message))+')')})},true);
@@ -888,17 +907,17 @@ function save(){console.warn('save() เลิกใช้แล้ว ใช้
 function clearSess(){}
 var shopOpen=true,topupOpen=false;
 
-/* ===== อันดับยอดคอยน์เข้า / ลืมรหัสผ่าน ===== */
+/* ===== อันดับยอดเครดิตเข้า / ลืมรหัสผ่าน ===== */
 var board=[];
 function showBoard(){
   var L=board.filter(function(x){return !x.banned&&x.inc>0}).sort(function(x,y){return y.inc-x.inc||String(x.name).localeCompare(String(y.name))}),rk=[];
   L.forEach(function(x,i){rk[i]=(i>0&&x.inc===L[i-1].inc)?rk[i-1]:i+1});
-  var row=function(x,i){return '<div class="lb'+(x.uid===cur?' me':'')+'"><span><b class="rk'+(rk[i]<=3?' top':'')+'">'+rk[i]+'</b> '+esc(x.name||'-')+' <small>'+esc(x.cls||'')+'</small></span><b>+'+x.inc+' 🪙</b></div>'};
-  var h='<div class="hint" style="margin:0 0 8px">ยอดคอยน์ที่ได้รับเข้ามาสะสม (ไม่นับการคืนคอยน์ และไม่รวมผู้ที่ถูกแบน) · ยอดเท่ากันได้อันดับเท่ากัน</div><div class="lb lbh"><span>อันดับ · ผู้ใช้</span><span>ยอดเข้า</span></div>';
+  var row=function(x,i){return '<div class="lb'+(x.uid===cur?' me':'')+'"><span><b class="rk'+(rk[i]<=3?' top':'')+'">'+rk[i]+'</b> '+esc(x.name||'-')+' <small>'+esc(x.cls||'')+'</small></span><b>+'+x.inc+' 💵</b></div>'};
+  var h='<div class="hint" style="margin:0 0 8px">ยอดเครดิตที่ได้รับเข้ามาสะสม (ไม่นับการคืนเครดิต และไม่รวมผู้ที่ถูกแบน) · ยอดเท่ากันได้อันดับเท่ากัน</div><div class="lb lbh"><span>อันดับ · ผู้ใช้</span><span>ยอดเข้า</span></div>';
   h+=L.length?L.slice(0,20).map(row).join(''):'<p class="warn">ยังไม่มีข้อมูลอันดับ</p>';
   var mi=L.findIndex(function(x){return x.uid===cur});
   if(mi>=20)h+='<div class="hint" style="text-align:center;margin:6px 0">• • •</div>'+row(L[mi],mi);
-  info('🏆 อันดับยอดคอยน์เข้า',h)}
+  info('🏆 อันดับยอดเครดิตเข้า',h)}
 
 
 /* ===== สมาชิกรายเดือน ===== */
@@ -916,29 +935,29 @@ function subBtnTxt(a){return subState(a).k==='on'?'👑 สมาชิกขอ
 function memHome(a){if(a.owner)return '';var st=subState(a);if(st.k!=='on')return '';
   var s=st.s,P=pkgOf(s.pk);
   return '<div class="mcard">👑 <b>สมาชิก · '+P.name+'</b><br>เก็บแล้ว '+(s.n||0)+'/'+P.days+' วัน · หมดอายุ '+esc(dlabel(s.end))+
-    (st.can?'<button type="button" id="bClaim">🎁 กดเก็บ +'+P.daily+' 🪙 ประจำวันนี้</button>':'<div class="done">'+(st.today?'✓ วันนี้เก็บคอยน์แล้ว มาเก็บใหม่พรุ่งนี้':'เริ่มเก็บคอยน์รายวันได้ตั้งแต่พรุ่งนี้')+'</div>')+'</div>'}
+    (st.can?'<button type="button" id="bClaim">🎁 กดเก็บ +'+P.daily+' 💵 ประจำวันนี้</button>':'<div class="done">'+(st.today?'✓ วันนี้เก็บเครดิตแล้ว มาเก็บใหม่พรุ่งนี้':'เริ่มเก็บเครดิตรายวันได้ตั้งแต่พรุ่งนี้')+'</div>')+'</div>'}
 function claimDay(){var b=$('bClaim');if(b)b.disabled=true;
-  CF.claimDaily().then(function(r){popup('เก็บคอยน์สำเร็จ',function(x){x.textContent='ได้รับ +'+r.data.d+' 🪙 (วันที่ '+r.data.n+' ของแพ็คเกจ)'},'ตกลง')})
-   .catch(function(e){if(b)b.disabled=false;info('เก็บคอยน์ไม่ได้','<p class="warn">'+esc(e.message||'ผิดพลาด')+'</p>')})}
+  CF.claimDaily().then(function(r){popup('เก็บเครดิตสำเร็จ',function(x){x.textContent='ได้รับ +'+r.data.d+' 💵 (วันที่ '+r.data.n+' ของแพ็คเกจ)'},'ตกลง')})
+   .catch(function(e){if(b)b.disabled=false;info('เก็บเครดิตไม่ได้','<p class="warn">'+esc(e.message||'ผิดพลาด')+'</p>')})}
 function showSub(){var a=A();if(!a||a.owner)return;var st=subState(a),h='';
   if(st.k==='on'){var s=st.s,P=pkgOf(s.pk);
-    h+='<div class="cf">👑 <b>'+P.name+'</b><br>สมัครเมื่อ '+esc(dlabel(s.start))+'<br>หมดอายุ '+esc(dlabel(s.end))+'<br>เก็บแล้ว <b>'+(s.n||0)+'/'+P.days+'</b> วัน (รวม '+(s.n||0)*P.daily+' 🪙)</div>'+
-      (st.can?'<button type="button" class="lnk go2" id="sClaim">🎁 กดเก็บ +'+P.daily+' 🪙 ประจำวันนี้</button>':'<div class="cf">'+(st.today?'✓ วันนี้เก็บคอยน์แล้ว มาเก็บใหม่พรุ่งนี้':'เริ่มเก็บคอยน์รายวันได้ตั้งแต่พรุ่งนี้')+'</div>')+
-      '<div class="note">เข้ามากดเก็บคอยน์ทุกวัน วันไหนไม่ได้กดเก็บ จะไม่สะสมย้อนหลัง · สมัครแพ็คเกจใหม่ได้เมื่อแพ็คเกจนี้หมดอายุ</div>';
+    h+='<div class="cf">👑 <b>'+P.name+'</b><br>สมัครเมื่อ '+esc(dlabel(s.start))+'<br>หมดอายุ '+esc(dlabel(s.end))+'<br>เก็บแล้ว <b>'+(s.n||0)+'/'+P.days+'</b> วัน (รวม '+(s.n||0)*P.daily+' 💵)</div>'+
+      (st.can?'<button type="button" class="lnk go2" id="sClaim">🎁 กดเก็บ +'+P.daily+' 💵 ประจำวันนี้</button>':'<div class="cf">'+(st.today?'✓ วันนี้เก็บเครดิตแล้ว มาเก็บใหม่พรุ่งนี้':'เริ่มเก็บเครดิตรายวันได้ตั้งแต่พรุ่งนี้')+'</div>')+
+      '<div class="note">เข้ามากดเก็บเครดิตทุกวัน วันไหนไม่ได้กดเก็บ จะไม่สะสมย้อนหลัง · สมัครแพ็คเกจใหม่ได้เมื่อแพ็คเกจนี้หมดอายุ</div>';
   }else{
     if(st.k==='exp')h+='<div class="note">แพ็คเกจก่อนหน้าหมดอายุแล้ว สมัครใหม่ได้เลย</div>';
-    h+=PKG.map(function(P){return '<div class="cf pk"><b>'+P.name+'</b><br>ราคา '+(P.full>P.price?'<s class="fold">'+P.full+'</s> ':'')+'<b>'+P.price+' 🪙</b>'+(P.full>P.price?' (ลด '+(P.full-P.price)+')':'')+
-      '<br>🎁 รับทันที <b>+'+P.up+' 🪙</b><br>📅 เก็บวันละ <b>'+P.daily+' 🪙</b> × '+P.days+' วัน (เริ่มพรุ่งนี้)<br>รวมได้รับ <b>'+pkgTot(P)+' 🪙</b>'+
-      '<button type="button" class="lnk go2" data-pk="'+P.id+'">สมัคร '+P.price+' 🪙</button></div>'}).join('')+
-      '<div class="hint">ชำระด้วยคอยน์ในบัญชี (คงเหลือ '+bal(a)+' 🪙)</div>'}
+    h+=PKG.map(function(P){return '<div class="cf pk"><b>'+P.name+'</b><br>ราคา '+(P.full>P.price?'<s class="fold">'+P.full+'</s> ':'')+'<b>'+P.price+' 💵</b>'+(P.full>P.price?' (ลด '+(P.full-P.price)+')':'')+
+      '<br>🎁 รับทันที <b>+'+P.up+' 💵</b><br>📅 เก็บวันละ <b>'+P.daily+' 💵</b> × '+P.days+' วัน (เริ่มพรุ่งนี้)<br>รวมได้รับ <b>'+pkgTot(P)+' 💵</b>'+
+      '<button type="button" class="lnk go2" data-pk="'+P.id+'">สมัคร '+P.price+' 💵</button></div>'}).join('')+
+      '<div class="hint">ชำระด้วยเครดิตในบัญชี (คงเหลือ '+bal(a)+' 💵)</div>'}
   info('👑 สมัครสมาชิก',h);
   if($('sClaim'))$('sClaim').onclick=function(){closeSheet();claimDay()};
   $('shB').querySelectorAll('[data-pk]').forEach(function(b){b.onclick=function(){subConfirm(b.dataset.pk)}})}
 function subConfirm(id){var a=A(),P=pkgOf(id);
-  sheet('ยืนยันสมัคร '+P.name,'<p class="warn">ใช้ <b>'+P.price+' 🪙</b> (คงเหลือ '+bal(a)+' 🪙)</p><div class="cf">🎁 รับทันที +'+P.up+' 🪙<br>📅 เก็บวันละ '+P.daily+' 🪙 ต่อเนื่อง '+P.days+' วัน (เริ่มพรุ่งนี้)<br>รวมได้รับ '+pkgTot(P)+' 🪙</div><div class="hint">ต้องเข้ามากดเก็บทุกวัน วันไหนไม่กดเก็บจะไม่สะสมย้อนหลัง</div>','ยืนยันสมัคร',function(){
-    if((a.coins||0)<P.price)return shErr('คอยน์ไม่พอ (ต้องใช้ '+P.price+' คอยน์ มี '+(a.coins||0)+' คอยน์)');
+  sheet('ยืนยันสมัคร '+P.name,'<p class="warn">ใช้ <b>'+P.price+' 💵</b> (คงเหลือ '+bal(a)+' 💵)</p><div class="cf">🎁 รับทันที +'+P.up+' 💵<br>📅 เก็บวันละ '+P.daily+' 💵 ต่อเนื่อง '+P.days+' วัน (เริ่มพรุ่งนี้)<br>รวมได้รับ '+pkgTot(P)+' 💵</div><div class="hint">ต้องเข้ามากดเก็บทุกวัน วันไหนไม่กดเก็บจะไม่สะสมย้อนหลัง</div>','ยืนยันสมัคร',function(){
+    if((a.coins||0)<P.price)return shErr('เครดิตไม่พอ (ต้องใช้ '+P.price+' เครดิต มี '+(a.coins||0)+' เครดิต)');
     $('shOk').disabled=true;
-    CF.subscribe(P.id).then(function(){$('shOk').disabled=false;closeSheet();popup('สมัครสมาชิกสำเร็จ',function(b){b.textContent=P.name+' · ได้รับทันที +'+P.up+' 🪙 และเก็บวันละ '+P.daily+' 🪙 ตั้งแต่พรุ่งนี้'},'ตกลง')}).catch(function(e){$('shOk').disabled=false;shErr(e.message||'สมัครไม่สำเร็จ')})});
+    CF.subscribe(P.id).then(function(){$('shOk').disabled=false;closeSheet();popup('สมัครสมาชิกสำเร็จ',function(b){b.textContent=P.name+' · ได้รับทันที +'+P.up+' 💵 และเก็บวันละ '+P.daily+' 💵 ตั้งแต่พรุ่งนี้'},'ตกลง')}).catch(function(e){$('shOk').disabled=false;shErr(e.message||'สมัครไม่สำเร็จ')})});
   $('shC').onclick=showSub}
 
 
@@ -949,13 +968,13 @@ function fst(f,now){now=now||Date.now();if(!f||f.on===false)return 'off';if(now<
 function fdisc(p,f){var d=f.type==='pct'?Math.floor(p.price*f.val/100):f.val;return Math.max(0,Math.min(d,p.price))}
 function fprice(p,f){return p.price-fdisc(p,f)}
 function unit(p){var f=flashes[p.id];return f&&fst(f)==='live'?fprice(p,f):p.price}
-function flbl(f){return f.type==='pct'?'ลด '+f.val+'%':'ลด '+f.val+' 🪙'}
+function flbl(f){return f.type==='pct'?'ลด '+f.val+'%':'ลด '+f.val+' 💵'}
 function cdTxt(ms){if(ms<0)ms=0;var s=Math.floor(ms/1000),d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60),x=s%60;
   return (d?d+' วัน ':'')+pad2(h)+':'+pad2(m)+':'+pad2(x)}
 function ldt(ms){var d=new Date(ms);return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate())+'T'+pad2(d.getHours())+':'+pad2(d.getMinutes())}
 function priceHTML(p,f,fs,u,fl){var now=Date.now();
-  if(fl)return '<s class="fold">'+p.price+'</s><span class="fnew">'+u+' 🪙</span><span class="fcd" data-cd="'+f.end+'" data-pre="⚡ เหลือเวลา ">⚡ เหลือเวลา '+cdTxt(f.end-now)+'</span>';
-  return p.price+' 🪙'+(fs==='soon'?'<span class="fcd soon" data-cd="'+f.start+'" data-pre="🔜 Flash sale เริ่มใน ">🔜 Flash sale เริ่มใน '+cdTxt(f.start-now)+'</span>':'')}
+  if(fl)return '<s class="fold">'+p.price+'</s><span class="fnew">'+u+' 💵</span><span class="fcd" data-cd="'+f.end+'" data-pre="⚡ เหลือเวลา ">⚡ เหลือเวลา '+cdTxt(f.end-now)+'</span>';
+  return p.price+' 💵'+(fs==='soon'?'<span class="fcd soon" data-cd="'+f.start+'" data-pre="🔜 Flash sale เริ่มใน ">🔜 Flash sale เริ่มใน '+cdTxt(f.start-now)+'</span>':'')}
 function prodById(k){return prods.find(function(x){return String(x.id)===String(k)})}
 
 function showFlash(){var me=A();if(!me||!me.owner)return;
@@ -964,7 +983,7 @@ function showFlash(){var me=A();if(!me||!me.owner)return;
       stT={live:'🔥 กำลังลดราคา',soon:'🔜 รอเริ่ม',end:'⌛ สิ้นสุดแล้ว',off:'⛔ ปิด'};
   var h='<button type="button" class="lnk go2" id="fAdd">➕ ตั้ง Flash sale ใหม่</button>'+(open.length?'<button type="button" class="lnk go2 danger" id="fAll">⛔ ยกเลิกทั้งหมด ('+open.length+')</button>':'');
   h+=ks.length?ks.map(function(k){var f=flashes[k],p=prodById(k),s=fst(f,now);
-    return '<div class="cf"><b>'+(p?esc(p.name):'(สินค้าถูกลบแล้ว)')+'</b> · '+flbl(f)+(p?'<br>'+p.price+' 🪙 → <b>'+fprice(p,f)+' 🪙</b>':'')+
+    return '<div class="cf"><b>'+(p?esc(p.name):'(สินค้าถูกลบแล้ว)')+'</b> · '+flbl(f)+(p?'<br>'+p.price+' 💵 → <b>'+fprice(p,f)+' 💵</b>':'')+
       '<br>เริ่ม '+fd(f.start)+'<br>จบ '+fd(f.end)+'<br><span class="fst '+s+'">'+stT[s]+'</span>'+
       (s==='live'?'<span class="fcd" data-cd="'+f.end+'" data-pre="เหลือ ">เหลือ '+cdTxt(f.end-now)+'</span>':s==='soon'?'<span class="fcd soon" data-cd="'+f.start+'" data-pre="เริ่มใน ">เริ่มใน '+cdTxt(f.start-now)+'</span>':'')+
       '<div class="row" style="margin-top:8px">'+(p?'<button type="button" class="ghost" data-fe="'+esc(k)+'">'+(s==='end'?'ตั้งใหม่':'แก้ไข / ตั้งเวลา')+'</button>':'')+
@@ -989,8 +1008,8 @@ function flashForm(k){flashView=false;
   if(!pl.length)return info('⚡ Flash sale','<p class="warn">ยังไม่มีสินค้า กรุณาเพิ่มสินค้าก่อน</p>');
   var h='<div class="lbl">'+(ed?'สินค้า':'เลือกสินค้า (เลือกได้หลายรายการ)')+'</div><div id="fx_l">'+pl.map(function(p){
     var f0=flashes[p.id],on=f0&&fst(f0)!=='end';
-    return '<label class="chk"><input type="checkbox" class="fpc" value="'+p.id+'"'+(ed?' checked disabled':'')+'> <span>'+esc(p.name)+' · '+p.price+' 🪙'+(on?' ⚡':'')+'</span></label>'}).join('')+'</div>'+
-    '<div class="lbl">รูปแบบส่วนลด</div><select id="fx_t"><option value="pct">ลดเป็นเปอร์เซ็นต์ (%)</option><option value="coin">ลดเป็นคอยน์ (🪙) ต่อชิ้น</option></select>'+
+    return '<label class="chk"><input type="checkbox" class="fpc" value="'+p.id+'"'+(ed?' checked disabled':'')+'> <span>'+esc(p.name)+' · '+p.price+' 💵'+(on?' ⚡':'')+'</span></label>'}).join('')+'</div>'+
+    '<div class="lbl">รูปแบบส่วนลด</div><select id="fx_t"><option value="pct">ลดเป็นเปอร์เซ็นต์ (%)</option><option value="coin">ลดเป็นเครดิต (💵) ต่อชิ้น</option></select>'+
     fld('จำนวนส่วนลด','fx_v','number')+
     '<div class="lbl">เวลาเริ่ม <span class="opt">(ตั้งเป็นเวลาปัจจุบันเพื่อเริ่มทันที)</span></div><input id="fx_s" type="datetime-local">'+
     '<div class="lbl">เวลาสิ้นสุด</div><input id="fx_e" type="datetime-local">'+
@@ -1004,7 +1023,7 @@ function flashForm(k){flashView=false;
     if(!(val>=1))return shErr('กรุณากรอกจำนวนส่วนลดให้ถูกต้อง');
     if(type==='pct'&&val>100)return shErr('เปอร์เซ็นต์ต้องอยู่ระหว่าง 1–100');
     if(type==='coin'){var bad=ids.map(prodById).find(function(p){return p&&val>p.price});
-      if(bad)return shErr('ลดได้ไม่เกินราคาสินค้า ('+bad.name+' ราคา '+bad.price+' 🪙)')}
+      if(bad)return shErr('ลดได้ไม่เกินราคาสินค้า ('+bad.name+' ราคา '+bad.price+' 💵)')}
     if(!$('fx_s').value)return shErr('กรุณาเลือกเวลาเริ่ม');
     if(!$('fx_e').value)return shErr('กรุณาเลือกเวลาสิ้นสุด');
     var st=new Date($('fx_s').value).getTime(),en=new Date($('fx_e').value).getTime();
@@ -1017,12 +1036,12 @@ function flashForm(k){flashView=false;
   if(ed){$('fx_t').value=ed.type;$('fx_v').value=ed.val}
   $('fx_s').value=ldt(ed?ed.start:now);$('fx_e').value=ldt(ed?ed.end:now+36e5);
   var pv=function(){var type=$('fx_t').value,val=Math.floor(+$('fx_v').value);
-    $('fx_v').placeholder=type==='pct'?'เช่น 20 (%)':'เช่น 10 (คอยน์)';
+    $('fx_v').placeholder=type==='pct'?'เช่น 20 (%)':'เช่น 10 (เครดิต)';
     var ids=ed?[String(k)]:Array.prototype.map.call(document.querySelectorAll('.fpc:checked'),function(c){return c.value});
     if(!ids.length)return $('fx_p').textContent='เลือกสินค้าเพื่อดูตัวอย่าง';
     if(!(val>=1))return $('fx_p').textContent='กรอกจำนวนส่วนลดเพื่อดูตัวอย่าง';
     $('fx_p').innerHTML=ids.map(function(i){var p=prodById(i);if(!p)return '';
-      return esc(p.name)+': '+p.price+' → <b>'+fprice(p,{type:type,val:val})+' 🪙</b>'}).join('<br>')};
+      return esc(p.name)+': '+p.price+' → <b>'+fprice(p,{type:type,val:val})+' 💵</b>'}).join('<br>')};
   $('fx_t').onchange=pv;$('fx_v').oninput=pv;
   document.querySelectorAll('.fpc').forEach(function(c){c.onchange=pv});
   $('shB').querySelectorAll('[data-h]').forEach(function(b){b.onclick=function(){
@@ -1040,15 +1059,15 @@ function toggleShop(){var to=!shopOpen;
     FB.setShop(to).then(closeSheet).catch(pe)},!to)}
 var RESET_CODE='255701';   // โค้ดลับสำหรับรีเซ็ตข้อมูลทั้งหมด
 function resetAll(){
-  sheet('รีเซ็ตข้อมูลทั้งหมด','<p class="warn">จะลบ <b>สินค้า ออเดอร์ โค้ดส่วนลด</b> ทั้งหมด และตั้ง <b>คอยน์ของสมาชิกทุกคนเป็น 0</b> พร้อมล้างประวัติคอยน์ (บัญชีสมาชิกยังอยู่) กู้คืนไม่ได้</p><label for="rsT">ใส่ <b>โค้ดลับ</b> เพื่อยืนยันการรีเซ็ต</label><input id="rsT" type="password" inputmode="numeric" autocomplete="off" placeholder="โค้ดลับ">','ลบข้อมูลทั้งหมด',function(){
+  sheet('รีเซ็ตข้อมูลทั้งหมด','<p class="warn">จะลบ <b>สินค้า ออเดอร์ โค้ดส่วนลด</b> ทั้งหมด และตั้ง <b>เครดิตของสมาชิกทุกคนเป็น 0</b> พร้อมล้างประวัติเครดิต (บัญชีสมาชิกยังอยู่) กู้คืนไม่ได้</p><label for="rsT">ใส่ <b>โค้ดลับ</b> เพื่อยืนยันการรีเซ็ต</label><input id="rsT" type="password" inputmode="numeric" autocomplete="off" placeholder="โค้ดลับ">','ลบข้อมูลทั้งหมด',function(){
     if($('rsT').value.trim()!==RESET_CODE)return shErr('โค้ดลับไม่ถูกต้อง');
     $('shOk').disabled=true;$('shM').className='msg';$('shM').textContent='กำลังลบข้อมูล...';
-    FB.resetAll().then(function(){$('shOk').disabled=false;closeSheet();popup('รีเซ็ตเรียบร้อย',function(b){b.textContent='ลบสินค้า ออเดอร์ โค้ดส่วนลด และตั้งคอยน์สมาชิกเป็น 0 แล้ว'},'ตกลง')}).catch(function(e){$('shOk').disabled=false;shErr('รีเซ็ตไม่สำเร็จ ('+(e.code||e.message)+')')})},true)}
+    FB.resetAll().then(function(){$('shOk').disabled=false;closeSheet();popup('รีเซ็ตเรียบร้อย',function(b){b.textContent='ลบสินค้า ออเดอร์ โค้ดส่วนลด และตั้งเครดิตสมาชิกเป็น 0 แล้ว'},'ตกลง')}).catch(function(e){$('shOk').disabled=false;shErr('รีเซ็ตไม่สำเร็จ ('+(e.code||e.message)+')')})},true)}
 /* ===== เจ้าของลบบัญชีผู้ใช้ (ต้องใส่โค้ดลับ) ===== */
 function delUser(k,g){var me=A();if(!me||!me.owner)return;var a=accounts[k];if(!a||a.owner)return;
   var pn=orders.filter(function(o){return o.u===k&&o.st==='pending'}).length;
   if(pn)return info('ลบบัญชีผู้ใช้','<p class="warn">'+esc(a.name)+' ยังมีออเดอร์รอยืนยัน '+pn+' รายการ กรุณายืนยันหรือยกเลิกออเดอร์ก่อน แล้วค่อยลบบัญชี</p>');
-  sheet('ลบบัญชีผู้ใช้','<p class="warn">ลบบัญชี <b id="duN"></b> ถาวร คอยน์คงเหลือ <b>'+bal(a)+' 🪙</b> จะหายทั้งหมดและกู้คืนไม่ได้</p><label for="duC">ใส่ <b>โค้ดลับ</b> เพื่อยืนยันการลบ</label><input id="duC" type="password" inputmode="numeric" autocomplete="off" placeholder="โค้ดลับ">','ลบบัญชีถาวร',function(){
+  sheet('ลบบัญชีผู้ใช้','<p class="warn">ลบบัญชี <b id="duN"></b> ถาวร เครดิตคงเหลือ <b>'+bal(a)+' 💵</b> จะหายทั้งหมดและกู้คืนไม่ได้</p><label for="duC">ใส่ <b>โค้ดลับ</b> เพื่อยืนยันการลบ</label><input id="duC" type="password" inputmode="numeric" autocomplete="off" placeholder="โค้ดลับ">','ลบบัญชีถาวร',function(){
     if($('duC').value.trim()!==RESET_CODE)return shErr('โค้ดลับไม่ถูกต้อง');
     $('shOk').disabled=true;$('shM').className='msg';$('shM').textContent='กำลังลบบัญชี...';
     FB.deleteUser(k).then(function(){$('shOk').disabled=false;closeSheet();popup('ลบบัญชีเรียบร้อย',function(b){b.textContent='ลบบัญชี '+a.name+' แล้ว'},'ตกลง',function(){showMem(g)})})
@@ -1111,7 +1130,7 @@ const mkAcc=(id,d)=>{const a=Object.assign({id:id},d);a.owner=isOwn(d);return a}
 const D=(...p)=>doc(db,...p);
 const errLog=e=>console.error('Firestore:',e.code,e.message);
 let unsubs=[],signing=false,selfDel=false,rawCodes=[],rawUses=[];
-/* เจ้าของ: ซิงก์ตารางอันดับ (board) ให้ตรงกับประวัติคอยน์จริงของผู้ใช้ */
+/* เจ้าของ: ซิงก์ตารางอันดับ (board) ให้ตรงกับประวัติเครดิตจริงของผู้ใช้ */
 let syncT=null;
 function syncBoard(){clearTimeout(syncT);syncT=setTimeout(async()=>{
   const me=cur&&accounts[cur];if(!me||!me.owner)return;
@@ -1248,7 +1267,7 @@ const FB={
       if(!uS.exists())throw new Error('ไม่พบบัญชี');
       const u=uS.data(),td=iso(new Date());
       if(u.sub&&u.sub.end&&td<=u.sub.end)throw new Error('คุณเป็นสมาชิกอยู่แล้ว');
-      if((u.coins||0)<P.price)throw new Error('คอยน์ไม่พอ (ต้องใช้ '+P.price+' คอยน์ มี '+(u.coins||0)+' คอยน์)');
+      if((u.coins||0)<P.price)throw new Error('เครดิตไม่พอ (ต้องใช้ '+P.price+' เครดิต มี '+(u.coins||0)+' เครดิต)');
       const now=Date.now();let b=(u.coins||0)-P.price;
       const L=[...(u.ledger||[]),{t:now,d:-P.price,n:'สมัครสมาชิก '+P.name,b:b,rf:false}];
       b+=P.up;L.push({t:now+1,d:P.up,n:'โบนัสสมาชิก (รับทันที) '+P.name,b:b,rf:false});
@@ -1262,10 +1281,10 @@ const FB={
       if(!s||!s.end)throw new Error('ยังไม่ได้สมัครสมาชิก');
       const P=PKG.find(x=>x.id===s.pk)||PKG[0];
       if(td>s.end)throw new Error('แพ็คเกจสมาชิกหมดอายุแล้ว');
-      if(td<=s.start)throw new Error('เริ่มเก็บคอยน์ได้ตั้งแต่พรุ่งนี้');
-      if((s.last||'')>=td)throw new Error('วันนี้คุณเก็บคอยน์แล้ว');
+      if(td<=s.start)throw new Error('เริ่มเก็บเครดิตได้ตั้งแต่พรุ่งนี้');
+      if((s.last||'')>=td)throw new Error('วันนี้คุณเก็บเครดิตแล้ว');
       const now=Date.now(),nb=(u.coins||0)+P.daily,n=(s.n||0)+1;
-      tx.update(uR,{coins:nb,ledger:[...(u.ledger||[]),{t:now,d:P.daily,n:'เก็บคอยน์สมาชิกรายวัน ('+n+'/'+P.days+')',b:nb,rf:false}],sub:Object.assign({},s,{last:td,n:n})});
+      tx.update(uR,{coins:nb,ledger:[...(u.ledger||[]),{t:now,d:P.daily,n:'เก็บเครดิตสมาชิกรายวัน ('+n+'/'+P.days+')',b:nb,rf:false}],sub:Object.assign({},s,{last:td,n:n})});
       res.d=P.daily;res.n=n});
     setDoc(D('board',cur),{uid:cur,name:a.name,cls:a.cls||'',inc:increment(res.d)},{merge:true}).catch(()=>{});
     return{data:res}},
@@ -1303,7 +1322,7 @@ const FB={
         if(mS.exists())throw new Error('คุณใช้โค้ดนี้ไปแล้ว');
         disc=codeDisc(c,sub)}
       const tot=sub-disc;
-      if(!a.owner&&u.coins<tot)throw new Error('คอยน์ไม่พอ (ต้องใช้ '+tot+' คอยน์ มี '+u.coins+' คอยน์)');
+      if(!a.owner&&u.coins<tot)throw new Error('เครดิตไม่พอ (ต้องใช้ '+tot+' เครดิต มี '+u.coins+' เครดิต)');
       const now=Date.now();
       tx.set(D('orders',String(oid)),{id:oid,u:cur,pid:p.id,n:p.name,q:q,pr:up,po:p.price,fl:fl,tot:tot,disc:disc,cd:code,pt:PTS[+d.pt],tm:d.tm,dy:d.dy,st:a.owner?'confirmed':'pending',t:now});
       tx.update(pR,{stock:p.stock-q,lastOrder:String(oid)});
@@ -1322,19 +1341,19 @@ const FB={
       let cR,cS;if(o.cd){cR=D('codes',o.cd);cS=await tx.get(cR)}
       tx.update(oR,{st:'rejected'});
       if(uS.exists()&&!isOwn(uS.data())){const u=uS.data(),nb=(u.coins||0)+o.tot;
-        tx.update(uR,{coins:nb,ledger:[...(u.ledger||[]),{t:Date.now(),d:o.tot,n:'คืนคอยน์ ออเดอร์ #'+String(o.id).slice(-6),b:nb,rf:true}]})}
+        tx.update(uR,{coins:nb,ledger:[...(u.ledger||[]),{t:Date.now(),d:o.tot,n:'คืนเครดิต ออเดอร์ #'+String(o.id).slice(-6),b:nb,rf:true}]})}
       if(pS.exists())tx.update(pR,{stock:(pS.data().stock||0)+o.q});
       if(cS&&cS.exists()){tx.update(cR,{used:Math.max(0,(cS.data().used||0)-1)});
         tx.delete(D('codes',o.cd,'users',o.u));tx.update(D('codes',o.cd,'uses',String(o.id)),{void:true})}})
     return{data:{}}},
 
-  async adjustCoins(d){need();const v=Math.floor(+d.amt);if(!v)throw new Error('จำนวนคอยน์ไม่ถูกต้อง');
+  async adjustCoins(d){need();const v=Math.floor(+d.amt);if(!v)throw new Error('จำนวนเครดิตไม่ถูกต้อง');
     await runTransaction(db,async tx=>{
       const uR=D('users',d.uid),uS=await tx.get(uR);
       if(!uS.exists()||isOwn(uS.data()))throw new Error('ไม่พบผู้ใช้');
       const u=uS.data(),nb=(u.coins||0)+v;
       if(nb<0)throw new Error('หักเกินยอดคงเหลือไม่ได้');
-      tx.update(uR,{coins:nb,ledger:[...(u.ledger||[]),{t:Date.now(),d:v,n:(v>0?'เจ้าของให้คอยน์':'เจ้าของหักคอยน์')+(d.note?' · '+d.note:''),b:nb,rf:false}]})});
+      tx.update(uR,{coins:nb,ledger:[...(u.ledger||[]),{t:Date.now(),d:v,n:(v>0?'เจ้าของให้เครดิต':'เจ้าของหักเครดิต')+(d.note?' · '+d.note:''),b:nb,rf:false}]})});
     if(v>0){const bu=accounts[d.uid]||{};setDoc(D('board',d.uid),{uid:d.uid,name:bu.name||'',cls:bu.cls||'',inc:increment(v)},{merge:true}).catch(()=>{})}
     return{data:{}}}
 };
